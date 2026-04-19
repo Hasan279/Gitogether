@@ -125,4 +125,3 @@ Visit `http://localhost:5000` in your browser.
 | AreebSaeed | [@AreebSaeed](https://github.com/AreebSaeed) |
 
 ---
-This project is for personal use. Feel free to fork and build on it.
