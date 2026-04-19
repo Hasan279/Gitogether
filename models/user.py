@@ -1,6 +1,6 @@
 import bcrypt
 from models.db import get_connection
-def create_new_user(email, password, role = "developer"):
+def create_user(email, password, role = "developer"):
     conn = get_connection()
     cur = conn.cursor()
     password_hashed = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt()).decode('utf-8')
@@ -56,10 +56,26 @@ def verify_password(plain_password,hashed_password):
     return bcrypt.checkpw(plain_password.encode('utf-8'),hashed_password.encode('utf-8'))
         
 def activate_user(user_id):
-    None
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+                    update users 
+                set is_active = TRUE
+                where user_id = %s """, (user_id))
+    conn.commit()
+    cur.close()
+    conn.close()
 
 def deactivate_user(user_id):
-    None
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(""" 
+                    update users
+                set is_active = FALSE
+                where user_id = %s""", (user_id))
+    conn.commit()
+    cur.close()
+    conn.close()
 
 def create_developer_profile(user_id, full_name, bio, location, years_experience, contact_link, avatar_url=None):
     conn = get_connection()
@@ -106,10 +122,30 @@ def get_developer_by_name(full_name):
     return developer 
 
 def update_developer_profile(user_id, full_name, bio, location, years_experience, contact_link, avatar_url=None):
-    None
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+                update developer_profiles
+                set full_name = %s, 
+                bio = %s,
+                location = %s,
+                years_experience = %s,
+                contact_link = %s,
+                avatar_url = %s,
+                where user_id = %s """, (full_name, bio, location, years_experience, contact_link, avatar_url, user_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
 
 def delete_developer_profile(user_id):
-    None
+    conn = get_connection()
+    cur= conn.cursor()
+    cur.execute(""" delete from developer_profiles
+                where user_id = %s """, (user_id))
+    conn.commit()
+    cur.close()
+    conn.close()
 
     
     
