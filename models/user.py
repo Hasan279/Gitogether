@@ -79,9 +79,11 @@ def get_developer_by_user_id(user_id):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-               SELECT * FROM developer_profiles
-               WHERE user_id = (%s)
-                """,(user_id))
+                SELECT dp.*, u.email, u.role
+                FROM developer_profiles dp
+                JOIN users u ON u.user_id = dp.user_id
+                where user_id = (%s)
+               """,(user_id))
     developer = cur.fetchone()
     conn.commit()
     cur.close()
@@ -92,8 +94,10 @@ def get_developer_by_name(full_name):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-               SELECT * FROM developer_profiles
-               WHERE full_name = (%s)
+               SELECT dp.*, u.email, u.role
+                FROM developer_profiles dp
+                JOIN users u ON u.user_id = dp.user_id
+                where full_name = (%s)
                 """,(full_name))
     developer = cur.fetchone()
     conn.commit()
