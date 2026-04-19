@@ -24,7 +24,7 @@ def register():
     if not email or '@' not in email:
         return render_template('auth/register.html', error="Invalid email address")
     
-    if(not password or len(password<12)):
+    if(not password or len(password)<12):
          return render_template('auth/register.html', error="Invalid Password")
      
     if not bio or not contact_link or not location:
@@ -37,7 +37,8 @@ def register():
     session['email'] = email
     session['role'] = 'developer'
     
-    return redirect(url_for('dashboard.index'))
+    return render_template('dashboard/dashboard.html')
+    # return redirect(url_for('dashboard.index'))
 
 @bp.route('/login',methods=['GET','POST'])
 def login():
@@ -67,7 +68,8 @@ def login():
     if user[3] == 'admin':
         return redirect(url_for('admin.panel'))
     
-    return redirect(url_for('dashboard.index'))
+    return render_template('dashboard/dashboard.html')
+    # return redirect(url_for('dashboard.index'))
 
 @bp.route('/logout')
 def logout():

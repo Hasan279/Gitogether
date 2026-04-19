@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Register</title>
+  </head>
+  <body>
+    <h2>Register</h2>
+    {% if error %}
+    <p style="color: red">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="/register">
+      <input type="email" name="email" placeholder="Email" required /><br />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        required
+      /><br />
+      <input
+        type="text"
+        name="full_name"
+        placeholder="Full Name"
+        required
+      /><br />
+      <input type="text" name="bio" placeholder="Bio" /><br />
+      <input type="text" name="location" placeholder="Location" /><br />
+      <input
+        type="number"
+        name="years_experience"
+        placeholder="Years of Experience"
+      /><br />
+      <input
+        type="text"
+        name="contact_link"
+        placeholder="Discord/Telegram link"
+      /><br />
+      <button type="submit">Register</button>
+    </form>
+    <a href="/login">Already have an account? Login</a>
+  </body>
+</html>

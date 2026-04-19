@@ -32,7 +32,7 @@ def get_user_by_email(email):
     cur.execute("""
                Select * FROM USERS
                WHERE email = (%s)
-                """,(email))
+                """,(email,))
     User = cur.fetchone()
     conn.commit()
     cur.close()

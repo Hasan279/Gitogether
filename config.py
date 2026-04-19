@@ -1,8 +1,10 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
-DATABASE_URL = os.getenv("postgresql://postgres:Jtt$.S4hhEDhnG2@db.hobwhojtlwfahzwhtckf.supabase.co:5432/postgres")
-SECRET_KEY = os.getenv("43cae493238383fe75e23450ceeca0d569fa37fb12833895cf98ea254591e17d")
+DATABASE_URL = os.getenv("DATABASE_URL")
+SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "False") == "True"
+
+print("DB URL:", DATABASE_URL)
