@@ -5,7 +5,11 @@ def get_all_skills():
     cur = conn.cursor()
     cur.execute(""" 
                 select * from skills""")
-    return cur.fetchall()
+    all_skills = cur.fetchall()
+    conn.commit()
+    cur.close()
+    conn.close()
+    return all_skills
 
 def add_skill(skill_name, category):
     conn = get_connection()
@@ -31,10 +35,11 @@ def get_developer_skill(developer_id):
                 on s.skill_id = ds.skill_id
                 where ds.developer_id = %s
                 """, (developer_id))
+    dev_skills = cur.fetchall()
     conn.commit()
     cur.close()
     conn.close()
-    return cur.fetchall()
+    return dev_skills
 
 def add_developer_skill(developer_id, skill_id, proficiency_level):
     conn = get_connection()
@@ -68,10 +73,11 @@ def get_project_skill (project_id):
                 on s.kill_id = ps.skill_id
                 where ps.project_id = %s
                 """, (project_id))
+    proj_skills = cur.fetchall()
     conn.commit()
     cur.close()
     conn.close()
-    return cur.fetchall()
+    return proj_skills
 
 def add_project_skill (project_id, skill_id, is_required):
     conn = get_connection()
