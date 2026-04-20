@@ -72,14 +72,10 @@ def update_request_status(request_id, status):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-                
-
-
-
-
-
-                    """)
-
+                UPDATE Requests
+                SET status = %s
+                WHERE request_id = %s
+                    """, (status, request_id))
     conn.commit()
     cur.close()
     conn.close()
@@ -88,14 +84,10 @@ def check_existing_request(developer_id, project_id):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-                
-
-
-
-
-
-                    """)
-
+                SELECT * FROM Requests
+                WHERE developer_id = %s AND project_id = %s
+                    """, (developer_id, project_id))
+    request = cur.fetchone()
     conn.commit()
     cur.close()
     conn.close()
