@@ -30,19 +30,27 @@ def get_request_by_id(request_id):
 def get_requests_by_project(project_id):
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("""
-                
+    cur.execute(""" SELECT r.request_id, r.status, r.created_at,
 
+    dp.developer_id,dp.full_name,dp.bio,dp.location,dp.years_experience,dp.contact_link,dp.avatar_url,
 
+    u.email
 
+    FROM Requests r
+    JOIN Developer_Profiles dp 
+    ON r.developer_id = dp.developer_id
+    JOIN Users u 
+    ON dp.user_id = u.user_id
 
+    WHERE r.project_id = (%s)
+    AND r.status = (%s)
 
-                    """)
-
+    ORDER BY r.created_at DESC""",(project_id,'pending'))
+    pending_requests = cur.fetchall()
     conn.commit()
     cur.close()
     conn.close()
-    return requests
+    return pending_requests
 
 def get_requests_by_developer(developer_id):
     conn = get_connection()
