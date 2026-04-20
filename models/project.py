@@ -4,10 +4,10 @@ def create_project(owner_id, title, description, location, slots_needed, status,
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-                    INSERT INTO projects (owner_id, title, description, slots_needed, status, created_at)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO projects (owner_id, title, description, location, slots_needed, status, created_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                     RETURNING project_id
-                    """, (owner_id, title, description, slots_needed, status, created_at))
+                    """, (owner_id, title, description, location, slots_needed, status, created_at))
     project_id = cur.fetchone()[0]
     conn.commit()
     cur.close()
