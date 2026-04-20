@@ -4,14 +4,11 @@ def create_request(developer_id, project_id):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-                
-
-
-
-
-
-                    """)
-
+                insert into requests(developer_id, project_id, status)
+                values (%s, %s, 'pending')
+                RETURNING request_id
+                    """, (developer_id, project_id))
+    request_id = cur.fetchone()[0]
     conn.commit()
     cur.close()
     conn.close()
@@ -21,14 +18,10 @@ def get_request_by_id(request_id):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-                
-
-
-
-
-
-                    """)
-
+                select * from requests 
+                where request_id = %s
+                    """, (request_id))
+    request = cur.fetchone()
     conn.commit()
     cur.close()
     conn.close()
