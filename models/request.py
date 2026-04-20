@@ -56,14 +56,13 @@ def get_requests_by_developer(developer_id):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-                
-
-
-
-
-
-                    """)
-
+                select r.request_id, r.status, r.created_at, p.project_id, p.title, p.status, p.owner_id  
+                from requests r
+                join projects p 
+                on r.project_id, = p.project_id
+                where r.developer_id = %s
+                    """, (developer_id))
+    requests = cur.fetchall()
     conn.commit()
     cur.close()
     conn.close()
