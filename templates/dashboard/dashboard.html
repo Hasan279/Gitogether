@@ -54,11 +54,11 @@
         style="background-color: #0f0e47"
       >
         <div>
-          <p class="text-white font-medium">{{ project[2] }}</p>
+          <p class="text-white font-medium">{{ project['title'] }}</p>
           <span
-            class="badge badge-sm mt-1 {% if project[6] == 'open' %}badge-success {% elif project[6] == 'in_progress' %}badge-warning {% else %}badge-neutral{% endif %}"
+            class="badge badge-sm mt-1 {% if project['status'] == 'open' %}badge-success {% elif project['status'] == 'in_progress' %}badge-warning {% else %}badge-neutral{% endif %}"
           >
-            {{ project[6] }}
+            {{ project['status'] }}
           </span>
         </div>
         <div class="flex gap-2">
@@ -121,13 +121,13 @@
         <div class="flex gap-2">
           <form
             method="POST"
-            action="{{ url_for('requests.accept', request_id=req[0]) }}"
+            action="{{ url_for('requests.accept', request_id=req['request_id']) }}"
           >
             <button type="submit" class="btn btn-success btn-xs">Accept</button>
           </form>
           <form
             method="POST"
-            action="{{ url_for('requests.reject', request_id=req[0]) }}"
+            action="{{ url_for('requests.reject', request_id=req['request_id']) }}"
           >
             <button type="submit" class="btn btn-error btn-xs">Reject</button>
           </form>
@@ -163,10 +163,10 @@
             class="btn btn-ghost btn-xs text-purple-300"
             >Contact</a
           >
-          {% if match['owner_id'] == developer[0] %}
+          {% if match['owner_id'] == developer['developer_id'] %}
           <form
             method="POST"
-            action="{{ url_for('matches.complete', match_id=match[0]) }}"
+            action="{{ url_for('matches.complete', match_id=match['match_id']) }}"
             onsubmit="return confirm('Mark this project as completed?');"
           >
             <button type="submit" class="btn btn-warning btn-xs">
@@ -233,12 +233,14 @@
             <td class="text-gray-300">{{ req['owner_name'] }}</td>
             <td>
               <span
-                class="badge badge-sm {% if req[3] == 'pending' %}badge-warning {% elif req[3] == 'accepted' %}badge-success {% else %}badge-error{% endif %}"
+                class="badge badge-sm {% if req['status'] == 'pending' %}badge-warning {% elif req['status'] == 'accepted' %}badge-success {% else %}badge-error{% endif %}"
               >
-                {{ req[3] }}
+                {{ req['status'] }}
               </span>
             </td>
-            <td class="text-gray-400">{{ req[4].strftime('%b %d, %Y') }}</td>
+            <td class="text-gray-400">
+              {{ req['created_at'].strftime('%b %d, %Y') }}
+            </td>
           </tr>
           {% endfor %}
         </tbody>
