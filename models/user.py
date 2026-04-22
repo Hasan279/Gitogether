@@ -104,8 +104,17 @@ def get_developer_by_user_id(user_id):
     conn.commit()
     cur.close()
     conn.close()
-    return developer 
-    
+    return developer
+
+def get_developer_id(user_id):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT developer_id FROM Developer_Profiles WHERE user_id = %s", (user_id,))
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    return result[0] if result else None
+
 def get_developer_by_name(full_name):
     conn = get_connection()
     cur = conn.cursor()
