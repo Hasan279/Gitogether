@@ -1,41 +1,127 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Register</title>
-  </head>
-  <body>
-    <h2>Register</h2>
-    {% if error %}
-    <p style="color: red">{{ error }}</p>
-    {% endif %}
-    <form method="POST" action="/register">
-      <input type="email" name="email" placeholder="Email" required /><br />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        required
-      /><br />
-      <input
-        type="text"
-        name="full_name"
-        placeholder="Full Name"
-        required
-      /><br />
-      <input type="text" name="bio" placeholder="Bio" /><br />
-      <input type="text" name="location" placeholder="Location" /><br />
-      <input
-        type="number"
-        name="years_experience"
-        placeholder="Years of Experience"
-      /><br />
-      <input
-        type="text"
-        name="contact_link"
-        placeholder="Discord/Telegram link"
-      /><br />
-      <button type="submit">Register</button>
+{% extends "base.html" %} {% block title %}Register — Gitogether{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center py-8">
+  <div class="card-custom rounded-2xl p-10 w-full max-w-lg shadow-2xl">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold tracking-widest text-white">
+        &lt;Gitogether /&gt;
+      </h1>
+      <p class="text-gray-400 mt-2 text-sm">Create your developer profile</p>
+    </div>
+
+    <form
+      method="POST"
+      action="{{ url_for('auth.register') }}"
+      class="space-y-4"
+    >
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Email</span>
+        </label>
+        <input
+          type="email"
+          name="email"
+          placeholder="you@example.com"
+          class="input input-custom w-full rounded-lg"
+          required
+        />
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Password</span>
+        </label>
+        <input
+          type="password"
+          name="password"
+          placeholder="••••••••"
+          class="input input-custom w-full rounded-lg"
+          required
+        />
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Full Name</span>
+        </label>
+        <input
+          type="text"
+          name="full_name"
+          placeholder="John Doe"
+          class="input input-custom w-full rounded-lg"
+          required
+        />
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Bio</span>
+        </label>
+        <textarea
+          name="bio"
+          placeholder="Tell other developers about yourself..."
+          class="textarea input-custom w-full rounded-lg h-24 resize-none"
+        ></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text text-gray-300">Location</span>
+          </label>
+          <input
+            type="text"
+            name="location"
+            placeholder="Karachi, PK"
+            class="input input-custom w-full rounded-lg"
+          />
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text text-gray-300">Years of Experience</span>
+          </label>
+          <input
+            type="number"
+            name="years_experience"
+            placeholder="2"
+            min="0"
+            class="input input-custom w-full rounded-lg"
+          />
+        </div>
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Contact Link</span>
+          <span class="label-text-alt text-gray-500"
+            >Discord, Telegram, etc.</span
+          >
+        </label>
+        <input
+          type="text"
+          name="contact_link"
+          placeholder="discord.gg/yourserver"
+          class="input input-custom w-full rounded-lg"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary-custom w-full rounded-lg mt-2"
+      >
+        Create Account
+      </button>
     </form>
-    <a href="/login">Already have an account? Login</a>
-  </body>
-</html>
+
+    <p class="text-center text-gray-400 text-sm mt-6">
+      Already have an account?
+      <a
+        href="{{ url_for('auth.login') }}"
+        class="text-purple-300 hover:text-white transition"
+        >Login</a
+      >
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,23 +1,57 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Login</title>
-  </head>
-  <body>
-    <h2>Login</h2>
-    {% if error %}
-    <p style="color: red">{{ error }}</p>
-    {% endif %}
-    <form method="POST" action="/login">
-      <input type="email" name="email" placeholder="Email" required /><br />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        required
-      /><br />
-      <button type="submit">Login</button>
+{% extends "base.html" %} {% block title %}Login — Gitogether{% endblock %} {%
+block content %}
+<div class="min-h-screen flex items-center justify-center -mt-16">
+  <div class="card-custom rounded-2xl p-10 w-full max-w-md shadow-2xl">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold tracking-widest text-white">
+        &lt;Gitogether /&gt;
+      </h1>
+      <p class="text-gray-400 mt-2 text-sm">Find your next coding partner</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-4">
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Email</span>
+        </label>
+        <input
+          type="email"
+          name="email"
+          placeholder="you@example.com"
+          class="input input-custom w-full rounded-lg"
+          required
+        />
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Password</span>
+        </label>
+        <input
+          type="password"
+          name="password"
+          placeholder="••••••••"
+          class="input input-custom w-full rounded-lg"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary-custom w-full rounded-lg mt-2"
+      >
+        Login
+      </button>
     </form>
-    <a href="/register">Don't have an account? Register</a>
-  </body>
-</html>
+
+    <p class="text-center text-gray-400 text-sm mt-6">
+      Don't have an account?
+      <a
+        href="{{ url_for('auth.register') }}"
+        class="text-purple-300 hover:text-white transition"
+        >Register</a
+      >
+    </p>
+  </div>
+</div>
+{% endblock %}
