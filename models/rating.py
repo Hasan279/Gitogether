@@ -28,7 +28,7 @@ def get_rating_by_id(rating_id):
                 where rating_id = %s
     """, (rating_id,))
     
-    rating_details = cur.fetchall()
+    rating_details = cur.fetchone()
     
     conn.commit()
     cur.close()
@@ -57,7 +57,7 @@ def get_average_rating(developer_id):
     cur = conn.cursor()
     
     cur.execute("""
-                select avg(score) from ratings
+                select COALESCE(AVG(score), 0) from ratings
                 where rated_id = %s
     """, (developer_id,))
 
@@ -67,7 +67,7 @@ def get_average_rating(developer_id):
     cur.close()
     conn.close()
 
-    return average_rating
+    return float(average_rating)
 
 def check_existing_rating(match_id, rater_id):
     conn = get_connection()
