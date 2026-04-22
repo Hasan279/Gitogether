@@ -14,8 +14,13 @@ def index():
 
     developer_id = get_developer_id(session['user_id'])
     active_matches = get_active_matches_by_developer(developer_id)
+    session['developer_id'] = developer_id
     completed_matches = get_completed_matches_by_developer(developer_id)
-
+    
+    # check if already rated for each completed match
+    for match in completed_matches:
+        match['already_rated'] = bool(check_existing_rating(match['match_id'], developer_id))
+        
     return render_template('matches/matches.html',
                            active_matches=active_matches,
                            completed_matches=completed_matches)

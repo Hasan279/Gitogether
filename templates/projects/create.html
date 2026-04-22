@@ -1,0 +1,105 @@
+{% extends "base.html" %} {% block title %}Create Project — Gitogether{%
+endblock %} {% block content %}
+
+<div class="max-w-2xl mx-auto">
+  <a
+    href="{{ url_for('dashboard.index') }}"
+    class="text-gray-400 hover:text-white text-sm mb-6 inline-block"
+  >
+    ← Back to Dashboard
+  </a>
+
+  <div class="card-custom rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-white mb-6">Post a New Project</h1>
+
+    <form
+      method="POST"
+      action="{{ url_for('projects.create') }}"
+      class="space-y-5"
+    >
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Project Title</span>
+        </label>
+        <input
+          type="text"
+          name="title"
+          placeholder="e.g. AI Chatbot App"
+          class="input input-custom w-full rounded-lg"
+          required
+        />
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Description</span>
+        </label>
+        <textarea
+          name="description"
+          placeholder="Describe your project, what you're building, and what kind of collaborator you need..."
+          class="textarea input-custom w-full rounded-lg h-32 resize-none"
+          required
+        ></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text text-gray-300">Location</span>
+            <span class="label-text-alt text-gray-500">Optional</span>
+          </label>
+          <input
+            type="text"
+            name="location"
+            placeholder="Remote"
+            class="input input-custom w-full rounded-lg"
+          />
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text text-gray-300">Slots Needed</span>
+          </label>
+          <input
+            type="number"
+            name="slots_needed"
+            placeholder="1"
+            min="1"
+            value="1"
+            class="input input-custom w-full rounded-lg"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text text-gray-300">Required Skills</span>
+          <span class="label-text-alt text-gray-500"
+            >Hold Ctrl to select multiple</span
+          >
+        </label>
+        <select
+          name="skills"
+          multiple
+          class="select input-custom w-full rounded-lg h-36"
+        >
+          {% for skill in skills %}
+          <option value="{{ skill['skill_id'] }}">
+            {{ skill['skill_name'] }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary-custom w-full rounded-lg mt-2"
+      >
+        Post Project
+      </button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

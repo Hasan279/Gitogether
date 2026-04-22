@@ -1,0 +1,135 @@
+{% extends "base.html" %} {% block title %}{{ project['title'] }} — Gitogether{%
+endblock %} {% block content %}
+
+<div class="max-w-3xl mx-auto">
+  <!-- Back -->
+  <a
+    href="{{ url_for('projects.browse') }}"
+    class="text-gray-400 hover:text-white text-sm mb-6 inline-block"
+  >
+    ← Back to Projects
+  </a>
+
+  <!-- Project Header -->
+  <div class="card-custom rounded-xl p-8 mb-6">
+    <div class="flex items-start justify-between mb-4">
+      <h1 class="text-3xl font-bold text-white">{{ project['title'] }}</h1>
+      <span
+        class="badge badge-lg {% if project['status'] == 'open' %}badge-success {% elif project['status'] == 'in_progress' %}badge-warning {% else %}badge-neutral{% endif %}"
+      >
+        {{ project['status'] }}
+      </span>
+    </div>
+
+    <p class="text-gray-300 mb-6 leading-relaxed">
+      {{ project['description'] }}
+    </p>
+
+    <div class="flex flex-wrap gap-6 text-sm text-gray-400 mb-6">
+      {% if project['location'] %}
+      <span>📍 {{ project['location'] }}</span>
+      {% endif %}
+      <span
+        >👥 {{ project['slots_needed'] }} slot{{ 's' if project['slots_needed']
+        != 1 }} needed</span
+      >
+      <span>📅 {{ project['created_at'].strftime('%b %d, %Y') }}</span>
+    </div>
+
+    <!-- Skills -->
+    {% if project_skills %}
+    <div class="mb-6">
+      <p class="text-gray-400 text-sm mb-2">Required Skills</p>
+      <div class="flex flex-wrap gap-2">
+        {% for skill in project_skills %}
+        <span
+          class="badge rounded-lg px-3 py-2 text-white text-xs"
+          style="background-color: #505081"
+        >
+          {{ skill['skill_name'] }} {% if skill['is_required'] %}
+          <span class="text-red-300 ml-1">*</span>
+          {% endif %}
+        </span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Owner Info -->
+    <div
+      class="flex items-center gap-3 p-4 rounded-lg"
+      style="background-color: #0f0e47"
+    >
+      <div class="avatar placeholder">
+        <div class="rounded-full w-10" style="background-color: #505081">
+          <span class="text-white">{{ project['full_name'][0].upper() }}</span>
+        </div>
+      </div>
+      <div>
+        <a
+          href="{{ url_for('developers.profile', developer_id=project['owner_id']) }}"
+          class="text-white font-medium hover:text-purple-300"
+        >
+          {{ project['full_name'] }}
+        </a>
+        {% if project['avg_rating'] %}
+        <p class="text-yellow-400 text-xs">
+          ⭐ {{ "%.1f"|format(project['avg_rating']) }}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Action -->
+  {% if session['user_id'] %} {% if project['owner_id'] == developer_id %}
+  <!-- Owner actions -->
+  <div class="flex gap-3">
+    <a
+      href="{{ url_for('projects.edit', project_id=project['project_id']) }}"
+      class="btn btn-primary-custom rounded-lg flex-1"
+      >Edit Project</a
+    >
+    <form
+      method="POST"
+      action="{{ url_for('projects.delete', project_id=project['project_id']) }}"
+      onsubmit="return confirm('Delete this project?');"
+      class="flex-1"
+    >
+      <button type="submit" class="btn btn-error rounded-lg w-full">
+        Delete Project
+      </button>
+    </form>
+  </div>
+  {% elif existing_request %}
+  <!-- Already requested -->
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-gray-300">
+      Request status:
+      <span
+        class="badge {% if existing_request['status'] == 'pending' %}badge-warning {% elif existing_request['status'] == 'accepted' %}badge-success {% else %}badge-error{% endif %}"
+      >
+        {{ existing_request['status'] }}
+      </span>
+    </p>
+  </div>
+  {% elif project['status'] == 'open' %}
+  <!-- Request to join -->
+  <form
+    method="POST"
+    action="{{ url_for('requests.send', project_id=project['project_id']) }}"
+  >
+    <button
+      type="submit"
+      class="btn btn-primary-custom rounded-lg w-full text-lg py-4"
+    >
+      Request to Join
+    </button>
+  </form>
+  {% else %}
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-gray-400">This project is no longer accepting requests</p>
+  </div>
+  {% endif %} {% endif %}
+</div>
+{% endblock %}

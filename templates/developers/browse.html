@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Find Developers — Gitogether{% endblock %}
+
+{% block content %}
+
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-3xl font-bold text-white">Find Developers</h1>
+        <p class="text-gray-400 text-sm mt-1">Discover developers looking to collaborate</p>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="card-custom rounded-xl p-4 mb-6">
+    <form method="GET" action="{{ url_for('developers.browse') }}" class="flex gap-4 items-end flex-wrap">
+        <div class="form-control flex-1 min-w-48">
+            <label class="label">
+                <span class="label-text text-gray-300 text-sm">Filter by Skill</span>
+            </label>
+            <select name="skill" class="select input-custom w-full rounded-lg">
+                <option value="">All Skills</option>
+                {% for skill in skills %}
+                <option value="{{ skill['skill_id'] }}"
+                    {% if skill_filter == skill['skill_id']|string %}selected{% endif %}>
+                    {{ skill['skill_name'] }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary-custom rounded-lg">Filter</button>
+        {% if skill_filter %}
+        <a href="{{ url_for('developers.browse') }}" class="btn btn-ghost rounded-lg text-gray-400">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Developers Grid -->
+{% if developers %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+    {% for dev in developers %}
+    <div class="card-custom rounded-xl p-5 hover:border-purple-400 transition-all duration-200 flex flex-col justify-between">
+        <div>
+            <!-- Avatar and Name -->
+            <div class="flex items-center gap-3 mb-4">
+                <div class="avatar placeholder">
+                    <div class="rounded-full w-12" style="background-color: #505081;">
+                        <span class="text-white text-lg">{{ dev['full_name'][0].upper() }}</span>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold">{{ dev['full_name'] }}</h3>
+                    {% if dev['location'] %}
+                    <p class="text-gray-400 text-xs">📍 {{ dev['location'] }}</p>
+                    {% endif %}
+                </div>
+                {% if dev['avg_rating'] %}
+                <span class="text-yellow-400 text-sm ml-auto">⭐ {{ "%.1f"|format(dev['avg_rating']) }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Bio -->
+            {% if dev['bio'] %}
+            <p class="text-gray-400 text-sm mb-4 line-clamp-2">{{ dev['bio'] }}</p>
+            {% endif %}
+
+            <!-- Skills -->
+            {% if dev['skills'] %}
+            <div class="flex flex-wrap gap-2 mb-4">
+                {% for skill in dev['skills'][:4] %}
+                <span class="badge rounded-lg px-2 py-1 text-white text-xs"
+                      style="background-color: #505081;">
+                    {{ skill }}
+                </span>
+                {% endfor %}
+                {% if dev['skills']|length > 4 %}
+                <span class="badge rounded-lg px-2 py-1 text-gray-400 text-xs"
+                      style="background-color: #0F0E47;">
+                    +{{ dev['skills']|length - 4 }} more
+                </span>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Experience -->
+            {% if dev['years_experience'] %}
+            <p class="text-gray-400 text-xs">💼 {{ dev['years_experience'] }} year{{ 's' if dev['years_experience'] != 1 }} experience</p>
+            {% endif %}
+        </div>
+
+        <a href="{{ url_for('developers.profile', developer_id=dev['developer_id']) }}"
+           class="btn btn-primary-custom btn-sm rounded-lg w-full mt-4">
+            View Profile
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+<div class="flex justify-center gap-2">
+    {% if page > 1 %}
+    <a href="{{ url_for('developers.browse', page=page-1, skill=skill_filter) }}"
+       class="btn btn-ghost rounded-lg text-gray-300">← Prev</a>
+    {% endif %}
+    <span class="btn btn-ghost rounded-lg text-gray-400 no-animation">Page {{ page }}</span>
+    {% if developers|length == 10 %}
+    <a href="{{ url_for('developers.browse', page=page+1, skill=skill_filter) }}"
+       class="btn btn-ghost rounded-lg text-gray-300">Next →</a>
+    {% endif %}
+</div>
+
+{% else %}
+<div class="text-center py-20">
+    <p class="text-gray-400 text-lg">No developers found</p>
+    <p class="text-gray-500 text-sm mt-2">Try a different filter</p>
+</div>
+{% endif %}
+
+{% endblock %}

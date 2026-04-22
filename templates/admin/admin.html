@@ -1,0 +1,174 @@
+{% extends "base.html" %} {% block title %}Admin Panel — Gitogether{% endblock
+%} {% block content %}
+
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-white">Admin Panel</h1>
+  <p class="text-gray-400 text-sm mt-1">Manage users and projects</p>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-3xl font-bold text-white">{{ users|length }}</p>
+    <p class="text-gray-400 text-sm mt-1">Total Users</p>
+  </div>
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-3xl font-bold text-white">{{ projects|length }}</p>
+    <p class="text-gray-400 text-sm mt-1">Total Projects</p>
+  </div>
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-3xl font-bold text-white">
+      {{ users|selectattr('is_active', 'equalto', True)|list|length }}
+    </p>
+    <p class="text-gray-400 text-sm mt-1">Active Users</p>
+  </div>
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-3xl font-bold text-white">
+      {{ projects|selectattr('status', 'equalto', 'open')|list|length }}
+    </p>
+    <p class="text-gray-400 text-sm mt-1">Open Projects</p>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div role="tablist" class="tabs tabs-bordered mb-6">
+  <input
+    type="radio"
+    name="admin_tabs"
+    role="tab"
+    class="tab text-gray-300"
+    aria-label="Users"
+    checked
+  />
+  <div role="tabpanel" class="tab-content pt-6">
+    <!-- Users Table -->
+    <div class="card-custom rounded-xl p-6">
+      <h2 class="text-lg font-bold text-white mb-4">All Users</h2>
+      <div class="overflow-x-auto">
+        <table class="table w-full text-sm">
+          <thead>
+            <tr class="text-gray-400 border-b border-gray-600">
+              <th class="bg-transparent">ID</th>
+              <th class="bg-transparent">Email</th>
+              <th class="bg-transparent">Role</th>
+              <th class="bg-transparent">Status</th>
+              <th class="bg-transparent">Joined</th>
+              <th class="bg-transparent">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr class="border-b border-gray-700 hover:bg-gray-800">
+              <td class="text-gray-400">{{ user['user_id'] }}</td>
+              <td class="text-white">{{ user['email'] }}</td>
+              <td>
+                <span
+                  class="badge badge-sm {% if user['role'] == 'admin' %}badge-error {% else %}badge-info{% endif %}"
+                >
+                  {{ user['role'] }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="badge badge-sm {% if user['is_active'] %}badge-success {% else %}badge-neutral{% endif %}"
+                >
+                  {% if user['is_active'] %}active{% else %}inactive{% endif %}
+                </span>
+              </td>
+              <td class="text-gray-400">
+                {{ user['created_at'].strftime('%b %d, %Y') }}
+              </td>
+              <td>
+                {% if user['role'] != 'admin' %} {% if user['is_active'] %}
+                <form
+                  method="POST"
+                  action="{{ url_for('admin.deactivate', user_id=user['user_id']) }}"
+                  onsubmit="return confirm('Deactivate this user?');"
+                >
+                  <button type="submit" class="btn btn-error btn-xs rounded-lg">
+                    Deactivate
+                  </button>
+                </form>
+                {% else %}
+                <span class="text-gray-500 text-xs">Deactivated</span>
+                {% endif %} {% else %}
+                <span class="text-gray-500 text-xs">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <input
+    type="radio"
+    name="admin_tabs"
+    role="tab"
+    class="tab text-gray-300"
+    aria-label="Projects"
+  />
+  <div role="tabpanel" class="tab-content pt-6">
+    <!-- Projects Table -->
+    <div class="card-custom rounded-xl p-6">
+      <h2 class="text-lg font-bold text-white mb-4">All Projects</h2>
+      <div class="overflow-x-auto">
+        <table class="table w-full text-sm">
+          <thead>
+            <tr class="text-gray-400 border-b border-gray-600">
+              <th class="bg-transparent">ID</th>
+              <th class="bg-transparent">Title</th>
+              <th class="bg-transparent">Owner</th>
+              <th class="bg-transparent">Status</th>
+              <th class="bg-transparent">Slots</th>
+              <th class="bg-transparent">Posted</th>
+              <th class="bg-transparent">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for project in projects %}
+            <tr class="border-b border-gray-700 hover:bg-gray-800">
+              <td class="text-gray-400">{{ project['project_id'] }}</td>
+              <td class="text-white">
+                <a
+                  href="{{ url_for('projects.detail', project_id=project['project_id']) }}"
+                  class="hover:text-purple-300"
+                >
+                  {{ project['title'] }}
+                </a>
+              </td>
+              <td class="text-gray-300">{{ project['full_name'] }}</td>
+              <td>
+                <span
+                  class="badge badge-sm {% if project['status'] == 'open' %}badge-success {% elif project['status'] == 'in_progress' %}badge-warning {% else %}badge-neutral{% endif %}"
+                >
+                  {{ project['status'] }}
+                </span>
+              </td>
+              <td class="text-gray-400">{{ project['slots_needed'] }}</td>
+              <td class="text-gray-400">
+                {{ project['created_at'].strftime('%b %d, %Y') }}
+              </td>
+              <td>
+                <form
+                  method="POST"
+                  action="{{ url_for('admin.delete_project_admin', project_id=project['project_id']) }}"
+                  onsubmit="return confirm('Delete this project?');"
+                >
+                  <button type="submit" class="btn btn-error btn-xs rounded-lg">
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

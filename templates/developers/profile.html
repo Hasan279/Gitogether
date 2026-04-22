@@ -1,0 +1,116 @@
+{% extends "base.html" %} {% block title %}{{ developer['full_name'] }} —
+Gitogether{% endblock %} {% block content %}
+
+<div class="max-w-3xl mx-auto">
+  <a
+    href="{{ url_for('developers.browse') }}"
+    class="text-gray-400 hover:text-white text-sm mb-6 inline-block"
+  >
+    ← Back to Developers
+  </a>
+
+  <!-- Profile Header -->
+  <div class="card-custom rounded-xl p-8 mb-6">
+    <div class="flex items-start gap-6">
+      <div class="avatar placeholder">
+        <div class="rounded-full w-20" style="background-color: #505081">
+          <span class="text-white text-3xl"
+            >{{ developer['full_name'][0].upper() }}</span
+          >
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="flex items-start justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-white">
+              {{ developer['full_name'] }}
+            </h1>
+            {% if developer['location'] %}
+            <p class="text-gray-400 text-sm mt-1">
+              📍 {{ developer['location'] }}
+            </p>
+            {% endif %}
+          </div>
+          {% if avg_rating %}
+          <div class="text-center">
+            <p class="text-3xl font-bold text-yellow-400">
+              {{ "%.1f"|format(avg_rating) }}
+            </p>
+            <p class="text-gray-400 text-xs">⭐ Rating</p>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if developer['years_experience'] %}
+        <p class="text-gray-400 text-sm mt-2">
+          💼 {{ developer['years_experience'] }} year{{ 's' if
+          developer['years_experience'] != 1 }} of experience
+        </p>
+        {% endif %} {% if developer['bio'] %}
+        <p class="text-gray-300 mt-4 leading-relaxed">{{ developer['bio'] }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  {% if developer_skills %}
+  <div class="card-custom rounded-xl p-6 mb-6">
+    <h2 class="text-lg font-bold text-white mb-4">Skills</h2>
+    <div class="flex flex-wrap gap-3">
+      {% for skill in developer_skills %}
+      <div
+        class="flex items-center gap-2 px-3 py-2 rounded-lg"
+        style="background-color: #0f0e47"
+      >
+        <span class="text-white text-sm">{{ skill['skill_name'] }}</span>
+        <span
+          class="badge badge-sm {% if skill['proficiency_level'] == 'expert' %}badge-success {% elif skill['proficiency_level'] == 'intermediate' %}badge-warning {% else %}badge-neutral{% endif %}"
+        >
+          {{ skill['proficiency_level'] }}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Reviews -->
+  {% if reviews %}
+  <div class="card-custom rounded-xl p-6 mb-6">
+    <h2 class="text-lg font-bold text-white mb-4">Reviews</h2>
+    <div class="space-y-4">
+      {% for review in reviews %}
+      <div class="p-4 rounded-lg" style="background-color: #0f0e47">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-yellow-400">
+            {% for i in range(review['score']) %}⭐{% endfor %}
+          </span>
+          <span class="text-gray-400 text-xs"
+            >{{ review['created_at'].strftime('%b %d, %Y') }}</span
+          >
+        </div>
+        {% if review['review'] %}
+        <p class="text-gray-300 text-sm">{{ review['review'] }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Contact -->
+  {% if developer['contact_link'] and session.get('user_id') %}
+  <div class="card-custom rounded-xl p-6">
+    <h2 class="text-lg font-bold text-white mb-3">Contact</h2>
+    <a
+      href="{{ developer['contact_link'] }}"
+      target="_blank"
+      class="btn btn-primary-custom rounded-lg gap-2"
+    >
+      🔗 Reach Out
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

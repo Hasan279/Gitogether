@@ -1,0 +1,177 @@
+{% extends "base.html" %} {% block title %}Matches — Gitogether{% endblock %} {%
+block content %}
+
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-white">My Collaborations</h1>
+  <p class="text-gray-400 text-sm mt-1">
+    All your active and completed projects
+  </p>
+</div>
+
+<!-- Active Collabs -->
+<div class="mb-10">
+  <h2 class="text-xl font-bold text-white mb-4">
+    Active
+    <span class="badge badge-success ml-2">{{ active_matches|length }}</span>
+  </h2>
+
+  {% if active_matches %}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    {% for match in active_matches %}
+    <div class="card-custom rounded-xl p-6">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <h3 class="text-white font-bold text-lg">
+            {{ match['project_title'] }}
+          </h3>
+          <p class="text-gray-400 text-sm mt-1">
+            Collaborating with
+            <a
+              href="{{ url_for('developers.profile', developer_id=match['developer_id']) }}"
+              class="text-purple-300 hover:text-white"
+            >
+              {{ match['full_name'] }}
+            </a>
+          </p>
+        </div>
+        <span class="badge badge-success">active</span>
+      </div>
+
+      <p class="text-gray-400 text-xs mb-4">
+        Started {{ match['matched_at'].strftime('%b %d, %Y') }}
+      </p>
+
+      <div class="flex gap-3">
+        <a
+          href="{{ match['contact_link'] }}"
+          target="_blank"
+          class="btn btn-primary-custom btn-sm rounded-lg flex-1"
+        >
+          🔗 Contact
+        </a>
+        {% if match['owner_id'] == session.get('developer_id') %}
+        <form
+          method="POST"
+          action="{{ url_for('matches.complete', match_id=match['match_id']) }}"
+          onsubmit="
+            return confirm(
+              'Mark this project as completed? This cannot be undone.',
+            );
+          "
+        >
+          <button type="submit" class="btn btn-warning btn-sm rounded-lg">
+            Mark Complete
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="card-custom rounded-xl p-8 text-center">
+    <p class="text-gray-400">No active collaborations yet</p>
+    <a
+      href="{{ url_for('projects.browse') }}"
+      class="text-purple-300 hover:text-white text-sm mt-2 inline-block"
+    >
+      Browse projects to get started
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Completed Collabs -->
+<div>
+  <h2 class="text-xl font-bold text-white mb-4">
+    Completed
+    <span class="badge badge-neutral ml-2">{{ completed_matches|length }}</span>
+  </h2>
+
+  {% if completed_matches %}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    {% for match in completed_matches %}
+    <div class="card-custom rounded-xl p-6">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <h3 class="text-white font-bold text-lg">
+            {{ match['project_title'] }}
+          </h3>
+          <p class="text-gray-400 text-sm mt-1">
+            With
+            <a
+              href="{{ url_for('developers.profile', developer_id=match['developer_id']) }}"
+              class="text-purple-300 hover:text-white"
+            >
+              {{ match['full_name'] }}
+            </a>
+          </p>
+        </div>
+        <span class="badge badge-neutral">completed</span>
+      </div>
+
+      <p class="text-gray-400 text-xs mb-4">
+        Completed {{ match['completed_at'].strftime('%b %d, %Y') }}
+      </p>
+
+      <!-- Rating Form -->
+      {% if not match['already_rated'] %}
+      <div class="p-4 rounded-lg mb-3" style="background-color: #0f0e47">
+        <p class="text-gray-300 text-sm mb-3">Rate your collaborator</p>
+        <form
+          method="POST"
+          action="{{ url_for('ratings.submit', match_id=match['match_id']) }}"
+          class="space-y-3"
+        >
+          <input
+            type="hidden"
+            name="rated_id"
+            value="{{ match['developer_id'] }}"
+          />
+
+          <div class="flex gap-2 items-center">
+            <span class="text-gray-400 text-sm">Score:</span>
+            <select
+              name="score"
+              class="select select-sm input-custom rounded-lg"
+            >
+              <option value="5">⭐⭐⭐⭐⭐ 5</option>
+              <option value="4">⭐⭐⭐⭐ 4</option>
+              <option value="3">⭐⭐⭐ 3</option>
+              <option value="2">⭐⭐ 2</option>
+              <option value="1">⭐ 1</option>
+            </select>
+          </div>
+
+          <textarea
+            name="review"
+            placeholder="Leave a review (optional)"
+            class="textarea input-custom w-full rounded-lg h-16 resize-none text-sm"
+          ></textarea>
+
+          <button
+            type="submit"
+            class="btn btn-primary-custom btn-sm rounded-lg w-full"
+          >
+            Submit Rating
+          </button>
+        </form>
+      </div>
+      {% else %}
+      <div class="p-3 rounded-lg text-center" style="background-color: #0f0e47">
+        <p class="text-gray-400 text-sm">✓ You have rated this collaboration</p>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="card-custom rounded-xl p-8 text-center">
+    <p class="text-gray-400">No completed collaborations yet</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

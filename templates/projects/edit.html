@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Project — Gitogether{% endblock %}
+
+{% block content %}
+
+<div class="max-w-2xl mx-auto">
+
+    <a href="{{ url_for('dashboard.index') }}" class="text-gray-400 hover:text-white text-sm mb-6 inline-block">
+        ← Back to Dashboard
+    </a>
+
+    <div class="card-custom rounded-xl p-8">
+        <h1 class="text-2xl font-bold text-white mb-6">Edit Project</h1>
+
+        <form method="POST" action="{{ url_for('projects.edit', project_id=project['project_id']) }}" class="space-y-5">
+
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text text-gray-300">Project Title</span>
+                </label>
+                <input type="text" name="title" value="{{ project['title'] }}"
+                       class="input input-custom w-full rounded-lg" required />
+            </div>
+
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text text-gray-300">Description</span>
+                </label>
+                <textarea name="description"
+                          class="textarea input-custom w-full rounded-lg h-32 resize-none"
+                          required>{{ project['description'] }}</textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-gray-300">Location</span>
+                    </label>
+                    <input type="text" name="location" value="{{ project['location'] or '' }}"
+                           class="input input-custom w-full rounded-lg" />
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-gray-300">Slots Needed</span>
+                    </label>
+                    <input type="number" name="slots_needed" value="{{ project['slots_needed'] }}"
+                           min="1" class="input input-custom w-full rounded-lg" required />
+                </div>
+            </div>
+
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text text-gray-300">Required Skills</span>
+                    <span class="label-text-alt text-gray-500">Hold Ctrl to select multiple</span>
+                </label>
+                <select name="skills" multiple class="select input-custom w-full rounded-lg h-36">
+                    {% for skill in skills %}
+                    <option value="{{ skill['skill_id'] }}"
+                        {% if skill['skill_id'] in project_skills|map(attribute='skill_id')|list %}
+                        selected
+                        {% endif %}>
+                        {{ skill['skill_name'] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-full rounded-lg mt-2">
+                Save Changes
+            </button>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

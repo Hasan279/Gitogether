@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Projects — Gitogether{% endblock %}
+
+{% block content %}
+
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-3xl font-bold text-white">Find Projects</h1>
+        <p class="text-gray-400 text-sm mt-1">Discover projects looking for collaborators</p>
+    </div>
+    <a href="{{ url_for('projects.create') }}" class="btn btn-primary-custom rounded-lg">
+        + Post Project
+    </a>
+</div>
+
+<!-- Filter Bar -->
+<div class="card-custom rounded-xl p-4 mb-6">
+    <form method="GET" action="{{ url_for('projects.browse') }}" class="flex gap-4 items-end flex-wrap">
+        <div class="form-control flex-1 min-w-48">
+            <label class="label">
+                <span class="label-text text-gray-300 text-sm">Filter by Skill</span>
+            </label>
+            <select name="skill" class="select input-custom w-full rounded-lg">
+                <option value="">All Skills</option>
+                {% for skill in skills %}
+                <option value="{{ skill['skill_id'] }}"
+                    {% if skill_filter == skill['skill_id']|string %}selected{% endif %}>
+                    {{ skill['skill_name'] }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary-custom rounded-lg">Filter</button>
+        {% if skill_filter %}
+        <a href="{{ url_for('projects.browse') }}" class="btn btn-ghost rounded-lg text-gray-400">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Projects Grid -->
+{% if projects %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+    {% for project in projects %}
+    <div class="card-custom rounded-xl p-5 hover:border-purple-400 transition-all duration-200 flex flex-col justify-between">
+        <div>
+            <div class="flex items-start justify-between mb-3">
+                <h3 class="text-white font-bold text-lg">{{ project['title'] }}</h3>
+                <span class="badge badge-sm badge-success ml-2 shrink-0">{{ project['status'] }}</span>
+            </div>
+            <p class="text-gray-400 text-sm mb-4 line-clamp-3">{{ project['description'] }}</p>
+
+            <div class="flex items-center gap-4 text-xs text-gray-400 mb-4">
+                {% if project['location'] %}
+                <span>📍 {{ project['location'] }}</span>
+                {% endif %}
+                <span>👥 {{ project['slots_needed'] }} slot{{ 's' if project['slots_needed'] != 1 }}</span>
+            </div>
+
+            <!-- Owner info -->
+            <div class="flex items-center gap-2 mb-4">
+                <div class="avatar placeholder">
+                    <div class="rounded-full w-6" style="background-color: #505081;">
+                        <span class="text-xs text-white">{{ project['full_name'][0].upper() }}</span>
+                    </div>
+                </div>
+                <span class="text-gray-300 text-xs">{{ project['full_name'] }}</span>
+                {% if project['avg_rating'] %}
+                <span class="text-yellow-400 text-xs ml-auto">⭐ {{ "%.1f"|format(project['avg_rating']) }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="{{ url_for('projects.detail', project_id=project['project_id']) }}"
+           class="btn btn-primary-custom btn-sm rounded-lg w-full">
+            View Project
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+<div class="flex justify-center gap-2">
+    {% if page > 1 %}
+    <a href="{{ url_for('projects.browse', page=page-1, skill=skill_filter) }}"
+       class="btn btn-ghost rounded-lg text-gray-300">← Prev</a>
+    {% endif %}
+    <span class="btn btn-ghost rounded-lg text-gray-400 no-animation">Page {{ page }}</span>
+    {% if projects|length == 10 %}
+    <a href="{{ url_for('projects.browse', page=page+1, skill=skill_filter) }}"
+       class="btn btn-ghost rounded-lg text-gray-300">Next →</a>
+    {% endif %}
+</div>
+
+{% else %}
+<div class="text-center py-20">
+    <p class="text-gray-400 text-lg">No projects found</p>
+    <p class="text-gray-500 text-sm mt-2">Try a different filter or
+        <a href="{{ url_for('projects.create') }}" class="text-purple-300 hover:text-white">post your own</a>
+    </p>
+</div>
+{% endif %}
+
+{% endblock %}

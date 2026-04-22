@@ -22,46 +22,41 @@ def create_project(owner_id, title, description, location, slots_needed):
 
 def get_all_open_projects(skill_filter=None, page=1, per_page=10):
     offset = (page - 1) * per_page
-    
+
     conn = get_connection()
     cur = get_cursor(conn)
-    
+
     if skill_filter:
         cur.execute("""
             SELECT p.*, dp.full_name,
-                   COALESCE(AVG(r.score), 0) AS owner_rating
+                   COALESCE(AVG(r.score), 0) AS avg_rating
             FROM Projects p
             JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
-            LEFT JOIN Matches m ON dp.developer_id = m.developer_id
-            LEFT JOIN Ratings r ON m.match_id = r.match_id
+            LEFT JOIN Ratings r ON dp.developer_id = r.rated_id
             JOIN Project_Skills ps ON p.project_id = ps.project_id
             JOIN Skills s ON ps.skill_id = s.skill_id
             WHERE p.status = 'open' AND s.skill_name = %s
             GROUP BY p.project_id, dp.developer_id
-            ORDER BY owner_rating DESC, p.created_at DESC
+            ORDER BY avg_rating DESC, p.created_at DESC
             LIMIT %s OFFSET %s
         """, (skill_filter, per_page, offset))
     else:
         cur.execute("""
             SELECT p.*, dp.full_name,
-                   COALESCE(AVG(r.score), 0) AS owner_rating
+                   COALESCE(AVG(r.score), 0) AS avg_rating
             FROM Projects p
             JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
-            LEFT JOIN Matches m ON dp.developer_id = m.developer_id
-            LEFT JOIN Ratings r ON m.match_id = r.match_id
+            LEFT JOIN Ratings r ON dp.developer_id = r.rated_id
             WHERE p.status = 'open'
             GROUP BY p.project_id, dp.developer_id
-            ORDER BY owner_rating DESC, p.created_at DESC
+            ORDER BY avg_rating DESC, p.created_at DESC
             LIMIT %s OFFSET %s
         """, (per_page, offset))
-    
+
     projects = cur.fetchall()
-    
     cur.close()
     conn.close()
-    
     return projects
-
 
 def get_project_by_id(project_id):
     conn = get_connection()
