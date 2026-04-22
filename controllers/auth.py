@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from models.user import create_user, get_user_by_email, create_developer_profile, verify_password
+from models.user import *
 
 bp = Blueprint('auth', __name__)
 
@@ -40,6 +40,8 @@ def register():
     session['user_id'] = user_id
     session['email'] = email
     session['role'] = 'developer'
+    full_name = get_developer_by_user_id(session['user_id'])[2]
+    session['full_name'] = full_name
 
     flash("Welcome to Gitogether!", "success")
     return redirect(url_for('dashboard.index'))
@@ -73,7 +75,8 @@ def login():
     session['user_id'] = user[0]
     session['email'] = user[1]
     session['role'] = user[3]
-
+    full_name = get_developer_by_user_id(session['user_id'])[2]
+    session['full_name'] = full_name
     if user[3] == 'admin':
         return redirect(url_for('admin.panel'))
 
