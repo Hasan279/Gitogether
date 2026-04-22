@@ -13,7 +13,7 @@ def submit(match_id):
 
     match = get_match_by_id(match_id)
 
-    if match[3] != 'completed':
+    if match['status'] != 'completed':
         flash("You can only rate completed collaborations", "error")
         return redirect(url_for('matches.index'))
 

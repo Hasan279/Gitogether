@@ -27,15 +27,15 @@ def complete(match_id):
         return redirect(url_for('auth.login'))
 
     match = get_match_by_id(match_id)
-    project = get_project_by_id(match[2])
+    project = get_project_by_id(match['project_id'])
     developer_id = get_developer_id(session['user_id'])
 
-    if project[1] != developer_id:
+    if project['owner_id'] != developer_id:
         flash("Only the project owner can mark a project as completed", "error")
         return redirect(url_for('matches.index'))
 
     complete_match(match_id)
-    update_project_status(project[0], 'completed')
+    update_project_status(project['project_id'], 'completed')
 
     flash("Project marked as completed", "success")
     return redirect(url_for('matches.index'))

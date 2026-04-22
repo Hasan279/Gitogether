@@ -72,12 +72,12 @@ def login():
         flash("Your account has been deactivated", "error")
         return redirect(url_for('auth.login'))
 
-    session['user_id'] = user[0]
-    session['email'] = user[1]
-    session['role'] = user[3]
-    full_name = get_developer_by_user_id(session['user_id'])[2]
+    session['user_id'] = user['user_id']
+    session['email'] = user['email']
+    session['role'] = user['role']
+    full_name = get_developer_by_user_id(session['user_id'])['full_name']
     session['full_name'] = full_name
-    if user[3] == 'admin':
+    if user['role'] == 'admin':
         return redirect(url_for('admin.panel'))
 
     flash("Welcome back!", "success")

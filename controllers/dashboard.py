@@ -1,21 +1,39 @@
 from flask import Blueprint, render_template, session, redirect, url_for
-from models.project import *
-from models.user import *
-from models.request import *
+from models.user import get_developer_by_user_id, get_developer_id
+from models.project import get_projects_by_owner
+from models.request import get_requests_by_developer, get_requests_by_project
+from models.match import get_active_matches_by_developer, get_completed_matches_by_developer
+from models.rating import get_average_rating
+
 bp = Blueprint('dashboard', __name__)
+
 
 @bp.route('/dashboard')
 def index():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+
     user_id = session['user_id']
-    # get developer profile
-    dev = get_developer_by_user_id(user_id)
-    # get projects by owner
-    dev_id = get_developer_id(user_id)
-    projects = get_projects_by_owner(dev_id)
-    # get requests by developer
-    req = get_requests_by_developer(dev_id)
-    # get active matches
-    # get last 3 completed matches
-    # get average rating
-    # render dashboard.html with all of the above
-    pass
+    developer = get_developer_by_user_id(user_id)
+    developer_id = developer['developer_id']
+
+    my_projects = get_projects_by_owner(developer_id)
+
+    incoming_requests = []
+    for project in my_projects:
+        reqs = get_requests_by_project(project['project_id'])
+        incoming_requests.extend(reqs)
+
+    sent_requests = get_requests_by_developer(developer_id)
+    active_matches = get_active_matches_by_developer(developer_id)
+    completed_matches = get_completed_matches_by_developer(developer_id, limit=3)
+    avg_rating = get_average_rating(developer_id)
+
+    return render_template('dashboard/dashboard.html',
+                           developer=developer,
+                           my_projects=my_projects,
+                           incoming_requests=incoming_requests,
+                           sent_requests=sent_requests,
+                           active_matches=active_matches,
+                           completed_matches=completed_matches,
+                           avg_rating=avg_rating)

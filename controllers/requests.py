@@ -15,7 +15,7 @@ def send(project_id):
     developer_id = get_developer_id(session['user_id'])
     project = get_project_by_id(project_id)
 
-    if project[1] == developer_id:
+    if project['project_id'] == developer_id:
         flash("You cannot request to join your own project", "error")
         return redirect(url_for('projects.detail', project_id=project_id))
 
@@ -35,20 +35,20 @@ def accept(request_id):
         return redirect(url_for('auth.login'))
 
     req = get_request_by_id(request_id)
-    project = get_project_by_id(req[2])
+    project = get_project_by_id(req['project_id'])
     developer_id = get_developer_id(session['user_id'])
 
-    if project[1] != developer_id:
+    if project['project_id'] != developer_id:
         flash("You are not authorized to accept this request", "error")
         return redirect(url_for('dashboard.index'))
 
-    existing = check_existing_match(req[1], req[2])
+    existing = check_existing_match(req['developer_id'], req['project_id'])
     if existing:
         flash("A match already exists for this developer and project", "error")
         return redirect(url_for('dashboard.index'))
 
     update_request_status(request_id, 'accepted')
-    create_match(req[1], req[2])
+    create_match(req['developer_id'], req['project_id'])
 
     flash("Request accepted, match created", "success")
     return redirect(url_for('dashboard.index'))
@@ -60,10 +60,10 @@ def reject(request_id):
         return redirect(url_for('auth.login'))
 
     req = get_request_by_id(request_id)
-    project = get_project_by_id(req[2])
+    project = get_project_by_id(req['project_id'])
     developer_id = get_developer_id(session['user_id'])
 
-    if project[1] != developer_id:
+    if project['owner_id'] != developer_id:
         flash("You are not authorized to reject this request", "error")
         return redirect(url_for('dashboard.index'))
 

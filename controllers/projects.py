@@ -82,7 +82,7 @@ def edit(project_id):
     project = get_project_by_id(project_id)
     developer_id = get_developer_id(session['user_id'])
 
-    if project[1] != developer_id:
+    if project['owner_id'] != developer_id:
         flash("You are not authorized to edit this project", "error")
         return redirect(url_for('dashboard.index'))
 
@@ -119,7 +119,7 @@ def delete(project_id):
     project = get_project_by_id(project_id)
     developer_id = get_developer_id(session['user_id'])
 
-    if project[1] != developer_id:
+    if project['owner_id'] != developer_id:
         flash("You are not authorized to delete this project", "error")
         return redirect(url_for('dashboard.index'))
 

@@ -1,10 +1,259 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Dashboard</title>
-  </head>
-  <body>
-    <h2>Welcome, {{ session['email'] }}</h2>
-    <a href="/logout">Logout</a>
-  </body>
-</html>
+{% extends "base.html" %} {% block title %}Dashboard — Gitogether{% endblock %}
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="text-3xl font-bold text-white">
+      Hey, {{ session.get('full_name') }} 👋
+    </h1>
+    <p class="text-gray-400 mt-1 text-sm">
+      Here's what's going on with your projects
+    </p>
+  </div>
+  <a
+    href="{{ url_for('projects.create') }}"
+    class="btn btn-primary-custom rounded-lg gap-2"
+  >
+    + New Project
+  </a>
+</div>
+
+<!-- Stats Row -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-3xl font-bold text-white">{{ my_projects|length }}</p>
+    <p class="text-gray-400 text-sm mt-1">My Projects</p>
+  </div>
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-3xl font-bold text-white">{{ active_matches|length }}</p>
+    <p class="text-gray-400 text-sm mt-1">Active Collabs</p>
+  </div>
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-3xl font-bold text-white">{{ incoming_requests|length }}</p>
+    <p class="text-gray-400 text-sm mt-1">Pending Requests</p>
+  </div>
+  <div class="card-custom rounded-xl p-5 text-center">
+    <p class="text-3xl font-bold text-white">
+      {% if avg_rating %} {{ "%.1f"|format(avg_rating) }} ⭐ {% else %} N/A {%
+      endif %}
+    </p>
+    <p class="text-gray-400 text-sm mt-1">Your Rating</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <!-- My Projects -->
+  <div class="card-custom rounded-xl p-6">
+    <h2 class="text-lg font-bold text-white mb-4">My Projects</h2>
+    {% if my_projects %}
+    <div class="space-y-3">
+      {% for project in my_projects %}
+      <div
+        class="flex items-center justify-between p-3 rounded-lg"
+        style="background-color: #0f0e47"
+      >
+        <div>
+          <p class="text-white font-medium">{{ project[2] }}</p>
+          <span
+            class="badge badge-sm mt-1 {% if project[6] == 'open' %}badge-success {% elif project[6] == 'in_progress' %}badge-warning {% else %}badge-neutral{% endif %}"
+          >
+            {{ project[6] }}
+          </span>
+        </div>
+        <div class="flex gap-2">
+          <a
+            href="{{ url_for('projects.detail', project_id=project[0]) }}"
+            class="btn btn-ghost btn-xs text-gray-300"
+            >View</a
+          >
+          <a
+            href="{{ url_for('projects.edit', project_id=project[0]) }}"
+            class="btn btn-ghost btn-xs text-gray-300"
+            >Edit</a
+          >
+          <form
+            method="POST"
+            action="{{ url_for('projects.delete', project_id=project[0]) }}"
+            onsubmit="return confirm('Delete this project?');"
+          >
+            <button type="submit" class="btn btn-ghost btn-xs text-red-400">
+              Delete
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-400 text-sm">
+      No projects yet.
+      <a
+        href="{{ url_for('projects.create') }}"
+        class="text-purple-300 hover:text-white"
+        >Create one</a
+      >
+    </p>
+    {% endif %}
+  </div>
+
+  <!-- Incoming Requests -->
+  <div class="card-custom rounded-xl p-6">
+    <h2 class="text-lg font-bold text-white mb-4">Incoming Requests</h2>
+    {% if incoming_requests %}
+    <div class="space-y-3">
+      {% for req in incoming_requests %}
+      <div
+        class="flex items-center justify-between p-3 rounded-lg"
+        style="background-color: #0f0e47"
+      >
+        <div>
+          <a
+            href="{{ url_for('developers.profile', developer_id=req[1]) }}"
+            class="text-white font-medium hover:text-purple-300"
+          >
+            {{ req['full_name'] }}
+          </a>
+          <p class="text-gray-400 text-xs mt-1">
+            wants to join {{ req['project_title'] }}
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <form
+            method="POST"
+            action="{{ url_for('requests.accept', request_id=req[0]) }}"
+          >
+            <button type="submit" class="btn btn-success btn-xs">Accept</button>
+          </form>
+          <form
+            method="POST"
+            action="{{ url_for('requests.reject', request_id=req[0]) }}"
+          >
+            <button type="submit" class="btn btn-error btn-xs">Reject</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-400 text-sm">No pending requests</p>
+    {% endif %}
+  </div>
+
+  <!-- Active Collabs -->
+  <div class="card-custom rounded-xl p-6">
+    <h2 class="text-lg font-bold text-white mb-4">Active Collaborations</h2>
+    {% if active_matches %}
+    <div class="space-y-3">
+      {% for match in active_matches %}
+      <div
+        class="flex items-center justify-between p-3 rounded-lg"
+        style="background-color: #0f0e47"
+      >
+        <div>
+          <p class="text-white font-medium">{{ match['project_title'] }}</p>
+          <p class="text-gray-400 text-xs mt-1">
+            with {{ match['full_name'] }}
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <a
+            href="{{ match['contact_link'] }}"
+            target="_blank"
+            class="btn btn-ghost btn-xs text-purple-300"
+            >Contact</a
+          >
+          {% if match['owner_id'] == developer[0] %}
+          <form
+            method="POST"
+            action="{{ url_for('matches.complete', match_id=match[0]) }}"
+            onsubmit="return confirm('Mark this project as completed?');"
+          >
+            <button type="submit" class="btn btn-warning btn-xs">
+              Complete
+            </button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-400 text-sm">No active collaborations</p>
+    {% endif %}
+  </div>
+
+  <!-- Recent Completed Collabs -->
+  <div class="card-custom rounded-xl p-6">
+    <h2 class="text-lg font-bold text-white mb-4">Recent Completed</h2>
+    {% if completed_matches %}
+    <div class="space-y-3">
+      {% for match in completed_matches %}
+      <div
+        class="flex items-center justify-between p-3 rounded-lg"
+        style="background-color: #0f0e47"
+      >
+        <div>
+          <p class="text-white font-medium">{{ match['project_title'] }}</p>
+          <p class="text-gray-400 text-xs mt-1">
+            with {{ match['full_name'] }}
+          </p>
+        </div>
+        <a
+          href="{{ url_for('matches.index') }}"
+          class="btn btn-ghost btn-xs text-gray-300"
+          >View</a
+        >
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-400 text-sm">No completed collaborations yet</p>
+    {% endif %}
+  </div>
+
+  <!-- Sent Requests -->
+  <div class="card-custom rounded-xl col-span-1 lg:col-span-2 p-6">
+    <h2 class="text-lg font-bold text-white mb-4">Sent Requests</h2>
+    {% if sent_requests %}
+    <div class="overflow-x-auto">
+      <table class="table w-full text-sm">
+        <thead>
+          <tr class="text-gray-400 border-b border-gray-600">
+            <th class="bg-transparent">Project</th>
+            <th class="bg-transparent">Owner</th>
+            <th class="bg-transparent">Status</th>
+            <th class="bg-transparent">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in sent_requests %}
+          <tr class="border-b border-gray-700 hover:bg-gray-800">
+            <td class="text-white">{{ req['project_title'] }}</td>
+            <td class="text-gray-300">{{ req['owner_name'] }}</td>
+            <td>
+              <span
+                class="badge badge-sm {% if req[3] == 'pending' %}badge-warning {% elif req[3] == 'accepted' %}badge-success {% else %}badge-error{% endif %}"
+              >
+                {{ req[3] }}
+              </span>
+            </td>
+            <td class="text-gray-400">{{ req[4].strftime('%b %d, %Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-gray-400 text-sm">
+      No sent requests yet.
+      <a
+        href="{{ url_for('projects.browse') }}"
+        class="text-purple-300 hover:text-white"
+        >Browse projects</a
+      >
+    </p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
