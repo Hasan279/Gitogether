@@ -1,55 +1,56 @@
-{% extends "base.html" %} {% block title %}Login — Gitogether{% endblock %} {%
-block content %}
-<div class="min-h-screen flex items-center justify-center -mt-16">
-  <div class="card-custom rounded-2xl p-10 w-full max-w-md shadow-2xl">
+{% extends 'base.html' %} {% block content %}
+<div class="min-h-[70vh] flex items-center justify-center">
+  <div
+    class="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 p-10 rounded-3xl shadow-2xl"
+  >
     <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold tracking-widest text-white">
-        &lt;Gitogether /&gt;
-      </h1>
-      <p class="text-gray-400 mt-2 text-sm">Find your next coding partner</p>
+      <h2 class="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+      <p class="text-brand-light/60">
+        Enter your credentials to access Gitogether
+      </p>
     </div>
 
-    <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-4">
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text text-gray-300">Email</span>
-        </label>
+    <form action="{{ url_for('auth.login') }}" method="POST" class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-brand-light mb-2"
+          >Email Address</label
+        >
         <input
           type="email"
           name="email"
-          placeholder="you@example.com"
-          class="input input-custom w-full rounded-lg"
           required
+          class="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-teal/50 transition"
+          placeholder="dev@example.com"
         />
       </div>
 
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text text-gray-300">Password</span>
-        </label>
+      <div>
+        <div class="flex justify-between mb-2">
+          <label class="text-sm font-medium text-brand-light">Password</label>
+        </div>
         <input
           type="password"
           name="password"
-          placeholder="••••••••"
-          class="input input-custom w-full rounded-lg"
           required
+          class="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-teal/50 transition"
+          placeholder="••••••••"
         />
       </div>
 
       <button
         type="submit"
-        class="btn btn-primary-custom w-full rounded-lg mt-2"
+        class="w-full bg-brand-emerald hover:bg-brand-teal text-brand-dark font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-brand-emerald/10 active:scale-[0.98]"
       >
-        Login
+        Sign In
       </button>
     </form>
 
-    <p class="text-center text-gray-400 text-sm mt-6">
+    <p class="mt-8 text-center text-sm text-brand-light/60">
       Don't have an account?
       <a
         href="{{ url_for('auth.register') }}"
-        class="text-purple-300 hover:text-white transition"
-        >Register</a
+        class="text-brand-teal font-semibold hover:underline"
+        >Create one</a
       >
     </p>
   </div>

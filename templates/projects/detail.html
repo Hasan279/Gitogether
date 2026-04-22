@@ -1,135 +1,186 @@
-{% extends "base.html" %} {% block title %}{{ project['title'] }} — Gitogether{%
-endblock %} {% block content %}
-
-<div class="max-w-3xl mx-auto">
-  <!-- Back -->
-  <a
-    href="{{ url_for('projects.browse') }}"
-    class="text-gray-400 hover:text-white text-sm mb-6 inline-block"
-  >
-    ← Back to Projects
-  </a>
-
-  <!-- Project Header -->
-  <div class="card-custom rounded-xl p-8 mb-6">
-    <div class="flex items-start justify-between mb-4">
-      <h1 class="text-3xl font-bold text-white">{{ project['title'] }}</h1>
-      <span
-        class="badge badge-lg {% if project['status'] == 'open' %}badge-success {% elif project['status'] == 'in_progress' %}badge-warning {% else %}badge-neutral{% endif %}"
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <a
+      href="{{ url_for('projects.browse') }}"
+      class="text-brand-teal hover:text-white text-xs font-black uppercase tracking-widest transition-colors inline-flex items-center gap-2"
+    >
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
       >
-        {{ project['status'] }}
-      </span>
-    </div>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 19l-7-7m0 0l7-7m-7 7h18"
+        ></path>
+      </svg>
+      Back to Project Feed
+    </a>
 
-    <p class="text-gray-300 mb-6 leading-relaxed">
-      {{ project['description'] }}
-    </p>
-
-    <div class="flex flex-wrap gap-6 text-sm text-gray-400 mb-6">
-      {% if project['location'] %}
-      <span>📍 {{ project['location'] }}</span>
-      {% endif %}
-      <span
-        >👥 {{ project['slots_needed'] }} slot{{ 's' if project['slots_needed']
-        != 1 }} needed</span
+    {% set current_user_id = session.developer_id or session.user_id %} {% if
+    current_user_id == project.owner_id %}
+    <div class="flex gap-2">
+      <a
+        href="{{ url_for('projects.edit', project_id=project.project_id) }}"
+        class="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2 rounded-xl text-xs font-bold transition uppercase tracking-tighter shadow-sm"
       >
-      <span>📅 {{ project['created_at'].strftime('%b %d, %Y') }}</span>
-    </div>
+        Modify
+      </a>
 
-    <!-- Skills -->
-    {% if project_skills %}
-    <div class="mb-6">
-      <p class="text-gray-400 text-sm mb-2">Required Skills</p>
-      <div class="flex flex-wrap gap-2">
-        {% for skill in project_skills %}
-        <span
-          class="badge rounded-lg px-3 py-2 text-white text-xs"
-          style="background-color: #505081"
-        >
-          {{ skill['skill_name'] }} {% if skill['is_required'] %}
-          <span class="text-red-300 ml-1">*</span>
-          {% endif %}
-        </span>
-        {% endfor %}
-      </div>
+      <button
+        hx-delete="{{ url_for('projects.delete', project_id=project.project_id) }}"
+        hx-confirm="Are you sure you want to terminate this project? This action cannot be undone."
+        hx-target="body"
+        class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 px-4 py-2 rounded-xl text-xs font-bold transition uppercase tracking-tighter"
+      >
+        Terminate
+      </button>
     </div>
     {% endif %}
+  </div>
 
-    <!-- Owner Info -->
-    <div
-      class="flex items-center gap-3 p-4 rounded-lg"
-      style="background-color: #0f0e47"
-    >
-      <div class="avatar placeholder">
-        <div class="rounded-full w-10" style="background-color: #505081">
-          <span class="text-white">{{ project['full_name'][0].upper() }}</span>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+      <div
+        class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl relative overflow-hidden"
+      >
+        <div
+          class="absolute top-0 left-0 w-full h-1 bg-brand-teal opacity-30"
+        ></div>
+
+        <div class="mb-6">
+          <span
+            class="text-[10px] font-black text-brand-teal uppercase tracking-[0.3em] bg-brand-teal/10 px-3 py-1 rounded-full border border-brand-teal/20"
+            >Active Project</span
+          >
+          <h1
+            class="text-4xl font-black text-white tracking-tighter mt-4 uppercase leading-none"
+          >
+            {{ project.title }}
+          </h1>
+        </div>
+
+        <div class="prose prose-invert max-w-none">
+          <h3
+            class="text-sm font-black text-brand-teal uppercase tracking-widest mb-4"
+          >
+            System Overview
+          </h3>
+          <p
+            class="text-brand-light/70 leading-relaxed font-mono text-sm whitespace-pre-wrap bg-black/20 p-4 rounded-2xl border border-white/5"
+          >
+            {{ project.description }}
+          </p>
         </div>
       </div>
-      <div>
-        <a
-          href="{{ url_for('developers.profile', developer_id=project['owner_id']) }}"
-          class="text-white font-medium hover:text-purple-300"
+
+      <div class="bg-black/20 border border-white/5 p-8 rounded-3xl">
+        <h3
+          class="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3"
         >
-          {{ project['full_name'] }}
-        </a>
-        {% if project['avg_rating'] %}
-        <p class="text-yellow-400 text-xs">
-          ⭐ {{ "%.1f"|format(project['avg_rating']) }}
-        </p>
-        {% endif %}
+          Required Skill Stack
+          <div class="h-[1px] flex-1 bg-white/5"></div>
+        </h3>
+        <div class="space-y-6">
+          {% for category, skills in grouped_skills.items() %}
+          <div>
+            <h4
+              class="text-[10px] text-brand-teal/60 font-black uppercase tracking-[0.2em] mb-3"
+            >
+              {{ category }}
+            </h4>
+            <div class="flex flex-wrap gap-2">
+              {% for skill in skills %}
+              <span
+                class="bg-white/5 border border-white/10 text-white font-mono text-[11px] px-3 py-1.5 rounded-lg hover:border-brand-teal transition-colors"
+              >
+                {{ skill.skill_name }}
+              </span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Action -->
-  {% if session['user_id'] %} {% if project['owner_id'] == developer_id %}
-  <!-- Owner actions -->
-  <div class="flex gap-3">
-    <a
-      href="{{ url_for('projects.edit', project_id=project['project_id']) }}"
-      class="btn btn-primary-custom rounded-lg flex-1"
-      >Edit Project</a
-    >
-    <form
-      method="POST"
-      action="{{ url_for('projects.delete', project_id=project['project_id']) }}"
-      onsubmit="return confirm('Delete this project?');"
-      class="flex-1"
-    >
-      <button type="submit" class="btn btn-error rounded-lg w-full">
-        Delete Project
-      </button>
-    </form>
-  </div>
-  {% elif existing_request %}
-  <!-- Already requested -->
-  <div class="card-custom rounded-xl p-5 text-center">
-    <p class="text-gray-300">
-      Request status:
-      <span
-        class="badge {% if existing_request['status'] == 'pending' %}badge-warning {% elif existing_request['status'] == 'accepted' %}badge-success {% else %}badge-error{% endif %}"
+    <div class="space-y-6">
+      <div class="bg-white/5 border border-white/10 p-6 rounded-3xl space-y-4">
+        <div
+          class="flex justify-between items-center pb-4 border-b border-white/5"
+        >
+          <span class="text-[10px] font-black text-brand-light/30 uppercase"
+            >Environment</span
+          >
+          <span class="text-xs font-mono text-white"
+            >{{ project.location or 'Remote' }}</span
+          >
+        </div>
+        <div
+          class="flex justify-between items-center pb-4 border-b border-white/5"
+        >
+          <span class="text-[10px] font-black text-brand-light/30 uppercase"
+            >Devs Required</span
+          >
+          <span class="text-xs font-mono text-brand-teal"
+            >{{ project.slots_needed }} Members</span
+          >
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-[10px] font-black text-brand-light/30 uppercase"
+            >Created</span
+          >
+          <span class="text-xs font-mono text-white"
+            >{{ project.created_at.strftime('%Y-%m-%d') if project.created_at
+            else 'N/A' }}</span
+          >
+        </div>
+      </div>
+
+      <div
+        class="bg-white/5 border border-white/10 p-6 rounded-3xl text-center"
       >
-        {{ existing_request['status'] }}
-      </span>
-    </p>
+        <div
+          class="w-16 h-16 bg-brand-teal/20 rounded-full mx-auto mb-4 flex items-center justify-center border border-brand-teal/30"
+        >
+          <span class="text-xl font-black text-brand-teal">
+            {{ project.full_name[0]|upper if project.full_name else '?' }}
+          </span>
+        </div>
+        <h4 class="text-white font-black uppercase tracking-widest text-sm">
+          {{ project.full_name or 'Lead Developer' }}
+        </h4>
+        <p
+          class="text-[10px] text-brand-light/40 uppercase tracking-widest mt-1"
+        >
+          Lead Developer
+        </p>
+        <a
+          href="{{ url_for('developers.profile', developer_id=project.owner_id) }}"
+          class="mt-4 block text-[10px] font-bold text-brand-teal hover:text-white transition uppercase"
+          >View Full Profile</a
+        >
+      </div>
+
+      {% if current_user_id %} {% if current_user_id != project.owner_id %}
+      <button
+        class="w-full bg-brand-emerald hover:bg-brand-teal text-brand-dark font-black py-4 rounded-2xl transition-all shadow-xl hover:scale-[1.02] active:scale-95 uppercase tracking-widest text-sm shadow-brand-emerald/10"
+      >
+        Request to Join Team
+      </button>
+      {% endif %} {% else %}
+      <a
+        href="{{ url_for('auth.login') }}"
+        class="block w-full bg-white/10 text-white text-center font-black py-4 rounded-2xl border border-white/10 hover:bg-white/20 transition uppercase tracking-widest text-sm"
+      >
+        Login to Join
+      </a>
+      {% endif %}
+    </div>
   </div>
-  {% elif project['status'] == 'open' %}
-  <!-- Request to join -->
-  <form
-    method="POST"
-    action="{{ url_for('requests.send', project_id=project['project_id']) }}"
-  >
-    <button
-      type="submit"
-      class="btn btn-primary-custom rounded-lg w-full text-lg py-4"
-    >
-      Request to Join
-    </button>
-  </form>
-  {% else %}
-  <div class="card-custom rounded-xl p-5 text-center">
-    <p class="text-gray-400">This project is no longer accepting requests</p>
-  </div>
-  {% endif %} {% endif %}
 </div>
 {% endblock %}

@@ -1,200 +1,210 @@
 <!doctype html>
-<html lang="en" data-theme="custom">
+<html lang="en" class="h-full">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Gitogether{% endblock %}</title>
+    <title>Gitogether | Find Your Next Coding Partner</title>
 
-    <!-- Tailwind + DaisyUI -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/daisyui@4.10.1/dist/full.min.css"
-      rel="stylesheet"
-    />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
-    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
-    <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                light: "#C1F6ED" /* Mint highlight */,
+                dark: "#02353C" /* Deep Teal Background */,
+                forest: "#449342" /* Forest Green */,
+                emerald: "#2EAF7D" /* Action Green */,
+                teal: "#3FD0C9" /* High-energy Teal */,
+              },
+            },
+            fontFamily: {
+              sans: ["Inter", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
 
     <style>
-      :root {
-        --color-base-100: #0f0e47;
-        --color-base-200: #272757;
-        --color-base-300: #505081;
-        --color-primary: #8686ac;
-        --color-primary-content: #ffffff;
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #02353c;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #2eaf7d;
+        border-radius: 10px;
       }
 
-      [data-theme="custom"] {
-        --b1: 240 84% 17%; /* #0F0E47 */
-        --b2: 240 47% 25%; /* #272757 */
-        --b3: 240 23% 41%; /* #505081 */
-        --p: 240 18% 60%; /* #8686AC */
-        --pc: 0 0% 100%;
-        --s: 240 23% 41%;
-        --sc: 0 0% 100%;
-        --a: 240 18% 60%;
-        --ac: 0 0% 100%;
-        --n: 240 47% 25%;
-        --nc: 0 0% 100%;
-        --bc: 0 0% 100%;
+      /* Architectural Elements */
+      .nav-accent {
+        border-bottom: 1px solid rgba(63, 208, 201, 0.15);
+        box-shadow: 0 4px 30px -10px rgba(0, 0, 0, 0.7);
       }
 
-      body {
-        background-color: #0f0e47;
-        color: #ffffff;
-        min-height: 100vh;
+      .footer-accent {
+        border-top: 1px solid rgba(63, 208, 201, 0.15);
+        box-shadow: 0 -4px 30px -10px rgba(0, 0, 0, 0.7);
       }
 
-      .navbar-custom {
-        background-color: #272757;
-        border-bottom: 1px solid #505081;
+      .glass-glow {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02) 0%,
+          rgba(255, 255, 255, 0) 100%
+        );
       }
 
-      .card-custom {
-        background-color: #272757;
-        border: 1px solid #505081;
+      /* Page Transitions */
+      .page-enter {
+        animation: slideUp 0.4s ease-out;
       }
-
-      .btn-primary-custom {
-        background-color: #505081;
-        border-color: #505081;
-        color: #ffffff;
-      }
-
-      .btn-primary-custom:hover {
-        background-color: #8686ac;
-        border-color: #8686ac;
-      }
-
-      .input-custom {
-        background-color: #0f0e47;
-        border-color: #505081;
-        color: #ffffff;
-      }
-
-      .input-custom:focus {
-        border-color: #8686ac;
-        outline: none;
-      }
-
-      .sidebar {
-        background-color: #272757;
-        border-right: 1px solid #505081;
-        min-height: calc(100vh - 64px);
-      }
-
-      .active-link {
-        background-color: #505081;
-        border-radius: 8px;
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
     </style>
-
-    {% block head %}{% endblock %}
   </head>
-  <body>
-    <!-- Navbar -->
-    <div class="navbar navbar-custom px-6 sticky top-0 z-50">
-      <div class="flex-1">
-        <a
-          href="{{ url_for('dashboard.index') }}"
-          class="text-xl font-bold tracking-widest text-white"
-        >
-          &lt;Gitogether /&gt;
-        </a>
-      </div>
-      {% if session.get('user_id') %}
-      <div class="flex-none gap-4 items-center">
-        <a
-          href="{{ url_for('projects.browse') }}"
-          class="btn btn-ghost btn-sm text-white"
-          >Projects</a
-        >
-        <a
-          href="{{ url_for('developers.browse') }}"
-          class="btn btn-ghost btn-sm text-white"
-          >Developers</a
-        >
-        <a
-          href="{{ url_for('matches.index') }}"
-          class="btn btn-ghost btn-sm text-white"
-          >Matches</a
-        >
 
-        <!-- Avatar dropdown -->
-        <div class="dropdown dropdown-end">
-          <div
-            tabindex="0"
-            role="button"
-            class="btn btn-ghost btn-circle avatar placeholder"
+  <body
+    class="h-full bg-brand-dark text-slate-100 selection:bg-brand-teal selection:text-brand-dark"
+    hx-boost="true"
+  >
+    <nav
+      class="nav-accent glass-glow bg-brand-dark/90 backdrop-blur-xl sticky top-0 z-50"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-20 items-center"
+      >
+        <a href="/" class="flex items-center gap-3 group">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            alt="Logo"
+            class="h-9 w-auto object-contain transition-transform group-hover:scale-110"
+          />
+          <span
+            class="text-2xl font-black tracking-tighter text-white uppercase hidden md:block"
           >
-            <div class="bg-neutral text-neutral-content rounded-full w-9">
-              <span class="text-sm"
-                >{{ session.get('full_name', 'U')[0].upper() }}</span
-              >
-            </div>
-          </div>
-          <ul
-            tabindex="0"
-            class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content rounded-box w-52"
-            style="background-color: #272757; border: 1px solid #505081"
+            Gito<span class="text-brand-teal">gether</span>
+          </span>
+        </a>
+
+        <div
+          class="flex gap-4 md:gap-8 items-center font-bold text-sm tracking-wide"
+        >
+          <a
+            href="{{ url_for('projects.browse') }}"
+            class="text-brand-light/70 hover:text-brand-teal transition-colors"
+            >Projects</a
           >
-            <li class="menu-title text-xs text-gray-400 px-2 py-1">
-              {{ session.get('full_name', '') }}
-            </li>
-            <li>
-              <a href="{{ url_for('dashboard.index') }}" class="text-white"
-                >Dashboard</a
-              >
-            </li>
-            {% if session.get('role') == 'admin' %}
-            <li>
-              <a href="{{ url_for('admin.panel') }}" class="text-white"
-                >Admin Panel</a
-              >
-            </li>
-            {% endif %}
-            <li>
-              <a href="{{ url_for('auth.logout') }}" class="text-red-400"
-                >Logout</a
-              >
-            </li>
-          </ul>
+          <a
+            href="{{ url_for('developers.browse') }}"
+            class="text-brand-light/70 hover:text-brand-teal transition-colors"
+            >Developers</a
+          >
+
+          {% if session.user_id %}
+          <div class="h-6 w-[1px] bg-white/10 mx-2"></div>
+          <a
+            href="{{ url_for('dashboard.index') }}"
+            class="bg-brand-emerald hover:bg-brand-teal text-brand-dark px-6 py-2.5 rounded-full transition-all shadow-lg shadow-brand-emerald/10 active:scale-95"
+          >
+            Dashboard
+          </a>
+          {% else %}
+          <a
+            href="{{ url_for('auth.login') }}"
+            class="text-brand-teal border border-brand-teal/20 px-6 py-2 rounded-full hover:bg-brand-teal/5 transition-all"
+          >
+            Login
+          </a>
+          {% endif %}
         </div>
       </div>
-      {% endif %}
-    </div>
+    </nav>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %}
-    <div class="px-6 pt-4 space-y-2" id="flash-container">
-      {% for category, message in messages %}
+    <div
+      id="toast-wrap"
+      class="fixed top-24 right-6 z-[100] flex flex-col gap-3 pointer-events-none"
+    >
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
       <div
-        class="alert {% if category == 'error' %}alert-error{% else %}alert-success{% endif %} shadow-lg flex justify-between items-center"
+        class="pointer-events-auto flex items-center gap-4 px-6 py-4 rounded-2xl shadow-2xl border backdrop-blur-lg animate-bounce {% if category == 'error' %} bg-red-500/10 border-red-500/40 text-red-100 {% else %} bg-brand-emerald/10 border-brand-emerald/40 text-brand-light {% endif %}"
       >
-        <span>{{ message }}</span>
-        <button
-          onclick="this.parentElement.remove()"
-          class="btn btn-ghost btn-xs"
+        <span class="text-lg"
+          >{% if category == 'error' %}⚡{% else %}✨{% endif %}</span
         >
-          ✕
-        </button>
+        <p class="text-sm font-black">{{ message }}</p>
       </div>
-      {% endfor %}
+      {% endfor %} {% endif %} {% endwith %}
     </div>
-    {% endif %} {% endwith %}
 
-    <!-- Page Content -->
     <main
-      class="{% block main_class %}container mx-auto px-6 py-8{% endblock %}"
+      class="max-w-7xl mx-auto px-4 py-12 page-enter min-h-[calc(100vh-160px)]"
     >
       {% block content %}{% endblock %}
     </main>
 
-    {% block scripts %}{% endblock %}
+    <footer class="footer-accent glass-glow bg-brand-dark/90 backdrop-blur-xl">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-20 items-center"
+      >
+        <div class="flex items-center gap-3 opacity-50">
+          <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            class="h-6 w-auto grayscale brightness-200"
+          />
+          <span class="text-xs font-black uppercase tracking-widest text-white"
+            >Gitogether &copy; 2026</span
+          >
+        </div>
+
+        <div
+          class="flex gap-6 md:gap-10 text-[10px] font-bold text-brand-light/40 uppercase tracking-[0.2em]"
+        >
+          <a href="#" class="hover:text-brand-teal transition"
+            >Platform Stats</a
+          >
+          <a href="#" class="hover:text-brand-teal transition">Dev Rules</a>
+          {% if session.role == 'admin' %}
+          <a
+            href="{{ url_for('admin.panel') }}"
+            class="text-brand-teal/60 hover:text-brand-teal transition"
+            >Admin Access</a
+          >
+          {% endif %}
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const toasts = document.querySelectorAll("#toast-wrap > div");
+        toasts.forEach((t) => {
+          setTimeout(() => {
+            t.style.opacity = "0";
+            t.style.transform = "scale(0.9) translateX(30px)";
+            t.style.transition = "all 0.5s ease-in-out";
+            setTimeout(() => t.remove(), 500);
+          }, 3500);
+        });
+      });
+    </script>
   </body>
 </html>

@@ -1,127 +1,122 @@
-{% extends "base.html" %} {% block title %}Register — Gitogether{% endblock %}
-{% block content %}
-<div class="flex items-center justify-center py-8">
-  <div class="card-custom rounded-2xl p-10 w-full max-w-lg shadow-2xl">
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold tracking-widest text-white">
-        &lt;Gitogether /&gt;
-      </h1>
-      <p class="text-gray-400 mt-2 text-sm">Create your developer profile</p>
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-2xl mx-auto">
+  <div
+    class="bg-white/5 backdrop-blur-xl border border-white/10 p-10 rounded-3xl shadow-2xl"
+  >
+    <div class="mb-10">
+      <h2 class="text-3xl font-bold text-white mb-2">Join the Community</h2>
+      <p class="text-brand-light/60">
+        Create your developer profile and start collaborating.
+      </p>
     </div>
 
     <form
-      method="POST"
       action="{{ url_for('auth.register') }}"
-      class="space-y-4"
+      method="POST"
+      class="grid grid-cols-1 md:grid-cols-2 gap-6"
     >
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text text-gray-300">Email</span>
-        </label>
+      <div class="md:col-span-2 border-b border-white/10 pb-4 mb-2">
+        <h3 class="text-brand-teal font-bold uppercase tracking-wider text-xs">
+          Account Credentials
+        </h3>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-brand-light">Email</label>
         <input
           type="email"
           name="email"
-          placeholder="you@example.com"
-          class="input input-custom w-full rounded-lg"
           required
+          class="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand-teal/50 outline-none transition"
         />
       </div>
 
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text text-gray-300">Password</span>
-        </label>
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-brand-light"
+          >Password</label
+        >
         <input
           type="password"
           name="password"
-          placeholder="••••••••"
-          class="input input-custom w-full rounded-lg"
           required
+          class="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand-teal/50 outline-none transition"
         />
       </div>
 
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text text-gray-300">Full Name</span>
-        </label>
+      <div class="md:col-span-2 border-b border-white/10 pb-4 mt-4 mb-2">
+        <h3 class="text-brand-teal font-bold uppercase tracking-wider text-xs">
+          Developer Profile
+        </h3>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-brand-light"
+          >Full Name</label
+        >
         <input
           type="text"
           name="full_name"
-          placeholder="John Doe"
-          class="input input-custom w-full rounded-lg"
           required
+          class="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand-teal/50 outline-none transition"
         />
       </div>
 
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text text-gray-300">Bio</span>
-        </label>
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-brand-light"
+          >Years of Experience</label
+        >
+        <input
+          type="number"
+          name="years_experience"
+          min="0"
+          value="0"
+          class="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand-teal/50 outline-none transition"
+        />
+      </div>
+
+      <div class="md:col-span-2 space-y-2">
+        <label class="block text-sm font-medium text-brand-light"
+          >Location</label
+        >
+        <input
+          type="text"
+          name="location"
+          placeholder="e.g. Remote, New York, Karachi"
+          class="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand-teal/50 outline-none transition"
+        />
+      </div>
+
+      <div class="md:col-span-2 space-y-2">
+        <label class="block text-sm font-medium text-brand-light">Bio</label>
         <textarea
           name="bio"
-          placeholder="Tell other developers about yourself..."
-          class="textarea input-custom w-full rounded-lg h-24 resize-none"
+          rows="3"
+          class="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand-teal/50 outline-none transition"
+          placeholder="Tell us what you're building..."
         ></textarea>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text text-gray-300">Location</span>
-          </label>
-          <input
-            type="text"
-            name="location"
-            placeholder="Karachi, PK"
-            class="input input-custom w-full rounded-lg"
-          />
-        </div>
-
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text text-gray-300">Years of Experience</span>
-          </label>
-          <input
-            type="number"
-            name="years_experience"
-            placeholder="2"
-            min="0"
-            class="input input-custom w-full rounded-lg"
-          />
-        </div>
-      </div>
-
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text text-gray-300">Contact Link</span>
-          <span class="label-text-alt text-gray-500"
-            >Discord, Telegram, etc.</span
-          >
-        </label>
+      <div class="md:col-span-2 space-y-2">
+        <label class="block text-sm font-medium text-brand-light"
+          >Contact Link (GitHub/Portfolio)</label
+        >
         <input
-          type="text"
+          type="url"
           name="contact_link"
-          placeholder="discord.gg/yourserver"
-          class="input input-custom w-full rounded-lg"
+          placeholder="https://github.com/username"
+          class="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-brand-teal/50 outline-none transition"
         />
       </div>
 
-      <button
-        type="submit"
-        class="btn btn-primary-custom w-full rounded-lg mt-2"
-      >
-        Create Account
-      </button>
+      <div class="md:col-span-2 pt-6">
+        <button
+          type="submit"
+          class="w-full bg-brand-emerald hover:bg-brand-teal text-brand-dark font-bold py-4 rounded-xl transition-all shadow-xl shadow-brand-emerald/10"
+        >
+          Create My Profile
+        </button>
+      </div>
     </form>
-
-    <p class="text-center text-gray-400 text-sm mt-6">
-      Already have an account?
-      <a
-        href="{{ url_for('auth.login') }}"
-        class="text-purple-300 hover:text-white transition"
-        >Login</a
-      >
-    </p>
   </div>
 </div>
 {% endblock %}
