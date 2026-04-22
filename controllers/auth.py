@@ -40,7 +40,7 @@ def register():
     session['user_id'] = user_id
     session['email'] = email
     session['role'] = 'developer'
-    full_name = get_developer_by_user_id(session['user_id'])[2]
+    full_name = get_developer_by_user_id(session['user_id'])['full_name']
     session['full_name'] = full_name
 
     flash("Welcome to Gitogether!", "success")
@@ -64,11 +64,11 @@ def login():
         flash("Invalid email or password", "error")
         return redirect(url_for('auth.login'))
 
-    if not verify_password(password, user[2]):
+    if not verify_password(password, user['password_hash']):
         flash("Invalid email or password", "error")
         return redirect(url_for('auth.login'))
 
-    if not user[5]:
+    if not user['is_active']:
         flash("Your account has been deactivated", "error")
         return redirect(url_for('auth.login'))
 

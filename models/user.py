@@ -9,7 +9,7 @@ def create_user(email, password, role = "developer"):
                 VALUES(%s, %s, %s)
                 RETURNING user_id
                 """,(email,password_hashed,role))
-    user_id = cur.fetchone()[0]
+    user_id = cur.fetchone()['user_id']
     conn.commit()
     cur.close()
     conn.close()
@@ -85,7 +85,7 @@ def create_developer_profile(user_id, full_name, bio, location, years_experience
                 VALUES(%s, %s, %s, %s, %s, %s, %s)
                 RETURNING developer_id
                 """,(user_id, full_name, bio, location, years_experience, contact_link, avatar_url))
-    developer_id = cur.fetchone()[0]
+    developer_id = cur.fetchone()['developer_id']
     conn.commit()
     cur.close()
     conn.close()
@@ -98,8 +98,8 @@ def get_developer_by_user_id(user_id):
                 SELECT dp.*, u.email, u.role
                 FROM developer_profiles dp
                 JOIN users u ON u.user_id = dp.user_id
-                where user_id = (%s)
-               """,(user_id))
+                where dp.user_id = (%s)
+               """,(user_id,))
     developer = cur.fetchone()
     conn.commit()
     cur.close()
@@ -113,7 +113,7 @@ def get_developer_by_id(dev_id):
     result = cur.fetchone()
     cur.close()
     conn.close()
-    return result[0] if result else None
+    return result['developer_id'] if result else None
 
 def get_developer_id(user_id):
     conn = get_connection()
@@ -122,7 +122,7 @@ def get_developer_id(user_id):
     result = cur.fetchone()
     cur.close()
     conn.close()
-    return result[0] if result else None
+    return result['developer_id'] if result else None
 
 def get_developer_by_name(full_name):
     conn = get_connection()

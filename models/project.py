@@ -11,7 +11,7 @@ def create_project(owner_id, title, description, location, slots_needed):
         RETURNING project_id
     """, (owner_id, title, description, location, slots_needed))
     
-    project_id = cur.fetchone()[0]
+    project_id = cur.fetchone()['project_id']
     
     conn.commit()
     cur.close()

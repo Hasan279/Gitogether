@@ -29,6 +29,7 @@ def index():
     completed_matches = get_completed_matches_by_developer(developer_id, limit=3)
     avg_rating = get_average_rating(developer_id)
 
+
     return render_template('dashboard/dashboard.html',
                            developer=developer,
                            my_projects=my_projects,

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, flash
-from models.project import delete_project, get_all_projects
-from models.user import deactivate_user, get_all_users
+from models.project import delete_project, get_all_open_projects
+from models.user import deactivate_user, get_all_developers
 
 bp = Blueprint('admin', __name__)
 
@@ -17,8 +17,8 @@ def panel():
         flash("Access denied", "error")
         return redirect(url_for('auth.login'))
 
-    users = get_all_users()
-    projects = get_all_projects()
+    users = get_all_developers()
+    projects = get_all_open_projects()
 
     return render_template('admin/panel.html', users=users, projects=projects)
 

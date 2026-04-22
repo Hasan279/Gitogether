@@ -63,18 +63,18 @@
         </div>
         <div class="flex gap-2">
           <a
-            href="{{ url_for('projects.detail', project_id=project[0]) }}"
+            href="{{ url_for('projects.detail', project_id=project['project_id']) }}"
             class="btn btn-ghost btn-xs text-gray-300"
             >View</a
           >
           <a
-            href="{{ url_for('projects.edit', project_id=project[0]) }}"
+            href="{{ url_for('projects.edit', project_id=project['project_id']) }}"
             class="btn btn-ghost btn-xs text-gray-300"
             >Edit</a
           >
           <form
             method="POST"
-            action="{{ url_for('projects.delete', project_id=project[0]) }}"
+            action="{{ url_for('projects.delete', project_id=project['project_id']) }}"
             onsubmit="return confirm('Delete this project?');"
           >
             <button type="submit" class="btn btn-ghost btn-xs text-red-400">
@@ -109,7 +109,7 @@
       >
         <div>
           <a
-            href="{{ url_for('developers.profile', developer_id=req[1]) }}"
+            href="{{ url_for('developers.profile', developer_id=req['developer_id']) }}"
             class="text-white font-medium hover:text-purple-300"
           >
             {{ req['full_name'] }}
