@@ -1,9 +1,9 @@
-from models.db import get_connection
+from models.db import *
 
 
 def create_rating(match_id, rater_id, rated_id, score, review):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
                 insert into ratings (match_id, rater_id, rated_id, score, review)
@@ -21,7 +21,7 @@ def create_rating(match_id, rater_id, rated_id, score, review):
 
 def get_rating_by_id(rating_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
                 select * from ratings
@@ -37,7 +37,7 @@ def get_rating_by_id(rating_id):
 
 def get_ratings_by_developer(developer_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
                 select * from ratings
@@ -54,7 +54,7 @@ def get_ratings_by_developer(developer_id):
 
 def get_average_rating(developer_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
                 select COALESCE(AVG(score), 0) from ratings
@@ -71,7 +71,7 @@ def get_average_rating(developer_id):
 
 def check_existing_rating(match_id, rater_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
                 select * from ratings
@@ -88,7 +88,7 @@ def check_existing_rating(match_id, rater_id):
 
 def get_ratings_by_match(match_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
                 select * from ratings

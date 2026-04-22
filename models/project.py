@@ -1,9 +1,9 @@
-from models.db import get_connection
+from models.db import *
 
 
 def create_project(owner_id, title, description, location, slots_needed):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         INSERT INTO Projects (owner_id, title, description, location, slots_needed)
@@ -24,7 +24,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
     offset = (page - 1) * per_page
     
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     if skill_filter:
         cur.execute("""
@@ -65,7 +65,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
 
 def get_project_by_id(project_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         SELECT p.*, dp.full_name, dp.bio, dp.avatar_url
@@ -84,7 +84,7 @@ def get_project_by_id(project_id):
 
 def get_projects_by_owner(owner_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         SELECT * FROM Projects
@@ -102,7 +102,7 @@ def get_projects_by_owner(owner_id):
 
 def update_project(project_id, title, description, location, slots_needed):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         UPDATE Projects
@@ -120,7 +120,7 @@ def update_project(project_id, title, description, location, slots_needed):
 
 def update_project_status(project_id, status):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         UPDATE Projects
@@ -135,7 +135,7 @@ def update_project_status(project_id, status):
 
 def delete_project(project_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         DELETE FROM Projects

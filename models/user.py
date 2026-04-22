@@ -1,8 +1,8 @@
 import bcrypt
-from models.db import get_connection
+from models.db import *
 def create_user(email, password, role = "developer"):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     password_hashed = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt()).decode('utf-8')
     cur.execute("""
                 INSERT INTO USERS(email,password_hash,role)
@@ -17,7 +17,7 @@ def create_user(email, password, role = "developer"):
 
 def delete_user(user_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                 DELETE FROM USERS
                 WHERE user_id = (%s)
@@ -28,7 +28,7 @@ def delete_user(user_id):
 
 def get_user_by_email(email):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                Select * FROM USERS
                WHERE email = (%s)
@@ -41,7 +41,7 @@ def get_user_by_email(email):
 
 def get_user_by_id(user_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                Select * FROM USERS
                WHERE user_id = (%s)
@@ -57,7 +57,7 @@ def verify_password(plain_password,hashed_password):
         
 def activate_user(user_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                     update users 
                 set is_active = TRUE
@@ -68,7 +68,7 @@ def activate_user(user_id):
 
 def deactivate_user(user_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute(""" 
                     update users
                 set is_active = FALSE
@@ -79,7 +79,7 @@ def deactivate_user(user_id):
 
 def create_developer_profile(user_id, full_name, bio, location, years_experience, contact_link, avatar_url=None):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                 INSERT INTO developer_profiles(user_id, full_name, bio, location, years_experience, contact_link, avatar_url)
                 VALUES(%s, %s, %s, %s, %s, %s, %s)
@@ -93,7 +93,7 @@ def create_developer_profile(user_id, full_name, bio, location, years_experience
 
 def get_developer_by_user_id(user_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                 SELECT dp.*, u.email, u.role
                 FROM developer_profiles dp
@@ -108,7 +108,7 @@ def get_developer_by_user_id(user_id):
 
 def get_developer_by_id(dev_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("SELECT * FROM Developer_Profiles WHERE dev_id = %s", (dev_id,))
     result = cur.fetchone()
     cur.close()
@@ -117,7 +117,7 @@ def get_developer_by_id(dev_id):
 
 def get_developer_id(user_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("SELECT developer_id FROM Developer_Profiles WHERE user_id = %s", (user_id,))
     result = cur.fetchone()
     cur.close()
@@ -126,7 +126,7 @@ def get_developer_id(user_id):
 
 def get_developer_by_name(full_name):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                SELECT dp.*, u.email, u.role
                 FROM developer_profiles dp
@@ -141,7 +141,7 @@ def get_developer_by_name(full_name):
 
 def update_developer_profile(user_id, full_name, bio, location, years_experience, contact_link, avatar_url=None):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                 update developer_profiles
                 set full_name = %s, 
@@ -162,7 +162,7 @@ def get_all_developers(skill_filter=None, page=1, per_page=10):
     offset = (page - 1) * per_page
 
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
 
     if skill_filter:
         cur.execute("""
@@ -209,7 +209,7 @@ def get_all_developers(skill_filter=None, page=1, per_page=10):
 
 def delete_developer_profile(user_id):
     conn = get_connection()
-    cur= conn.cursor()
+    cur= get_cursor(conn)
     cur.execute(""" delete from developer_profiles
                 where user_id = %s """, (user_id))
     conn.commit()

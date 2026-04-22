@@ -1,8 +1,8 @@
-from models.db import get_connection
+from models.db import *
 
 def create_match(developer_id, project_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                     INSERT INTO Matches (developer_id, project_id, status)
                     VALUES (%s, %s, 'active')
@@ -18,7 +18,7 @@ def create_match(developer_id, project_id):
 
 def get_match_by_id(match_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                     SELECT * FROM Matches
                     WHERE match_id = %s
@@ -32,7 +32,7 @@ def get_match_by_id(match_id):
 
 def get_active_matches_by_developer(developer_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                     SELECT m.* , p.title, p.location, p.owner_id
                     FROM Matches m
@@ -48,7 +48,7 @@ def get_active_matches_by_developer(developer_id):
 
 def get_completed_matches_by_developer(developer_id, limit=3):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                     SELECT m.* , p.title, p.location, p.owner_id
                     FROM Matches m
@@ -67,7 +67,7 @@ def get_completed_matches_by_developer(developer_id, limit=3):
 
 def complete_match(match_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                     UPDATE Matches
                     SET status = 'completed', completed_at = CURRENT_TIMESTAMP
@@ -81,7 +81,7 @@ def complete_match(match_id):
 
 def check_existing_match(developer_id, project_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     cur.execute("""
                     SELECT * FROM Matches
                     WHERE developer_id = %s AND project_id = %s

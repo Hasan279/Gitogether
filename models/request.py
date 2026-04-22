@@ -1,9 +1,9 @@
-from models.db import get_connection
+from models.db import *
 
 
 def create_request(developer_id, project_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         INSERT INTO Requests (developer_id, project_id, status)
@@ -22,7 +22,7 @@ def create_request(developer_id, project_id):
 
 def get_request_by_id(request_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         SELECT * FROM Requests
@@ -39,7 +39,7 @@ def get_request_by_id(request_id):
 
 def get_requests_by_project(project_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         SELECT r.request_id, r.status, r.created_at,
@@ -64,7 +64,7 @@ def get_requests_by_project(project_id):
 
 def get_requests_by_developer(developer_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         SELECT r.request_id, r.status, r.created_at,
@@ -85,7 +85,7 @@ def get_requests_by_developer(developer_id):
 
 def update_request_status(request_id, status):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     # update request
     cur.execute("""
@@ -122,7 +122,7 @@ def update_request_status(request_id, status):
 
 def check_existing_request(developer_id, project_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         SELECT * FROM Requests

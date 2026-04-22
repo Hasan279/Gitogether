@@ -1,9 +1,9 @@
-from models.db import get_connection
+from models.db import *
 
 
 def get_all_skills():
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         SELECT * FROM Skills
@@ -19,7 +19,7 @@ def get_all_skills():
 
 def add_skill(skill_name, category):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         INSERT INTO Skills (skill_name, category)
@@ -47,7 +47,7 @@ def add_skill(skill_name, category):
 
 def get_developer_skills(developer_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         SELECT s.skill_id, s.skill_name, s.category, ds.proficiency_level
@@ -66,7 +66,7 @@ def get_developer_skills(developer_id):
 
 def add_developer_skill(developer_id, skill_id, proficiency_level):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         INSERT INTO Developer_Skills (developer_id, skill_id, proficiency_level)
@@ -81,7 +81,7 @@ def add_developer_skill(developer_id, skill_id, proficiency_level):
 
 def remove_developer_skill(developer_id, skill_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         DELETE FROM Developer_Skills
@@ -95,7 +95,7 @@ def remove_developer_skill(developer_id, skill_id):
 
 def get_project_skills(project_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         SELECT s.skill_id, s.skill_name, s.category, ps.is_required
@@ -114,7 +114,7 @@ def get_project_skills(project_id):
 
 def add_project_skill(project_id, skill_id, is_required):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         INSERT INTO Project_Skills (project_id, skill_id, is_required)
@@ -129,7 +129,7 @@ def add_project_skill(project_id, skill_id, is_required):
 
 def remove_project_skill(project_id, skill_id):
     conn = get_connection()
-    cur = conn.cursor()
+    cur = get_cursor(conn)
     
     cur.execute("""
         DELETE FROM Project_Skills
