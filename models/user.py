@@ -160,7 +160,6 @@ from models.db import get_connection
 
 def get_all_developers(skill_filter=None, page=1, per_page=10):
     offset = (page - 1) * per_page
-
     conn = get_connection()
     cur = get_cursor(conn)
 
@@ -173,7 +172,8 @@ def get_all_developers(skill_filter=None, page=1, per_page=10):
                 dp.location,
                 dp.years_experience,
                 dp.avatar_url,
-                COALESCE(AVG(r.score), 0) AS avg_rating
+                COALESCE(AVG(r.score), 0) AS avg_rating,
+                ARRAY_AGG(DISTINCT s.skill_name) AS skills
             FROM developer_profiles dp
             JOIN developer_skills ds ON dp.developer_id = ds.developer_id
             JOIN skills s ON ds.skill_id = s.skill_id
@@ -192,8 +192,11 @@ def get_all_developers(skill_filter=None, page=1, per_page=10):
                 dp.location,
                 dp.years_experience,
                 dp.avatar_url,
-                COALESCE(AVG(r.score), 0) AS avg_rating
+                COALESCE(AVG(r.score), 0) AS avg_rating,
+                ARRAY_AGG(DISTINCT s.skill_name) AS skills
             FROM developer_profiles dp
+            LEFT JOIN developer_skills ds ON dp.developer_id = ds.developer_id
+            LEFT JOIN skills s ON ds.skill_id = s.skill_id
             LEFT JOIN ratings r ON dp.developer_id = r.rated_id
             GROUP BY dp.developer_id
             ORDER BY avg_rating DESC, dp.years_experience DESC
@@ -201,10 +204,8 @@ def get_all_developers(skill_filter=None, page=1, per_page=10):
         """, (per_page, offset))
 
     developers = cur.fetchall()
-
     cur.close()
     conn.close()
-
     return developers
 
 def delete_developer_profile(user_id):

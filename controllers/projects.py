@@ -34,7 +34,10 @@ def detail(project_id):
     developer_id = get_developer_id(session['user_id'])
     existing_request = check_existing_request(developer_id, project_id)
 
-    return render_template('projects/detail.html', project=project, project_skills=project_skills, existing_request=existing_request)
+    return render_template('projects/detail.html', project=project, 
+                           project_skills=project_skills, 
+                           existing_request=existing_request,
+                           developer_id=developer_id)
 
 
 @bp.route('/projects/create', methods=['GET', 'POST'])
