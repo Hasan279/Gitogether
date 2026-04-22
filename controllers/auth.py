@@ -1,13 +1,14 @@
-from flask import Flask,session,Blueprint,request,render_template,redirect,url_for
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from models.user import create_user, get_user_by_email, create_developer_profile, verify_password
 
-bp = Blueprint('auth',__name__)
+bp = Blueprint('auth', __name__)
 
-@bp.route('/register', methods=['GET','POST'])
+
+@bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
         return render_template('auth/register.html')
-    
+
     email = request.form.get('email', '').strip()
     password = request.form.get('password', '').strip()
     full_name = request.form.get('full_name', '').strip()
@@ -16,62 +17,72 @@ def register():
     years_experience = request.form.get('years_experience', 0)
     contact_link = request.form.get('contact_link', '').strip()
 
-    
+    if not email or '@' not in email:
+        flash("Invalid email address", "error")
+        return redirect(url_for('auth.register'))
+
+    if len(password) < 6:
+        flash("Password must be at least 6 characters", "error")
+        return redirect(url_for('auth.register'))
+
+    if not full_name:
+        flash("Full name is required", "error")
+        return redirect(url_for('auth.register'))
+
     existing_user = get_user_by_email(email)
     if existing_user:
-        return render_template('auth/register.html', error="email already exists!")
-    
-    if not email or '@' not in email:
-        return render_template('auth/register.html', error="Invalid email address")
-    
-    if(not password or len(password)<12):
-         return render_template('auth/register.html', error="Invalid Password")
-     
-    if not bio or not contact_link or not location:
-         return render_template('auth/register.html', error="incomplete information")
-     
-    user_id = create_user(email,password)
-    create_developer_profile(user_id,full_name,bio,location,years_experience,contact_link)
-    
+        flash("Email already registered", "error")
+        return redirect(url_for('auth.register'))
+
+    user_id = create_user(email, password)
+    create_developer_profile(user_id, full_name, bio, location, years_experience, contact_link)
+
     session['user_id'] = user_id
     session['email'] = email
     session['role'] = 'developer'
-    
-    return render_template('dashboard/dashboard.html')
-    # return redirect(url_for('dashboard.index'))
 
-@bp.route('/login',methods=['GET','POST'])
+    flash("Welcome to Gitogether!", "success")
+    return redirect(url_for('dashboard.index'))
+
+
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template('auth/login.html')
-    
+
     email = request.form.get('email', '').strip()
     password = request.form.get('password', '').strip()
-    
+
     if not email or not password:
-        return render_template('auth/login.html',error='Email or password not entered')
-    
+        flash("Email and password are required", "error")
+        return redirect(url_for('auth.login'))
+
     user = get_user_by_email(email)
     if not user:
-        return render_template('auth/login.html',error='email does not exist')
-    
-    if not verify_password(password,user[2]):
-        return render_template('auth/login.html',error='incorrect password')
-    
+        flash("Invalid email or password", "error")
+        return redirect(url_for('auth.login'))
+
+    if not verify_password(password, user[2]):
+        flash("Invalid email or password", "error")
+        return redirect(url_for('auth.login'))
+
     if not user[5]:
-        return render_template('auth/login.html',error="account is deactivated, contact support for info")
+        flash("Your account has been deactivated", "error")
+        return redirect(url_for('auth.login'))
 
     session['user_id'] = user[0]
-    session['email'] = email[1]
+    session['email'] = user[1]
     session['role'] = user[3]
-    
+
     if user[3] == 'admin':
         return redirect(url_for('admin.panel'))
-    
-    return render_template('dashboard/dashboard.html')
-    # return redirect(url_for('dashboard.index'))
+
+    flash("Welcome back!", "success")
+    return redirect(url_for('dashboard.index'))
+
 
 @bp.route('/logout')
 def logout():
     session.clear()
+    flash("Logged out successfully", "success")
     return redirect(url_for('auth.login'))
