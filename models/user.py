@@ -106,6 +106,15 @@ def get_developer_by_user_id(user_id):
     conn.close()
     return developer
 
+def get_developer_by_id(dev_id):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM Developer_Profiles WHERE dev_id = %s", (dev_id,))
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    return result[0] if result else None
+
 def get_developer_id(user_id):
     conn = get_connection()
     cur = conn.cursor()
@@ -146,6 +155,57 @@ def update_developer_profile(user_id, full_name, bio, location, years_experience
     cur.close()
     conn.close()
 
+from models.db import get_connection
+
+
+def get_all_developers(skill_filter=None, page=1, per_page=10):
+    offset = (page - 1) * per_page
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    if skill_filter:
+        cur.execute("""
+            SELECT 
+                dp.developer_id,
+                dp.full_name,
+                dp.bio,
+                dp.location,
+                dp.years_experience,
+                dp.avatar_url,
+                COALESCE(AVG(r.score), 0) AS avg_rating
+            FROM developer_profiles dp
+            JOIN developer_skills ds ON dp.developer_id = ds.developer_id
+            JOIN skills s ON ds.skill_id = s.skill_id
+            LEFT JOIN ratings r ON dp.developer_id = r.rated_id
+            WHERE s.skill_name = %s
+            GROUP BY dp.developer_id
+            ORDER BY avg_rating DESC, dp.years_experience DESC
+            LIMIT %s OFFSET %s
+        """, (skill_filter, per_page, offset))
+    else:
+        cur.execute("""
+            SELECT 
+                dp.developer_id,
+                dp.full_name,
+                dp.bio,
+                dp.location,
+                dp.years_experience,
+                dp.avatar_url,
+                COALESCE(AVG(r.score), 0) AS avg_rating
+            FROM developer_profiles dp
+            LEFT JOIN ratings r ON dp.developer_id = r.rated_id
+            GROUP BY dp.developer_id
+            ORDER BY avg_rating DESC, dp.years_experience DESC
+            LIMIT %s OFFSET %s
+        """, (per_page, offset))
+
+    developers = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return developers
 
 def delete_developer_profile(user_id):
     conn = get_connection()
