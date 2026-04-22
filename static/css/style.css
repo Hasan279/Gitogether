@@ -1,0 +1,63 @@
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0F0E47;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #505081;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #8686AC;
+}
+
+/* Line clamp for project/bio descriptions */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Smooth page transitions */
+body {
+    animation: fadein 0.2s ease-in;
+}
+
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Select option background fix for dark theme */
+select option {
+    background-color: #272757;
+    color: #ffffff;
+}
+
+/* Table row hover */
+tr:hover td {
+    background-color: rgba(80, 80, 129, 0.2) !important;
+}
+
+/* Flash message animation */
+#flash-container .alert {
+    animation: slidein 0.3s ease-out;
+}
+
+@keyframes slidein {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
