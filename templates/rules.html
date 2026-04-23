@@ -1,0 +1,115 @@
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-4xl mx-auto space-y-12 pb-20 px-4">
+  <div class="border-b-2 border-white/5 pb-8">
+    <h1 class="text-5xl font-black text-white uppercase tracking-tighter">
+      Developer <span class="text-brand-teal">Rules</span>
+    </h1>
+    <p class="text-white/60 text-xs font-black uppercase tracking-[0.3em] mt-3">
+      The Gitogether Code of Conduct
+    </p>
+  </div>
+
+  <p
+    class="text-white/80 text-sm leading-relaxed font-medium bg-brand-teal/10 border border-brand-teal/20 p-6 rounded-2xl"
+  >
+    <strong class="text-brand-teal uppercase tracking-widest mr-2"
+      >Mission:</strong
+    >
+    Gitogether is designed to connect serious developers to build real-world
+    projects. To maintain the quality of our ecosystem, all users must adhere to
+    these four core directives. Violations are monitored by platform admins and
+    will result in account suspension.
+  </p>
+
+  <div class="space-y-6">
+    <div
+      class="bg-white/5 border border-white/10 p-8 md:p-10 rounded-[2.5rem] flex flex-col md:flex-row gap-6 md:gap-10 items-start group hover:border-brand-teal/30 transition-all backdrop-blur-sm"
+    >
+      <span
+        class="text-7xl font-black text-brand-teal/20 group-hover:text-brand-teal transition-colors tracking-tighter leading-none"
+        >01</span
+      >
+      <div class="space-y-3 md:mt-2">
+        <h3 class="text-base font-black text-white uppercase tracking-[0.2em]">
+          Absolute Professionalism
+        </h3>
+        <p class="text-sm text-white/60 leading-relaxed font-medium">
+          Treat every interaction like a professional workplace. Harassment,
+          toxicity, discrimination, or abusive language in project chats, code
+          reviews, or peer ratings is strictly prohibited. Disagreements over
+          architecture or code are fine; personal attacks are not.
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="bg-white/5 border border-white/10 p-8 md:p-10 rounded-[2.5rem] flex flex-col md:flex-row gap-6 md:gap-10 items-start group hover:border-brand-teal/30 transition-all backdrop-blur-sm"
+    >
+      <span
+        class="text-7xl font-black text-brand-teal/20 group-hover:text-brand-teal transition-colors tracking-tighter leading-none"
+        >02</span
+      >
+      <div class="space-y-3 md:mt-2">
+        <h3 class="text-base font-black text-white uppercase tracking-[0.2em]">
+          Commitment & Integrity
+        </h3>
+        <p class="text-sm text-white/60 leading-relaxed font-medium">
+          Do not request to join a project if you do not have the bandwidth to
+          contribute. "Ghosting" your team after being accepted halts
+          development and ruins the experience for others. If you must step down
+          from a project, communicate it clearly to the project owner.
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="bg-white/5 border border-white/10 p-8 md:p-10 rounded-[2.5rem] flex flex-col md:flex-row gap-6 md:gap-10 items-start group hover:border-brand-teal/30 transition-all backdrop-blur-sm"
+    >
+      <span
+        class="text-7xl font-black text-brand-teal/20 group-hover:text-brand-teal transition-colors tracking-tighter leading-none"
+        >03</span
+      >
+      <div class="space-y-3 md:mt-2">
+        <h3 class="text-base font-black text-white uppercase tracking-[0.2em]">
+          Authentic Representation
+        </h3>
+        <p class="text-sm text-white/60 leading-relaxed font-medium">
+          Your developer profile must reflect your actual skill set. Do not list
+          frameworks or languages you do not know just to get accepted into
+          higher-tier projects. Falsifying your technical abilities wastes the
+          project owner's time.
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="bg-white/5 border border-white/10 p-8 md:p-10 rounded-[2.5rem] flex flex-col md:flex-row gap-6 md:gap-10 items-start group hover:border-brand-teal/30 transition-all backdrop-blur-sm"
+    >
+      <span
+        class="text-7xl font-black text-brand-teal/20 group-hover:text-brand-teal transition-colors tracking-tighter leading-none"
+        >04</span
+      >
+      <div class="space-y-3 md:mt-2">
+        <h3 class="text-base font-black text-white uppercase tracking-[0.2em]">
+          Constructive Feedback
+        </h3>
+        <p class="text-sm text-white/60 leading-relaxed font-medium">
+          Peer ratings are designed to build reputation, not to tear people
+          down. All reviews must be honest, objective, and based purely on the
+          developer's technical contribution and teamwork. Retaliatory or
+          "review-bombing" ratings will be purged by platform admins.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-8 text-center">
+    <a
+      href="{{ url_for('projects.browse') }}"
+      class="inline-block bg-white text-brand-dark px-10 py-4 rounded-full text-xs font-black uppercase tracking-[0.25em] hover:bg-brand-teal hover:scale-105 transition-all shadow-xl shadow-white/5"
+    >
+      Acknowledge & Browse
+    </a>
+  </div>
+</div>
+{% endblock %}

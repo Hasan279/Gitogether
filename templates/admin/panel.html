@@ -1,0 +1,375 @@
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-7xl mx-auto space-y-12 pb-20 px-4">
+  <div class="flex justify-between items-end">
+    <div>
+      <h1 class="text-5xl font-black text-white uppercase tracking-tighter">
+        Admin <span class="text-brand-teal">Command</span>
+      </h1>
+      <p
+        class="text-white/60 text-xs font-black uppercase tracking-[0.3em] mt-3"
+      >
+        Platform Oversight & Statistics
+      </p>
+    </div>
+    <div
+      class="px-6 py-3 bg-brand-teal/10 border border-brand-teal/30 rounded-2xl shadow-lg shadow-brand-teal/5"
+    >
+      <span
+        class="text-brand-teal text-xs font-black uppercase tracking-widest flex items-center gap-2"
+      >
+        <span class="w-2 h-2 rounded-full bg-brand-teal animate-pulse"></span>
+        System Online
+      </span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    {% set stat_items = [ ('Users', stats.total_users, 'Total User Base'),
+    ('Projects', stats.active_projects, 'Live Listings'), ('Matches',
+    stats.completed_matches, 'Success Rate'), ('Avg Rating',
+    stats.global_avg|round(1), 'User Satisfaction') ] %} {% for label, val, sub
+    in stat_items %}
+    <div
+      class="bg-white/5 border border-white/10 p-10 rounded-[3rem] backdrop-blur-xl group hover:border-brand-teal/30 transition-all"
+    >
+      <p
+        class="text-xs font-black text-brand-teal uppercase tracking-[0.2em] mb-2"
+      >
+        {{ label }}
+      </p>
+      <h2 class="text-5xl font-black text-white tracking-tighter">{{ val }}</h2>
+      <p
+        class="text-[10px] font-bold text-white/50 uppercase mt-6 tracking-widest"
+      >
+        {{ sub }}
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="space-y-20">
+    <section class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="h-8 w-1.5 bg-brand-teal rounded-full"></div>
+          <h3 class="text-sm font-black text-white uppercase tracking-[0.4em]">
+            Developer Control
+          </h3>
+        </div>
+
+        <form
+          method="GET"
+          action="{{ url_for('admin.panel') }}"
+          class="relative w-full md:w-80"
+        >
+          <input type="hidden" name="project_q" value="{{ project_q }}" />
+          <input type="hidden" name="review_q" value="{{ review_q }}" />
+          <input
+            type="text"
+            name="dev_q"
+            value="{{ dev_q }}"
+            placeholder="SEARCH USERS..."
+            class="w-full bg-white/5 border border-white/20 text-white text-xs font-black uppercase tracking-widest px-5 py-3.5 rounded-xl focus:outline-none focus:border-brand-teal focus:bg-white/10 transition-all placeholder:text-white/30"
+          />
+          <button
+            type="submit"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-brand-teal transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <div
+        class="bg-white/5 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+      >
+        <table class="w-full text-left">
+          <thead
+            class="bg-white/[0.03] text-brand-teal font-black uppercase tracking-[0.2em] text-xs"
+          >
+            <tr>
+              <th class="px-10 py-6">Developer</th>
+              <th class="px-10 py-6">Email Address</th>
+              <th class="px-10 py-6">Status</th>
+              <th class="px-10 py-6 text-right">Access Control</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-white/80">
+            {% for dev in developers %}
+            <tr class="hover:bg-white/[0.02] transition-colors group">
+              <td
+                class="px-10 py-6 text-sm font-black uppercase tracking-tight text-white"
+              >
+                {{ dev.full_name or 'Profile Incomplete' }}
+              </td>
+              <td class="px-10 py-6 text-xs text-white/60 tracking-widest">
+                {{ dev.email }}
+              </td>
+              <td class="px-10 py-6">
+                {% if dev.is_active %}
+                <span
+                  class="px-3 py-1 rounded-lg bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/20 text-[10px] font-black uppercase tracking-widest"
+                  >Active</span
+                >
+                {% else %}
+                <span
+                  class="px-3 py-1 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-[10px] font-black uppercase tracking-widest"
+                  >Suspended</span
+                >
+                {% endif %}
+              </td>
+              <td class="px-10 py-6 text-right">
+                <form
+                  action="{{ url_for('admin.toggle_user', user_id=dev.user_id) }}"
+                  method="POST"
+                >
+                  {% if dev.is_active %}
+                  <button
+                    class="text-red-400/60 hover:text-red-400 font-black uppercase tracking-widest text-[10px] transition-all hover:scale-110"
+                  >
+                    Deactivate
+                  </button>
+                  {% else %}
+                  <button
+                    class="text-brand-teal/60 hover:text-brand-teal font-black uppercase tracking-widest text-[10px] transition-all hover:scale-110"
+                  >
+                    Restore
+                  </button>
+                  {% endif %}
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td
+                colspan="4"
+                class="px-10 py-10 text-center text-white/40 text-xs font-bold uppercase tracking-widest"
+              >
+                No users found.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="h-8 w-1.5 bg-brand-teal rounded-full"></div>
+          <h3 class="text-sm font-black text-white uppercase tracking-[0.4em]">
+            Project Control
+          </h3>
+        </div>
+        <form
+          method="GET"
+          action="{{ url_for('admin.panel') }}"
+          class="relative w-full md:w-80"
+        >
+          <input type="hidden" name="dev_q" value="{{ dev_q }}" />
+          <input type="hidden" name="review_q" value="{{ review_q }}" />
+          <input
+            type="text"
+            name="project_q"
+            value="{{ project_q }}"
+            placeholder="SEARCH PROJECTS..."
+            class="w-full bg-white/5 border border-white/20 text-white text-xs font-black uppercase tracking-widest px-5 py-3.5 rounded-xl focus:outline-none focus:border-brand-teal focus:bg-white/10 transition-all placeholder:text-white/30"
+          />
+          <button
+            type="submit"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-brand-teal transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <div
+        class="bg-white/5 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+      >
+        <table class="w-full text-left">
+          <thead
+            class="bg-white/[0.03] text-brand-teal font-black uppercase tracking-[0.2em] text-xs"
+          >
+            <tr>
+              <th class="px-10 py-6">Title</th>
+              <th class="px-10 py-6">Owner</th>
+              <th class="px-10 py-6">Status</th>
+              <th class="px-10 py-6 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-white/80">
+            {% for p in projects %}
+            <tr class="hover:bg-white/[0.02] transition-colors group">
+              <td
+                class="px-10 py-6 text-sm font-black uppercase tracking-tight text-white"
+              >
+                {{ p.title }}
+              </td>
+              <td class="px-10 py-6 text-xs text-white/60 tracking-widest">
+                {{ p.full_name }}
+              </td>
+              <td class="px-10 py-6">
+                <span
+                  class="px-3 py-1 rounded-lg bg-brand-teal/10 text-brand-teal text-[10px] font-black uppercase tracking-widest border border-brand-teal/20"
+                  >{{ p.status }}</span
+                >
+              </td>
+              <td class="px-10 py-6 text-right">
+                <form
+                  action="{{ url_for('admin.delete_project_admin', project_id=p.project_id) }}"
+                  method="POST"
+                >
+                  <button
+                    class="text-red-400/60 hover:text-red-400 font-black uppercase tracking-widest text-[10px] transition-all hover:scale-110"
+                  >
+                    Delete Project
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td
+                colspan="4"
+                class="px-10 py-10 text-center text-white/40 text-xs font-bold uppercase tracking-widest"
+              >
+                No projects found.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="h-8 w-1.5 bg-brand-teal rounded-full"></div>
+          <h3 class="text-sm font-black text-white uppercase tracking-[0.4em]">
+            Review Cleanup
+          </h3>
+        </div>
+        <form
+          method="GET"
+          action="{{ url_for('admin.panel') }}"
+          class="relative w-full md:w-80"
+        >
+          <input type="hidden" name="dev_q" value="{{ dev_q }}" />
+          <input type="hidden" name="project_q" value="{{ project_q }}" />
+          <input
+            type="text"
+            name="review_q"
+            value="{{ review_q }}"
+            placeholder="SEARCH REVIEWS..."
+            class="w-full bg-white/5 border border-white/20 text-white text-xs font-black uppercase tracking-widest px-5 py-3.5 rounded-xl focus:outline-none focus:border-brand-teal focus:bg-white/10 transition-all placeholder:text-white/30"
+          />
+          <button
+            type="submit"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-brand-teal transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for r in ratings %}
+        <div
+          class="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] flex justify-between items-start group hover:border-red-500/20 transition-all"
+        >
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="flex gap-0.5">
+                {% for i in range(r.score|int) %}<span
+                  class="text-yellow-400 text-xs"
+                  >★</span
+                >{% endfor %}
+              </div>
+              <span class="text-white/20 text-xs">|</span>
+              <span
+                class="text-white/60 font-black uppercase text-[10px] tracking-widest"
+              >
+                {{ r.reviewer_name }}
+                <span class="text-brand-teal mx-1">→</span> {{ r.rated_name }}
+              </span>
+            </div>
+            <p class="text-white/90 italic text-sm leading-relaxed pr-4">
+              "{{ r.review }}"
+            </p>
+          </div>
+          <form
+            action="{{ url_for('admin.delete_rating_admin', rating_id=r.rating_id) }}"
+            method="POST"
+          >
+            <button
+              class="opacity-30 group-hover:opacity-100 transition-all text-red-500 hover:scale-125 p-2"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </button>
+          </form>
+        </div>
+        {% else %}
+        <div
+          class="col-span-1 md:col-span-2 bg-white/5 border border-white/10 p-10 rounded-[2.5rem] text-center"
+        >
+          <p class="text-white/40 text-xs font-bold uppercase tracking-widest">
+            No reviews found.
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

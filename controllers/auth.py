@@ -3,7 +3,6 @@ from models.user import *
 
 bp = Blueprint('auth', __name__)
 
-
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
@@ -29,23 +28,23 @@ def register():
         flash("Full name is required", "error")
         return redirect(url_for('auth.register'))
 
-    existing_user = get_user_by_email(email)
-    if existing_user:
+    if get_user_by_email(email):
         flash("Email already registered", "error")
         return redirect(url_for('auth.register'))
 
     user_id = create_user(email, password)
     create_developer_profile(user_id, full_name, bio, location, years_experience, contact_link)
 
+    dev = get_developer_by_user_id(user_id)
+
     session['user_id'] = user_id
     session['email'] = email
     session['role'] = 'developer'
-    full_name = get_developer_by_user_id(session['user_id'])['full_name']
     session['full_name'] = full_name
+    session['developer_id'] = dev['developer_id']
 
     flash("Welcome to Gitogether!", "success")
     return redirect(url_for('dashboard.index'))
-
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -60,11 +59,7 @@ def login():
         return redirect(url_for('auth.login'))
 
     user = get_user_by_email(email)
-    if not user:
-        flash("Invalid email or password", "error")
-        return redirect(url_for('auth.login'))
-
-    if not verify_password(password, user['password_hash']):
+    if not user or not verify_password(password, user['password_hash']):
         flash("Invalid email or password", "error")
         return redirect(url_for('auth.login'))
 
@@ -72,17 +67,25 @@ def login():
         flash("Your account has been deactivated", "error")
         return redirect(url_for('auth.login'))
 
+    dev = get_developer_by_user_id(user['user_id'])
+
     session['user_id'] = user['user_id']
     session['email'] = user['email']
     session['role'] = user['role']
-    full_name = get_developer_by_user_id(session['user_id'])['full_name']
-    session['full_name'] = full_name
+    
+    if dev:
+        session['full_name'] = dev['full_name']
+        session['developer_id'] = dev['developer_id']
+    else:
+        session['full_name'] = "System Admin"
+        session['developer_id'] = 0
+
     if user['role'] == 'admin':
+        flash("Admin Access Granted", "success")
         return redirect(url_for('admin.panel'))
 
     flash("Welcome back!", "success")
     return redirect(url_for('dashboard.index'))
-
 
 @bp.route('/logout')
 def logout():

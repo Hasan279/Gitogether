@@ -25,7 +25,7 @@
               brand: {
                 light: "#C1F6ED" /* Mint highlight */,
                 dark: "#02353C" /* Deep Teal Background */,
-                forest: "#449342" /* Forest Green */,
+                forest: "#FFFDFA" /* Forest Green */,
                 emerald: "#2EAF7D" /* Action Green */,
                 teal: "#3FD0C9" /* High-energy Teal */,
               },
@@ -92,62 +92,109 @@
     hx-boost="true"
   >
     <nav
-      class="nav-accent glass-glow bg-brand-dark/90 backdrop-blur-xl sticky top-0 z-50"
+      class="flex items-center justify-between py-10 px-6 md:px-10 lg:px-12 max-w-[1440px] mx-auto"
     >
-      <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-20 items-center"
-      >
-        <a href="/" class="flex items-center gap-3 group">
+      <a href="/" class="flex items-center gap-4 group">
+        <div
+          class="w-11 h-11 flex items-center justify-center bg-brand-teal/10 rounded-xl border-2 border-brand-teal/20"
+        >
           <img
             src="{{ url_for('static', filename='images/logo.png') }}"
-            alt="Logo"
-            class="h-9 w-auto object-contain transition-transform group-hover:scale-110"
+            class="w-full h-full object-contain group-hover:scale-110 transition-transform"
+            alt="GT"
+            onerror="this.style.display = 'none'"
           />
-          <span
-            class="text-2xl font-black tracking-tighter text-white uppercase hidden md:block"
-          >
-            Gito<span class="text-brand-teal">gether</span>
-          </span>
-        </a>
-
-        <div
-          class="flex gap-4 md:gap-8 items-center font-bold text-sm tracking-wide"
+        </div>
+        <span
+          class="font-black tracking-tighter text-3xl uppercase leading-none"
         >
-          <a
-            href="{{ url_for('projects.browse') }}"
-            class="text-brand-light/70 hover:text-brand-teal transition-colors"
-            >Projects</a
-          >
-          <a
-            href="{{ url_for('developers.browse') }}"
-            class="text-brand-light/70 hover:text-brand-teal transition-colors"
-            >Developers</a
-          >
+          <span class="text-brand-teal">GIT</span
+          ><span class="text-white">OGETHER</span>
+        </span>
+      </a>
 
-          {% if session.user_id %}
-          <a
-            href="{{ url_for('matches.index') }}"
-            class="text-brand-light/70 hover:text-brand-teal transition-colors"
-            >Project History</a
+      <div class="flex items-center gap-12">
+        {% if request.endpoint == 'auth.login' %}
+        <div class="flex items-center gap-6">
+          <span
+            class="text-sm font-bold text-white/20 uppercase tracking-widest hidden sm:inline"
+            >New here?</span
           >
-
-          <div class="h-6 w-[1px] bg-white/10 mx-2"></div>
-
           <a
-            href="{{ url_for('dashboard.index') }}"
-            class="bg-brand-emerald hover:bg-brand-teal text-brand-dark px-6 py-2.5 rounded-full transition-all shadow-lg shadow-brand-emerald/10 active:scale-95"
+            href="{{ url_for('auth.register') }}"
+            class="border-2 border-brand-teal text-brand-teal px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-[0.25em] hover:bg-brand-teal hover:text-brand-dark transition-all"
           >
-            Dashboard
+            Join Now
           </a>
-          {% else %}
+        </div>
+
+        {% elif request.endpoint == 'auth.register' %}
+        <div class="flex items-center gap-6">
+          <span
+            class="text-sm font-bold text-white/20 uppercase tracking-widest hidden sm:inline"
+            >Already a member?</span
+          >
           <a
             href="{{ url_for('auth.login') }}"
-            class="text-brand-teal border border-brand-teal/20 px-6 py-2 rounded-full hover:bg-brand-teal/5 transition-all"
+            class="border-2 border-white/10 text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-[0.25em] hover:bg-white/5 transition-all"
           >
             Login
           </a>
-          {% endif %}
         </div>
+
+        {% else %} {% if session.user_id %}
+        <div class="flex items-center gap-12">
+          {% if session.get('role', '')|lower == 'admin' %}
+          <a
+            href="{{ url_for('admin.panel') }}"
+            class="text-sm font-black uppercase tracking-[0.2em] text-brand-teal border-2 border-brand-teal/20 px-6 py-2.5 rounded-2xl hover:bg-brand-teal/5 transition-all"
+          >
+            Admin Panel
+          </a>
+          {% else %}
+          <div
+            class="hidden md:flex gap-10 text-sm font-black uppercase tracking-[0.25em] text-white/30 mr-4"
+          >
+            <a
+              href="{{ url_for('projects.browse') }}"
+              class="hover:text-brand-teal transition-colors"
+              >Projects</a
+            >
+            <a
+              href="{{ url_for('developers.browse') }}"
+              class="hover:text-brand-teal transition-colors"
+              >Developers</a
+            >
+          </div>
+          <a
+            href="{{ url_for('dashboard.index') }}"
+            class="bg-brand-teal text-brand-dark px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-xl shadow-brand-teal/10"
+          >
+            Dashboard
+          </a>
+          {% endif %}
+
+          <a
+            href="{{ url_for('auth.logout') }}"
+            class="group flex items-center gap-4"
+          >
+            <div
+              class="h-2 w-2 rounded-full bg-red-600/40 group-hover:bg-red-500 transition-all"
+            ></div>
+            <span
+              class="text-sm font-black uppercase tracking-[0.25em] text-white/20 group-hover:text-red-400 transition-colors"
+              >Logout</span
+            >
+          </a>
+        </div>
+        {% else %}
+        <a
+          href="{{ url_for('auth.login') }}"
+          class="border-2 border-white/10 text-white px-8 py-2.5 rounded-full text-sm font-black uppercase tracking-[0.25em] hover:bg-white/5 transition-all"
+        >
+          Login
+        </a>
+        {% endif %} {% endif %}
       </div>
     </nav>
 
@@ -157,14 +204,25 @@
     >
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %} {% for category, message in messages %}
+
       <div
-        class="pointer-events-auto flex items-center gap-4 px-6 py-4 rounded-2xl shadow-2xl border backdrop-blur-lg animate-bounce {% if category == 'error' %} bg-red-500/10 border-red-500/40 text-red-100 {% else %} bg-brand-emerald/10 border-brand-emerald/40 text-brand-light {% endif %}"
+        x-data="{ show: true }"
+        x-show="show"
+        x-init="setTimeout(() => show = false, 3000)"
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="opacity-0 translate-x-8 scale-95"
+        x-transition:enter-end="opacity-100 translate-x-0 scale-100"
+        x-transition:leave="transition ease-in duration-300 transform"
+        x-transition:leave-start="opacity-100 translate-x-0 scale-100"
+        x-transition:leave-end="opacity-0 translate-x-8 scale-95"
+        class="pointer-events-auto flex items-center gap-4 px-6 py-4 rounded-2xl shadow-2xl border backdrop-blur-lg {% if category == 'error' %} bg-red-500/10 border-red-500/40 text-red-100 {% else %} bg-brand-emerald/10 border-brand-emerald/40 text-brand-light {% endif %}"
       >
         <span class="text-lg"
           >{% if category == 'error' %}⚡{% else %}✨{% endif %}</span
         >
         <p class="text-sm font-black">{{ message }}</p>
       </div>
+
       {% endfor %} {% endif %} {% endwith %}
     </div>
 
@@ -182,42 +240,41 @@
           <img
             src="{{ url_for('static', filename='images/logo.png') }}"
             class="h-6 w-auto grayscale brightness-200"
+            onerror="this.style.display = 'none'"
           />
-          <span class="text-xs font-black uppercase tracking-widest text-white"
-            >Gitogether &copy; 2026</span
-          >
+          <span class="text-xs font-black uppercase tracking-widest text-white">
+            Gitogether &copy; 2026
+          </span>
         </div>
 
         <div
           class="flex gap-6 md:gap-10 text-[10px] font-bold text-brand-light/40 uppercase tracking-[0.2em]"
         >
-          <a href="#" class="hover:text-brand-teal transition"
+          {% if session.get('role', '')|lower == 'admin' %}
+          <a
+            href="{{ url_for('admin.panel') }}"
+            class="hover:text-brand-teal transition"
             >Platform Stats</a
           >
-          <a href="#" class="hover:text-brand-teal transition">Dev Rules</a>
-          {% if session.role == 'admin' %}
           <a
             href="{{ url_for('admin.panel') }}"
             class="text-brand-teal/60 hover:text-brand-teal transition"
             >Admin Access</a
           >
+          {% else %}
+          <a
+            href="{{ url_for('dashboard.rules') }}"
+            class="hover:text-brand-teal transition"
+            >Dev Rules</a
+          >
+          <a
+            href="mailto:support@gitogether.com?subject=Gitogether%20Support%20Request"
+            class="hover:text-brand-teal transition"
+            >Contact Support</a
+          >
           {% endif %}
         </div>
       </div>
     </footer>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const toasts = document.querySelectorAll("#toast-wrap > div");
-        toasts.forEach((t) => {
-          setTimeout(() => {
-            t.style.opacity = "0";
-            t.style.transform = "scale(0.9) translateX(30px)";
-            t.style.transition = "all 0.5s ease-in-out";
-            setTimeout(() => t.remove(), 500);
-          }, 2000);
-        });
-      });
-    </script>
   </body>
 </html>

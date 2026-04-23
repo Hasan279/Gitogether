@@ -43,3 +43,7 @@ def index():
                            completed_matches=completed_matches,
                            avg_rating=avg_rating)
 
+@bp.route('/rules')
+def rules():
+
+    return render_template('rules.html')

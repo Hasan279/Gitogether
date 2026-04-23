@@ -104,3 +104,4 @@ def get_ratings_by_match(match_id):
     conn.close()
 
     return rating
+
