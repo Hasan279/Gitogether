@@ -35,7 +35,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
             LEFT JOIN Ratings r ON dp.developer_id = r.rated_id
             JOIN Project_Skills ps ON p.project_id = ps.project_id
             JOIN Skills s ON ps.skill_id = s.skill_id
-            WHERE p.status = 'active' AND s.skill_name = %s
+            WHERE p.status = 'open' AND s.skill_name = %s
             GROUP BY p.project_id, dp.developer_id
             ORDER BY avg_rating DESC, p.created_at DESC
             LIMIT %s OFFSET %s
@@ -47,7 +47,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
             FROM Projects p
             JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
             LEFT JOIN Ratings r ON dp.developer_id = r.rated_id
-            WHERE p.status = 'active'
+            WHERE p.status = 'open'
             GROUP BY p.project_id, dp.developer_id
             ORDER BY avg_rating DESC, p.created_at DESC
             LIMIT %s OFFSET %s
