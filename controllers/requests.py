@@ -1,8 +1,8 @@
 from flask import Blueprint, session, redirect, url_for, flash
 from models.request import create_request, get_request_by_id, update_request_status, check_existing_request
-from models.match import create_match, check_existing_match
+from models.match import *
 from models.user import get_developer_id
-from models.project import get_project_by_id
+from models.project import *
 
 bp = Blueprint('requests', __name__)
 
@@ -15,7 +15,7 @@ def send(project_id):
     developer_id = get_developer_id(session['user_id'])
     project = get_project_by_id(project_id)
 
-    if project['project_id'] == developer_id:
+    if project['owner_id'] == developer_id:
         flash("You cannot request to join your own project", "error")
         return redirect(url_for('projects.detail', project_id=project_id))
 
@@ -37,8 +37,9 @@ def accept(request_id):
     req = get_request_by_id(request_id)
     project = get_project_by_id(req['project_id'])
     developer_id = get_developer_id(session['user_id'])
-
-    if project['project_id'] != developer_id:
+  
+    
+    if int(project['owner_id']) != int(developer_id):
         flash("You are not authorized to accept this request", "error")
         return redirect(url_for('dashboard.index'))
 
@@ -48,9 +49,16 @@ def accept(request_id):
         return redirect(url_for('dashboard.index'))
 
     update_request_status(request_id, 'accepted')
-    create_match(req['developer_id'], req['project_id'])
 
-    flash("Request accepted, match created", "success")
+    current_members = get_active_match_count(req['project_id'])
+    
+    if current_members >= project['slots_needed']:
+        update_project_status(req['project_id'], 'closed')
+        flash("Request accepted! Your team is now full. Project locked.", "success")
+    else:
+        remaining = project['slots_needed'] - current_members
+        flash(f"Request accepted! {remaining} slot(s) remaining.", "success")
+
     return redirect(url_for('dashboard.index'))
 
 
@@ -63,7 +71,7 @@ def reject(request_id):
     project = get_project_by_id(req['project_id'])
     developer_id = get_developer_id(session['user_id'])
 
-    if project['owner_id'] != developer_id:
+    if int(project['owner_id']) != int(developer_id):
         flash("You are not authorized to reject this request", "error")
         return redirect(url_for('dashboard.index'))
 

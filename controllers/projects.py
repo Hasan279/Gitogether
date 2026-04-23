@@ -25,7 +25,7 @@ def detail(project_id):
     project = get_project_by_id(project_id) 
     raw_skills = get_project_skills(project_id) 
     
-    # Group them by category
+    # group by category
     grouped_skills = {}
     for skill in raw_skills:
         cat = skill['category'] if skill.get('category') else 'Other'
@@ -91,7 +91,7 @@ def edit(project_id):
     
     project = get_project_by_id(project_id)
     
-    # Security Check: Ensure only the owner can edit
+    #only the owner can edit
     current_user_id = session.get('developer_id') or session.get('user_id')
     if not project or current_user_id != project['owner_id']:
         flash("Unauthorized access.", "error")

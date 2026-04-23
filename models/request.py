@@ -11,7 +11,7 @@ def create_request(developer_id, project_id):
         RETURNING request_id
     """, (developer_id, project_id))
     
-    request_id = cur.fetchone()[0]
+    request_id = cur.fetchone()['request_id']
     
     conn.commit()
     cur.close()
@@ -97,9 +97,9 @@ def update_request_status(request_id, status):
     
     result = cur.fetchone()
     
-    # if accepted → create match
     if status == 'accepted' and result:
-        developer_id, project_id = result
+        developer_id = result['developer_id']
+        project_id = result['project_id']
         
         cur.execute("""
             INSERT INTO Matches (developer_id, project_id, status)

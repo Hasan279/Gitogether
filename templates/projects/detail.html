@@ -1,5 +1,14 @@
 {% extends 'base.html' %} {% block content %}
 <div class="max-w-5xl mx-auto space-y-6">
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for category, message in messages %}
+  <div
+    class="p-4 rounded-xl border font-bold text-sm text-center uppercase tracking-widest {% if category == 'error' %} bg-red-500/10 border-red-500/50 text-red-400 {% else %} bg-brand-emerald/10 border-brand-emerald/50 text-brand-emerald {% endif %}"
+  >
+    {{ message }}
+  </div>
+  {% endfor %} {% endif %} {% endwith %}
+
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <a
       href="{{ url_for('projects.browse') }}"
@@ -27,18 +36,20 @@
       <a
         href="{{ url_for('projects.edit', project_id=project.project_id) }}"
         class="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2 rounded-xl text-xs font-bold transition uppercase tracking-tighter shadow-sm"
+        >Modify</a
       >
-        Modify
-      </a>
-
-      <button
-        hx-delete="{{ url_for('projects.delete', project_id=project.project_id) }}"
-        hx-confirm="Are you sure you want to terminate this project? This action cannot be undone."
-        hx-target="body"
-        class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 px-4 py-2 rounded-xl text-xs font-bold transition uppercase tracking-tighter"
+      <form
+        action="{{ url_for('projects.delete', project_id=project.project_id) }}"
+        method="POST"
+        onsubmit="return confirm('Terminate this project?');"
       >
-        Terminate
-      </button>
+        <button
+          type="submit"
+          class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 px-4 py-2 rounded-xl text-xs font-bold transition uppercase tracking-tighter"
+        >
+          Terminate
+        </button>
+      </form>
     </div>
     {% endif %}
   </div>
@@ -51,7 +62,6 @@
         <div
           class="absolute top-0 left-0 w-full h-1 bg-brand-teal opacity-30"
         ></div>
-
         <div class="mb-6">
           <span
             class="text-[10px] font-black text-brand-teal uppercase tracking-[0.3em] bg-brand-teal/10 px-3 py-1 rounded-full border border-brand-teal/20"
@@ -63,7 +73,6 @@
             {{ project.title }}
           </h1>
         </div>
-
         <div class="prose prose-invert max-w-none">
           <h3
             class="text-sm font-black text-brand-teal uppercase tracking-widest mb-4"
@@ -96,10 +105,9 @@
             <div class="flex flex-wrap gap-2">
               {% for skill in skills %}
               <span
-                class="bg-white/5 border border-white/10 text-white font-mono text-[11px] px-3 py-1.5 rounded-lg hover:border-brand-teal transition-colors"
+                class="bg-white/5 border border-white/10 text-white font-mono text-[11px] px-3 py-1.5 rounded-lg"
+                >{{ skill.skill_name }}</span
               >
-                {{ skill.skill_name }}
-              </span>
               {% endfor %}
             </div>
           </div>
@@ -130,15 +138,6 @@
             >{{ project.slots_needed }} Members</span
           >
         </div>
-        <div class="flex justify-between items-center">
-          <span class="text-[10px] font-black text-brand-light/30 uppercase"
-            >Created</span
-          >
-          <span class="text-xs font-mono text-white"
-            >{{ project.created_at.strftime('%Y-%m-%d') if project.created_at
-            else 'N/A' }}</span
-          >
-        </div>
       </div>
 
       <div
@@ -147,39 +146,39 @@
         <div
           class="w-16 h-16 bg-brand-teal/20 rounded-full mx-auto mb-4 flex items-center justify-center border border-brand-teal/30"
         >
-          <span class="text-xl font-black text-brand-teal">
-            {{ project.full_name[0]|upper if project.full_name else '?' }}
-          </span>
+          <span class="text-xl font-black text-brand-teal"
+            >{{ project.full_name[0]|upper if project.full_name else '?'
+            }}</span
+          >
         </div>
         <h4 class="text-white font-black uppercase tracking-widest text-sm">
           {{ project.full_name or 'Lead Developer' }}
         </h4>
-        <p
-          class="text-[10px] text-brand-light/40 uppercase tracking-widest mt-1"
-        >
-          Lead Developer
-        </p>
-        <a
-          href="{{ url_for('developers.profile', developer_id=project.owner_id) }}"
-          class="mt-4 block text-[10px] font-bold text-brand-teal hover:text-white transition uppercase"
-          >View Full Profile</a
-        >
       </div>
 
-      {% if current_user_id %} {% if current_user_id != project.owner_id %}
-      <button
-        class="w-full bg-brand-emerald hover:bg-brand-teal text-brand-dark font-black py-4 rounded-2xl transition-all shadow-xl hover:scale-[1.02] active:scale-95 uppercase tracking-widest text-sm shadow-brand-emerald/10"
-      >
-        Request to Join Team
-      </button>
-      {% endif %} {% else %}
-      <a
-        href="{{ url_for('auth.login') }}"
-        class="block w-full bg-white/10 text-white text-center font-black py-4 rounded-2xl border border-white/10 hover:bg-white/20 transition uppercase tracking-widest text-sm"
-      >
-        Login to Join
-      </a>
-      {% endif %}
+      <div id="join-section">
+        {% if current_user_id %} {% if current_user_id != project.owner_id %}
+        <form
+          action="{{ url_for('requests.send', project_id=project.project_id) }}"
+          method="POST"
+          class="w-full"
+        >
+          <button
+            type="submit"
+            class="w-full bg-brand-emerald hover:bg-brand-teal text-brand-dark font-black py-4 rounded-2xl transition-all shadow-xl hover:scale-[1.02] active:scale-95 uppercase tracking-widest text-sm shadow-brand-emerald/10"
+          >
+            Request to Join Team
+          </button>
+        </form>
+        {% endif %} {% else %}
+        <a
+          href="{{ url_for('auth.login') }}"
+          class="block w-full bg-white/10 text-white text-center font-black py-4 rounded-2xl border border-white/10 hover:bg-white/20 transition uppercase tracking-widest text-sm"
+        >
+          Login to Join
+        </a>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>

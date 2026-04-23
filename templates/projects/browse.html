@@ -1,147 +1,90 @@
 {% extends 'base.html' %} {% block content %}
-<div
-  class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6"
->
-  <div>
-    <h1 class="text-3xl md:text-5xl font-black text-white tracking-tight">
-      Discover Projects
-    </h1>
-    <p class="text-brand-light/60 mt-2 text-lg">
-      Find a team, join a stack, and start building.
-    </p>
+<div class="max-w-6xl mx-auto space-y-8">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-4xl font-black text-white uppercase tracking-tighter">
+        Active Projects
+      </h1>
+      <p class="text-brand-light/60 text-sm mt-1">
+        Discover and join projects.
+      </p>
+    </div>
+    <a
+      href="{{ url_for('projects.create') }}"
+      class="bg-brand-teal hover:bg-brand-light text-brand-dark px-6 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition shadow-[0_0_15px_rgba(63,208,201,0.3)]"
+    >
+      + Deploy Project
+    </a>
   </div>
 
-  <form
-    method="GET"
-    action="{{ url_for('projects.browse') }}"
-    class="flex w-full md:w-auto gap-3"
-  >
-    <div class="relative flex-1 md:w-64">
-      <select
-        name="skill"
-        class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-brand-teal/50 transition shadow-inner cursor-pointer relative z-10"
-      >
-        <option value="" class="bg-brand-dark">All Tech Stacks</option>
-
-        {% for skill in skills %} {% if skill_filter == skill.skill_name %}
-        <option value="{{ skill.skill_name }}" class="bg-brand-dark" selected>
-          {{ skill.skill_name }}
-        </option>
-        {% else %}
-        <option value="{{ skill.skill_name }}" class="bg-brand-dark">
-          {{ skill.skill_name }}
-        </option>
-        {% endif %} {% endfor %}
-      </select>
-
-      <div
-        class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-brand-teal z-20"
-      >
-        <svg
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="3"
-            d="M19 9l-7 7-7-7"
-          ></path>
-        </svg>
-      </div>
-    </div>
-    <button
-      type="submit"
-      class="bg-brand-teal/10 hover:bg-brand-teal/20 text-brand-teal border border-brand-teal/30 px-6 py-3 rounded-xl font-bold transition-all active:scale-95"
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for project in projects %}
+    <div
+      class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col h-full hover:border-brand-teal/50 transition-colors group"
     >
-      Filter
-    </button>
-  </form>
-</div>
+      <div class="flex-1">
+        <div class="flex justify-between items-start mb-4">
+          <span
+            class="bg-brand-teal/10 text-brand-teal border border-brand-teal/20 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest"
+          >
+            {{ project.slots_needed }} Slots Open
+          </span>
+          <span class="text-[10px] text-white/40 font-mono"
+            >{{ project.location or 'Remote' }}</span
+          >
+        </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {% for project in projects %}
-  <div
-    class="group bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl hover:border-brand-teal/50 transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-[0_10px_30px_rgba(63,208,201,0.15)] hover:-translate-y-1"
-  >
-    <div>
-      <div class="flex justify-between items-start mb-4">
-        <span
-          class="text-[10px] font-black uppercase tracking-widest text-brand-dark bg-brand-teal px-3 py-1 rounded-full shadow-[0_0_10px_rgba(63,208,201,0.5)]"
-        >
-          {{ project.slots_needed }} slots open
-        </span>
-        <span class="text-xs font-medium text-brand-light/40"
-          >{{ project.created_at.strftime('%b %d') }}</span
-        >
-      </div>
-
-      <a
-        href="{{ url_for('projects.detail', project_id=project.project_id) }}"
-        class="block mt-2 mb-3"
-      >
         <h3
-          class="text-2xl font-bold text-white group-hover:text-brand-teal transition-colors line-clamp-2 leading-tight"
+          class="text-xl font-black text-white uppercase tracking-tighter mb-2 group-hover:text-brand-teal transition"
         >
           {{ project.title }}
         </h3>
-      </a>
-
-      <p class="text-brand-light/60 text-sm leading-relaxed line-clamp-3 mb-6">
-        {{ project.description }}
-      </p>
-    </div>
-
-    <div class="mt-auto pt-6 border-t border-white/10">
-      <div class="flex items-center gap-3 mb-6">
-        <div
-          class="w-10 h-10 rounded-full bg-brand-dark border border-brand-teal/30 flex items-center justify-center text-sm font-black text-brand-light"
-        >
-          {{ project.full_name[0] }}
-        </div>
-        <div>
-          <div class="text-xs text-brand-light/50">Posted by</div>
-          <div class="text-sm font-bold text-white flex items-center gap-2">
-            {{ project.full_name }}
-            <span class="text-xs text-yellow-400 font-normal"
-              >★ {{ "%.1f"|format(project.avg_rating) }}</span
-            >
-          </div>
-        </div>
+        <p class="text-brand-light/60 text-xs font-mono line-clamp-3 mb-6">
+          {{ project.description }}
+        </p>
       </div>
 
-      <form
-        hx-post="{{ url_for('requests.send', project_id=project.project_id) }}"
-        hx-swap="outerHTML"
-      >
-        <button
-          type="submit"
-          class="w-full bg-brand-emerald hover:bg-brand-teal text-brand-dark font-black py-3.5 rounded-xl transition-all shadow-lg shadow-brand-emerald/10 active:scale-[0.98]"
+      <div class="pt-4 border-t border-white/10 mt-auto flex gap-2">
+        <a
+          href="{{ url_for('projects.detail', project_id=project.project_id) }}"
+          class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition"
         >
-          Send Join Request
-        </button>
-      </form>
+          Inspect
+        </a>
+
+        {% set current_user_id = session.developer_id or session.user_id %} {%
+        if current_user_id and current_user_id != project.owner_id %}
+        <form
+          action="{{ url_for('requests.send', project_id=project.project_id) }}"
+          method="POST"
+          class="flex-1"
+        >
+          <button
+            type="submit"
+            class="w-full bg-brand-emerald hover:bg-brand-teal text-brand-dark text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition shadow-lg"
+          >
+            Join
+          </button>
+        </form>
+        {% endif %}
+      </div>
     </div>
-  </div>
-  {% else %}
-  <div
-    class="col-span-full bg-black/20 border border-white/5 border-dashed p-12 rounded-3xl text-center shadow-inner mt-8"
-  >
-    <span class="text-4xl block mb-4 opacity-50">🛸</span>
-    <h3 class="text-xl font-bold text-white mb-2">No projects found</h3>
-    <p class="text-brand-light/50 mb-6">
-      Be the first to create a project with this tech stack.
-    </p>
-    <a
-      href="{{ url_for('projects.create') }}"
-      class="inline-block text-brand-dark bg-brand-teal font-black px-6 py-3 rounded-xl hover:scale-105 transition-all shadow-[0_0_20px_rgba(63,208,201,0.3)]"
+    {% else %}
+    <div
+      class="col-span-full py-20 text-center border border-dashed border-white/20 rounded-3xl bg-black/20"
     >
-      + Post a Project
-    </a>
+      <p
+        class="text-brand-light/50 font-mono text-sm uppercase tracking-widest mb-4"
+      >
+        No active projects available
+      </p>
+      <a
+        href="{{ url_for('projects.create') }}"
+        class="text-brand-teal hover:text-white font-bold text-xs uppercase underline"
+        >Initiate the first sequence</a
+      >
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
 </div>
 {% endblock %}

@@ -1,116 +1,177 @@
-{% extends "base.html" %} {% block title %}{{ developer['full_name'] }} —
-Gitogether{% endblock %} {% block content %}
-
-<div class="max-w-3xl mx-auto">
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-5xl mx-auto space-y-10">
   <a
     href="{{ url_for('developers.browse') }}"
-    class="text-gray-400 hover:text-white text-sm mb-6 inline-block"
+    class="inline-flex items-center gap-2 text-brand-light/40 hover:text-brand-teal transition-colors group"
   >
-    ← Back to Developers
+    <svg
+      class="w-4 h-4 transition-transform group-hover:-translate-x-1"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M10 19l-7-7m0 0l7-7m-7 7h18"
+      />
+    </svg>
+    <span class="text-[10px] font-black uppercase tracking-[0.2em]"
+      >Back to List</span
+    >
   </a>
 
-  <!-- Profile Header -->
-  <div class="card-custom rounded-xl p-8 mb-6">
-    <div class="flex items-start gap-6">
-      <div class="avatar placeholder">
-        <div class="rounded-full w-20" style="background-color: #505081">
-          <span class="text-white text-3xl"
-            >{{ developer['full_name'][0].upper() }}</span
-          >
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex items-start justify-between">
-          <div>
-            <h1 class="text-3xl font-bold text-white">
-              {{ developer['full_name'] }}
-            </h1>
-            {% if developer['location'] %}
-            <p class="text-gray-400 text-sm mt-1">
-              📍 {{ developer['location'] }}
-            </p>
-            {% endif %}
-          </div>
-          {% if avg_rating %}
-          <div class="text-center">
-            <p class="text-3xl font-bold text-yellow-400">
-              {{ "%.1f"|format(avg_rating) }}
-            </p>
-            <p class="text-gray-400 text-xs">⭐ Rating</p>
-          </div>
-          {% endif %}
-        </div>
-
-        {% if developer['years_experience'] %}
-        <p class="text-gray-400 text-sm mt-2">
-          💼 {{ developer['years_experience'] }} year{{ 's' if
-          developer['years_experience'] != 1 }} of experience
-        </p>
-        {% endif %} {% if developer['bio'] %}
-        <p class="text-gray-300 mt-4 leading-relaxed">{{ developer['bio'] }}</p>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
-  <!-- Skills -->
-  {% if developer_skills %}
-  <div class="card-custom rounded-xl p-6 mb-6">
-    <h2 class="text-lg font-bold text-white mb-4">Skills</h2>
-    <div class="flex flex-wrap gap-3">
-      {% for skill in developer_skills %}
-      <div
-        class="flex items-center gap-2 px-3 py-2 rounded-lg"
-        style="background-color: #0f0e47"
-      >
-        <span class="text-white text-sm">{{ skill['skill_name'] }}</span>
-        <span
-          class="badge badge-sm {% if skill['proficiency_level'] == 'expert' %}badge-success {% elif skill['proficiency_level'] == 'intermediate' %}badge-warning {% else %}badge-neutral{% endif %}"
-        >
-          {{ skill['proficiency_level'] }}
-        </span>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- Reviews -->
-  {% if reviews %}
-  <div class="card-custom rounded-xl p-6 mb-6">
-    <h2 class="text-lg font-bold text-white mb-4">Reviews</h2>
-    <div class="space-y-4">
-      {% for review in reviews %}
-      <div class="p-4 rounded-lg" style="background-color: #0f0e47">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-yellow-400">
-            {% for i in range(review['score']) %}⭐{% endfor %}
-          </span>
-          <span class="text-gray-400 text-xs"
-            >{{ review['created_at'].strftime('%b %d, %Y') }}</span
-          >
-        </div>
-        {% if review['review'] %}
-        <p class="text-gray-300 text-sm">{{ review['review'] }}</p>
-        {% endif %}
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- Contact -->
-  {% if developer['contact_link'] and session.get('user_id') %}
-  <div class="card-custom rounded-xl p-6">
-    <h2 class="text-lg font-bold text-white mb-3">Contact</h2>
-    <a
-      href="{{ developer['contact_link'] }}"
-      target="_blank"
-      class="btn btn-primary-custom rounded-lg gap-2"
+  <div
+    class="relative bg-gradient-to-br from-white/10 to-transparent border border-white/10 rounded-[3rem] p-10 overflow-hidden shadow-2xl backdrop-blur-xl"
+  >
+    <div
+      class="flex flex-col md:flex-row gap-10 items-center md:items-start relative z-10"
     >
-      🔗 Reach Out
+      <div
+        class="w-40 h-40 rounded-[2.5rem] bg-brand-dark border-2 border-brand-teal/30 flex items-center justify-center text-6xl font-black text-brand-teal shadow-[0_0_50px_rgba(63,208,201,0.15)]"
+      >
+        {{ developer['full_name'][0]|upper }}
+      </div>
+
+      <div class="flex-1 text-center md:text-left space-y-4">
+        <div class="space-y-1">
+          <h1
+            class="text-5xl font-black text-white uppercase tracking-tighter leading-tight"
+          >
+            {{ developer['full_name'] }}
+          </h1>
+          <div class="flex items-center justify-center md:justify-start gap-4">
+            <div class="flex items-center gap-1 text-yellow-400">
+              <span class="text-lg">★</span>
+              <span class="text-white font-mono font-bold"
+                >{{ "%.1f"|format(avg_rating or 0) }}</span
+              >
+            </div>
+            <span
+              class="text-brand-light/30 font-mono text-xs uppercase tracking-widest"
+              >Avg Rating</span
+            >
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center md:justify-start gap-4">
+          <div class="bg-white/5 border border-white/5 px-4 py-2 rounded-xl">
+            <span
+              class="block text-[8px] font-black text-brand-teal uppercase tracking-widest"
+              >Location</span
+            >
+            <span class="text-white text-xs font-bold"
+              >{{ developer['location'] or 'Remote' }}</span
+            >
+          </div>
+          <div class="bg-white/5 border border-white/5 px-4 py-2 rounded-xl">
+            <span
+              class="block text-[8px] font-black text-brand-teal uppercase tracking-widest"
+              >Experience</span
+            >
+            <span class="text-white text-xs font-bold"
+              >{{ developer['years_experience'] }} Years</span
+            >
+          </div>
+        </div>
+
+        <p
+          class="text-brand-light/60 text-sm leading-relaxed max-w-2xl font-medium"
+        >
+          {{ developer['bio'] or "No bio provided." }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-1 space-y-6">
+      <h3
+        class="text-xs font-black text-white uppercase tracking-[0.3em] border-l-2 border-brand-teal pl-4"
+      >
+        Skills
+      </h3>
+      <div
+        class="bg-black/20 border border-white/5 p-8 rounded-[2.5rem] space-y-4 shadow-inner"
+      >
+        {% if developer_skills %} {% for s in developer_skills %}
+        <div class="flex justify-between items-center group">
+          <span
+            class="text-xs font-bold text-brand-light uppercase tracking-widest group-hover:text-white transition-colors"
+            >{{ s['skill_name'] }}</span
+          >
+          <span
+            class="text-[9px] font-black px-2.5 py-1 rounded bg-brand-teal/10 text-brand-teal border border-brand-teal/20 uppercase"
+          >
+            {{ s['proficiency_level'] }}
+          </span>
+        </div>
+        {% endfor %} {% else %}
+        <p
+          class="text-[10px] text-brand-light/20 italic uppercase tracking-widest"
+        >
+          No skills listed
+        </p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 space-y-6">
+      <h3
+        class="text-xs font-black text-white uppercase tracking-[0.3em] border-l-2 border-brand-teal pl-4"
+      >
+        Reviews
+      </h3>
+      <div class="space-y-4">
+        {% for review in reviews %}
+        <div
+          class="bg-white/5 border border-white/10 p-6 rounded-[2rem] hover:border-brand-teal/30 transition-all backdrop-blur-sm"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-1 text-yellow-400 text-[10px]">
+              {% for i in range(review['score']|int) %}★{% endfor %}
+            </div>
+            <span
+              class="text-[8px] font-black text-brand-teal/40 uppercase tracking-widest"
+              >Feedback</span
+            >
+          </div>
+
+          <p class="text-white/80 text-sm italic font-medium leading-relaxed">
+            "{{ review['review'] }}"
+          </p>
+
+          <div class="mt-4 pt-4 border-t border-white/5">
+            <span
+              class="text-[10px] font-black text-white uppercase tracking-widest"
+              >— {{ review['reviewer_name'] or 'Anonymous' }}</span
+            >
+          </div>
+        </div>
+        {% else %}
+        <div
+          class="bg-white/5 border border-white/5 border-dashed p-12 rounded-[2rem] text-center"
+        >
+          <p
+            class="text-[10px] font-black text-brand-light/20 uppercase tracking-[0.4em]"
+          >
+            No reviews yet
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-center pt-10 pb-20">
+    <a
+      href="{{ developer['contact_link'] or '#' }}"
+      target="_blank"
+      class="bg-brand-teal text-brand-dark px-12 py-5 rounded-2xl font-black uppercase tracking-[0.4em] text-xs hover:bg-white transition-all shadow-[0_0_30px_rgba(63,208,201,0.2)]"
+    >
+      Contact Developer
     </a>
   </div>
-  {% endif %}
 </div>
 {% endblock %}

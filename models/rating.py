@@ -11,7 +11,7 @@ def create_rating(match_id, rater_id, rated_id, score, review):
                 RETURNING rating_id
     """, (match_id, rater_id, rated_id, score, review))
     
-    rating_id = cur.fetchone()[0]
+    rating_id = cur.fetchone()['rating_id']
     
     conn.commit()
     cur.close()
@@ -40,16 +40,17 @@ def get_ratings_by_developer(developer_id):
     cur = get_cursor(conn)
     
     cur.execute("""
-                select * from ratings
-                where rated_id = %s
+        SELECT r.*, dp.full_name as reviewer_name
+        FROM ratings r
+        JOIN developer_profiles dp ON r.rater_id = dp.developer_id
+        WHERE r.rated_id = %s
+        ORDER BY r.created_at DESC
     """, (developer_id,))
 
     details = cur.fetchall()
-    
     conn.commit()
     cur.close()
     conn.close()
-
     return details
 
 def get_average_rating(developer_id):

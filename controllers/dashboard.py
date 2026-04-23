@@ -17,18 +17,22 @@ def index():
     developer = get_developer_by_user_id(user_id)
     developer_id = developer['developer_id']
 
-    my_projects = get_projects_by_owner(developer_id)
+    all_my_projects = get_projects_by_owner(developer_id)
+    my_projects = [p for p in all_my_projects if p['status'] == 'open']
 
-    incoming_requests = []
-    for project in my_projects:
+    all_incoming = []
+    for project in all_my_projects:
         reqs = get_requests_by_project(project['project_id'])
-        incoming_requests.extend(reqs)
+        all_incoming.extend(reqs)
+    
+    incoming_requests = [r for r in all_incoming if r['status'] == 'pending']
 
-    sent_requests = get_requests_by_developer(developer_id)
+    all_sent = get_requests_by_developer(developer_id)
+    sent_requests = [r for r in all_sent if r['status'] in ['pending', 'rejected']]
+
     active_matches = get_active_matches_by_developer(developer_id)
     completed_matches = get_completed_matches_by_developer(developer_id, limit=3)
     avg_rating = get_average_rating(developer_id)
-
 
     return render_template('dashboard/dashboard.html',
                            developer=developer,
@@ -38,3 +42,4 @@ def index():
                            active_matches=active_matches,
                            completed_matches=completed_matches,
                            avg_rating=avg_rating)
+

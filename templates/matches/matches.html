@@ -1,177 +1,128 @@
-{% extends "base.html" %} {% block title %}Matches — Gitogether{% endblock %} {%
-block content %}
-
-<div class="mb-8">
-  <h1 class="text-3xl font-bold text-white">My Collaborations</h1>
-  <p class="text-gray-400 text-sm mt-1">
-    All your active and completed projects
-  </p>
-</div>
-
-<!-- Active Collabs -->
-<div class="mb-10">
-  <h2 class="text-xl font-bold text-white mb-4">
-    Active
-    <span class="badge badge-success ml-2">{{ active_matches|length }}</span>
-  </h2>
-
-  {% if active_matches %}
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-    {% for match in active_matches %}
-    <div class="card-custom rounded-xl p-6">
-      <div class="flex items-start justify-between mb-4">
-        <div>
-          <h3 class="text-white font-bold text-lg">
-            {{ match['project_title'] }}
-          </h3>
-          <p class="text-gray-400 text-sm mt-1">
-            Collaborating with
-            <a
-              href="{{ url_for('developers.profile', developer_id=match['developer_id']) }}"
-              class="text-purple-300 hover:text-white"
-            >
-              {{ match['full_name'] }}
-            </a>
-          </p>
-        </div>
-        <span class="badge badge-success">active</span>
-      </div>
-
-      <p class="text-gray-400 text-xs mb-4">
-        Started {{ match['matched_at'].strftime('%b %d, %Y') }}
-      </p>
-
-      <div class="flex gap-3">
-        <a
-          href="{{ match['contact_link'] }}"
-          target="_blank"
-          class="btn btn-primary-custom btn-sm rounded-lg flex-1"
-        >
-          🔗 Contact
-        </a>
-        {% if match['owner_id'] == session.get('developer_id') %}
-        <form
-          method="POST"
-          action="{{ url_for('matches.complete', match_id=match['match_id']) }}"
-          onsubmit="
-            return confirm(
-              'Mark this project as completed? This cannot be undone.',
-            );
-          "
-        >
-          <button type="submit" class="btn btn-warning btn-sm rounded-lg">
-            Mark Complete
-          </button>
-        </form>
-        {% endif %}
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-
-  {% else %}
-  <div class="card-custom rounded-xl p-8 text-center">
-    <p class="text-gray-400">No active collaborations yet</p>
-    <a
-      href="{{ url_for('projects.browse') }}"
-      class="text-purple-300 hover:text-white text-sm mt-2 inline-block"
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-6xl mx-auto space-y-12 pb-20">
+  <div>
+    <h1 class="text-4xl font-black text-white uppercase tracking-tighter">
+      My <span class="text-brand-teal">Projects</span>
+    </h1>
+    <p
+      class="text-brand-light/50 text-[10px] font-black uppercase tracking-widest mt-2"
     >
-      Browse projects to get started
-    </a>
+      Active and finished collaborations
+    </p>
   </div>
-  {% endif %}
-</div>
 
-<!-- Completed Collabs -->
-<div>
-  <h2 class="text-xl font-bold text-white mb-4">
-    Completed
-    <span class="badge badge-neutral ml-2">{{ completed_matches|length }}</span>
-  </h2>
+  <section class="space-y-6">
+    <h2
+      class="text-xs font-black text-white uppercase tracking-widest border-l-2 border-brand-teal pl-4"
+    >
+      Active
+    </h2>
 
-  {% if completed_matches %}
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-    {% for match in completed_matches %}
-    <div class="card-custom rounded-xl p-6">
-      <div class="flex items-start justify-between mb-4">
+    {% if active_matches %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for match in active_matches %}
+      <div
+        class="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] flex flex-col justify-between hover:border-brand-teal/30 transition-all backdrop-blur-md"
+      >
         <div>
-          <h3 class="text-white font-bold text-lg">
-            {{ match['project_title'] }}
+          <h3 class="text-xl font-black text-white uppercase mb-2">
+            {{ match.title }}
           </h3>
-          <p class="text-gray-400 text-sm mt-1">
-            With
-            <a
-              href="{{ url_for('developers.profile', developer_id=match['developer_id']) }}"
-              class="text-purple-300 hover:text-white"
-            >
-              {{ match['full_name'] }}
-            </a>
+          <p
+            class="text-[10px] font-bold text-brand-light/40 uppercase tracking-widest"
+          >
+            {{ match.location or 'Remote' }}
           </p>
         </div>
-        <span class="badge badge-neutral">completed</span>
-      </div>
 
-      <p class="text-gray-400 text-xs mb-4">
-        Completed {{ match['completed_at'].strftime('%b %d, %Y') }}
-      </p>
+        <div class="mt-8 flex flex-col gap-3">
+          <a
+            href="{{ url_for('projects.detail', project_id=match.project_id) }}"
+            class="text-center text-[10px] font-black text-white border border-white/10 py-3 rounded-xl uppercase hover:bg-white hover:text-brand-dark transition-all"
+          >
+            View Project
+          </a>
 
-      <!-- Rating Form -->
-      {% if not match['already_rated'] %}
-      <div class="p-4 rounded-lg mb-3" style="background-color: #0f0e47">
-        <p class="text-gray-300 text-sm mb-3">Rate your collaborator</p>
-        <form
-          method="POST"
-          action="{{ url_for('ratings.submit', match_id=match['match_id']) }}"
-          class="space-y-3"
-        >
-          <input
-            type="hidden"
-            name="rated_id"
-            value="{{ match['developer_id'] }}"
-          />
-
-          <div class="flex gap-2 items-center">
-            <span class="text-gray-400 text-sm">Score:</span>
-            <select
-              name="score"
-              class="select select-sm input-custom rounded-lg"
+          {% if match.owner_id == session.get('developer_id') %}
+          <form
+            action="{{ url_for('matches.complete', match_id=match.match_id) }}"
+            method="POST"
+          >
+            <button
+              type="submit"
+              class="w-full bg-brand-teal text-brand-dark text-[10px] font-black py-3 rounded-xl uppercase hover:bg-white transition-all shadow-lg shadow-brand-teal/10"
             >
-              <option value="5">⭐⭐⭐⭐⭐ 5</option>
-              <option value="4">⭐⭐⭐⭐ 4</option>
-              <option value="3">⭐⭐⭐ 3</option>
-              <option value="2">⭐⭐ 2</option>
-              <option value="1">⭐ 1</option>
-            </select>
-          </div>
+              Mark Finished
+            </button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div
+      class="bg-black/20 border border-white/5 border-dashed p-12 rounded-[2.5rem] text-center"
+    >
+      <p
+        class="text-[10px] font-black text-brand-light/20 uppercase tracking-[0.4em]"
+      >
+        No active projects right now.
+      </p>
+    </div>
+    {% endif %}
+  </section>
 
-          <textarea
-            name="review"
-            placeholder="Leave a review (optional)"
-            class="textarea input-custom w-full rounded-lg h-16 resize-none text-sm"
-          ></textarea>
+  <section class="space-y-6">
+    <h2
+      class="text-xs font-black text-white uppercase tracking-widest border-l-2 border-white/20 pl-4"
+    >
+      Completed
+    </h2>
 
+    {% if completed_matches %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for match in completed_matches %}
+      <div
+        class="bg-white/5 border border-white/5 p-8 rounded-[2.5rem] opacity-80 hover:opacity-100 transition-all"
+      >
+        <h3 class="text-lg font-black text-white/60 uppercase mb-6">
+          {{ match.title }}
+        </h3>
+
+        {% if not match.already_rated %}
+        <form
+          action="{{ url_for('ratings.rate', match_id=match.match_id) }}"
+          method="GET"
+        >
           <button
             type="submit"
-            class="btn btn-primary-custom btn-sm rounded-lg w-full"
+            class="w-full bg-white text-brand-dark text-[10px] font-black py-4 rounded-xl uppercase hover:bg-brand-teal transition-all shadow-xl"
           >
-            Submit Rating
+            Rate Collaboration
           </button>
         </form>
+        {% else %}
+        <div
+          class="w-full bg-white/5 text-brand-teal/40 text-[9px] font-black uppercase py-4 rounded-xl text-center border border-white/5"
+        >
+          Rating Submitted
+        </div>
+        {% endif %}
       </div>
-      {% else %}
-      <div class="p-3 rounded-lg text-center" style="background-color: #0f0e47">
-        <p class="text-gray-400 text-sm">✓ You have rated this collaboration</p>
-      </div>
-      {% endif %}
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
-
-  {% else %}
-  <div class="card-custom rounded-xl p-8 text-center">
-    <p class="text-gray-400">No completed collaborations yet</p>
-  </div>
-  {% endif %}
+    {% else %}
+    <div
+      class="bg-black/20 border border-white/5 p-12 rounded-[2.5rem] text-center"
+    >
+      <p
+        class="text-[10px] font-black text-brand-light/20 uppercase tracking-[0.4em]"
+      >
+        Your history is empty.
+      </p>
+    </div>
+    {% endif %}
+  </section>
 </div>
-
 {% endblock %}

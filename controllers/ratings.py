@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, redirect, url_for, flash
+from flask import Blueprint, request, session, redirect, url_for, flash,render_template
 from models.rating import create_rating, check_existing_rating
 from models.match import get_match_by_id
 from models.user import get_developer_id
@@ -34,3 +34,18 @@ def submit(match_id):
     create_rating(match_id, rater_id, rated_id, score, review)
     flash("Rating submitted successfully", "success")
     return redirect(url_for('matches.index'))
+
+@bp.route('/ratings/rate/<int:match_id>')
+def rate(match_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    match = get_match_by_id(match_id)
+    user_dev_id = get_developer_id(session['user_id'])
+
+    if match['owner_id'] == user_dev_id:
+        target_id = match['developer_id']
+    else:
+        target_id = match['owner_id']
+
+    return render_template('ratings/rate.html', match=match, rated_id=target_id)

@@ -1,0 +1,239 @@
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-4xl mx-auto space-y-10">
+  <div>
+    <h1 class="text-4xl font-black text-white uppercase tracking-tighter">
+      Edit <span class="text-brand-teal">Profile</span>
+    </h1>
+    <p
+      class="text-brand-light/50 font-mono text-xs uppercase tracking-widest mt-2"
+    >
+      Update only what you need
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+      <form
+        action="{{ url_for('developers.edit_profile') }}"
+        method="POST"
+        class="bg-white/5 border border-white/10 p-8 rounded-[2rem] space-y-6 backdrop-blur-md"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label
+              class="text-[10px] font-black text-brand-teal uppercase tracking-widest"
+              >Full Name</label
+            >
+            <input
+              type="text"
+              name="full_name"
+              value="{{ developer.full_name or '' }}"
+              required
+              class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-brand-teal outline-none transition-all"
+            />
+          </div>
+          <div class="space-y-2">
+            <label
+              class="text-[10px] font-black text-brand-teal uppercase tracking-widest"
+              >Location</label
+            >
+            <input
+              type="text"
+              name="location"
+              value="{{ developer.location or '' }}"
+              class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-brand-teal outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label
+              class="text-[10px] font-black text-brand-teal uppercase tracking-widest"
+              >Years Experience</label
+            >
+            <input
+              type="number"
+              name="years_experience"
+              value="{{ developer.years_experience or 0 }}"
+              class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-brand-teal outline-none transition-all"
+            />
+          </div>
+          <div class="space-y-2">
+            <label
+              class="text-[10px] font-black text-brand-teal uppercase tracking-widest"
+              >Portfolio Link</label
+            >
+            <input
+              type="url"
+              name="contact_link"
+              value="{{ developer.contact_link or '' }}"
+              class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-brand-teal outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label
+            class="text-[10px] font-black text-brand-teal uppercase tracking-widest"
+            >Bio</label
+          >
+          <textarea
+            name="bio"
+            rows="4"
+            class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-brand-teal outline-none transition-all"
+          >
+{{ developer.bio or '' }}</textarea
+          >
+        </div>
+
+        <div class="flex gap-4">
+          <a
+            href="{{ url_for('dashboard.index') }}"
+            class="flex-1 bg-white/5 text-white text-center font-black py-4 rounded-2xl uppercase tracking-[0.2em] text-xs hover:bg-white/10 transition-all"
+            >Cancel</a
+          >
+          <button
+            type="submit"
+            class="flex-[2] bg-brand-teal text-brand-dark font-black py-4 rounded-2xl uppercase tracking-[0.2em] text-xs hover:bg-white transition-all shadow-lg shadow-brand-teal/10"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-white/5 border border-white/10 p-6 rounded-[2rem]">
+        <h3
+          class="text-sm font-black text-white uppercase tracking-widest mb-6"
+        >
+          Manage Skills
+        </h3>
+
+        <form
+          action="{{ url_for('developers.add_skill') }}"
+          method="POST"
+          class="space-y-4"
+        >
+          <div
+            x-data="{ open: false, selectedId: '', selectedName: 'Choose Skill' }"
+            class="relative"
+          >
+            <input
+              type="hidden"
+              name="skill_id"
+              x-model="selectedId"
+              required
+            />
+            <button
+              type="button"
+              @click="open = !open"
+              class="w-full flex justify-between items-center bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-brand-teal transition-all"
+            >
+              <span x-text="selectedName"></span>
+              <svg
+                class="w-4 h-4 text-brand-teal"
+                :class="{'rotate-180': open}"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div
+              x-show="open"
+              @click.away="open = false"
+              class="absolute z-50 w-full mt-2 bg-brand-dark border border-white/10 rounded-xl shadow-2xl max-h-48 overflow-y-auto"
+            >
+              {% for s in all_skills %}
+              <div
+                @click="selectedId = '{{ s.skill_id }}'; selectedName = '{{ s.skill_name }}'; open = false"
+                class="px-4 py-3 text-xs text-brand-light/70 hover:bg-brand-teal/20 hover:text-brand-teal cursor-pointer uppercase font-bold tracking-widest"
+              >
+                {{ s.skill_name }}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div
+            x-data="{ open: false, selected: 'Intermediate' }"
+            class="relative"
+          >
+            <input type="hidden" name="proficiency_level" x-model="selected" />
+            <button
+              type="button"
+              @click="open = !open"
+              class="w-full flex justify-between items-center bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-brand-teal transition-all"
+            >
+              <span x-text="selected"></span>
+              <svg
+                class="w-4 h-4 text-brand-teal"
+                :class="{'rotate-180': open}"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div
+              x-show="open"
+              @click.away="open = false"
+              class="absolute z-50 w-full mt-2 bg-brand-dark border border-white/10 rounded-xl shadow-2xl"
+            >
+              {% for level in ['Beginner', 'Intermediate', 'Advanced', 'Expert']
+              %}
+              <div
+                @click="selected = '{{ level }}'; open = false"
+                class="px-4 py-3 text-xs text-brand-light/70 hover:bg-brand-teal/20 hover:text-brand-teal cursor-pointer uppercase font-bold tracking-widest"
+              >
+                {{ level }}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full border border-brand-teal text-brand-teal font-black py-3 rounded-xl uppercase tracking-widest text-[10px] hover:bg-brand-teal hover:text-brand-dark transition-all"
+          >
+            Add Skill
+          </button>
+        </form>
+
+        <div class="mt-8 flex flex-wrap gap-2">
+          {% for ds in dev_skills %}
+          <div
+            class="bg-white/5 border border-white/10 px-3 py-2 rounded-lg flex items-center gap-3"
+          >
+            <div class="flex flex-col">
+              <span
+                class="text-[10px] font-black text-white uppercase tracking-tighter"
+                >{{ ds.skill_name }}</span
+              >
+              <span class="text-[8px] text-brand-teal/50 font-bold uppercase"
+                >{{ ds.proficiency_level }}</span
+              >
+            </div>
+            <form
+              action="{{ url_for('developers.remove_skill', skill_id=ds.skill_id) }}"
+              method="POST"
+            >
+              <button
+                type="submit"
+                class="text-white/20 hover:text-red-500 transition-colors text-lg font-light"
+              >
+                &times;
+              </button>
+            </form>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-2xl mx-auto py-12">
+  <div
+    class="bg-white/5 border border-white/10 p-10 rounded-[2.5rem] backdrop-blur-xl shadow-2xl"
+  >
+    <div class="mb-10 text-center">
+      <h1 class="text-3xl font-black text-white uppercase tracking-tight">
+        Rate <span class="text-brand-teal">Collaboration</span>
+      </h1>
+      <p
+        class="text-brand-light/40 text-[10px] font-black uppercase tracking-[0.2em] mt-2"
+      >
+        Project: {{ match['title'] }}
+      </p>
+    </div>
+
+    <form
+      action="{{ url_for('ratings.submit', match_id=match['match_id']) }}"
+      method="POST"
+      class="space-y-8"
+    >
+      <input type="hidden" name="rated_id" value="{{ rated_id }}" />
+      <div class="flex flex-col items-center space-y-4">
+        <label
+          class="text-[10px] font-black text-brand-teal uppercase tracking-widest"
+          >Select Score</label
+        >
+        <div class="flex flex-row-reverse justify-center gap-3">
+          {% for i in range(5, 0, -1) %}
+          <input
+            type="radio"
+            id="star{{ i }}"
+            name="score"
+            value="{{ i }}"
+            class="hidden peer"
+            required
+          />
+          <label
+            for="star{{ i }}"
+            class="text-4xl cursor-pointer text-white/10 peer-checked:text-yellow-400 hover:text-yellow-400/50 transition-all transform hover:scale-110"
+            >★</label
+          >
+          {% endfor %}
+        </div>
+      </div>
+      <div class="space-y-2">
+        <label
+          class="text-[10px] font-black text-brand-teal uppercase tracking-widest"
+          >Your Review</label
+        >
+        <textarea
+          name="review"
+          rows="4"
+          placeholder="Write your feedback here..."
+          class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm text-white focus:border-brand-teal outline-none transition-all resize-none"
+          required
+        ></textarea>
+      </div>
+      <div class="flex flex-col gap-3 pt-4">
+        <button
+          type="submit"
+          class="w-full bg-brand-teal text-brand-dark font-black py-4 rounded-2xl uppercase tracking-widest text-xs hover:bg-white transition-all"
+        >
+          Submit Rating
+        </button>
+        <a
+          href="{{ url_for('matches.index') }}"
+          class="text-center text-[10px] font-black text-white/20 hover:text-white uppercase tracking-widest transition-colors py-2"
+          >Cancel</a
+        >
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

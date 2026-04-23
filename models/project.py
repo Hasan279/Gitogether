@@ -35,7 +35,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
             LEFT JOIN Ratings r ON dp.developer_id = r.rated_id
             JOIN Project_Skills ps ON p.project_id = ps.project_id
             JOIN Skills s ON ps.skill_id = s.skill_id
-            WHERE p.status = 'open' AND s.skill_name = %s
+            WHERE p.status = 'active' AND s.skill_name = %s
             GROUP BY p.project_id, dp.developer_id
             ORDER BY avg_rating DESC, p.created_at DESC
             LIMIT %s OFFSET %s
@@ -47,7 +47,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
             FROM Projects p
             JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
             LEFT JOIN Ratings r ON dp.developer_id = r.rated_id
-            WHERE p.status = 'open'
+            WHERE p.status = 'active'
             GROUP BY p.project_id, dp.developer_id
             ORDER BY avg_rating DESC, p.created_at DESC
             LIMIT %s OFFSET %s
@@ -57,6 +57,49 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
     cur.close()
     conn.close()
     return projects
+def get_dashboard_projects(owner_id):
+    conn = get_connection()
+    cur = get_cursor(conn)
+    cur.execute("""
+        SELECT * FROM projects 
+        WHERE owner_id = %s AND status = 'open'
+        ORDER BY created_at DESC
+    """, (owner_id,))
+    projects = cur.fetchall()
+    cur.close()
+    conn.close()
+    return projects
+
+def get_incoming_requests(owner_id):
+    conn = get_connection()
+    cur = get_cursor(conn)
+    cur.execute("""
+        SELECT r.*, p.title, dp.full_name, dp.developer_id
+        FROM requests r
+        JOIN projects p ON r.project_id = p.project_id
+        JOIN developer_profiles dp ON r.developer_id = dp.developer_id
+        WHERE p.owner_id = %s AND r.status = 'pending'
+        ORDER BY r.created_at DESC
+    """, (owner_id,))
+    requests = cur.fetchall()
+    cur.close()
+    conn.close()
+    return requests
+
+def get_sent_requests(developer_id):
+    conn = get_connection()
+    cur = get_cursor(conn)
+    cur.execute("""
+        SELECT r.*, p.title
+        FROM requests r
+        JOIN projects p ON r.project_id = p.project_id
+        WHERE r.developer_id = %s AND r.status IN ('pending', 'rejected')
+        ORDER BY r.created_at DESC
+    """, (developer_id,))
+    requests = cur.fetchall()
+    cur.close()
+    conn.close()
+    return requests
 
 def get_project_by_id(project_id):
     conn = get_connection()

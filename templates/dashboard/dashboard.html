@@ -1,134 +1,146 @@
 {% extends 'base.html' %} {% block content %}
 <div class="mb-8">
-  <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight">
-    Command Center
+  <h1
+    class="text-3xl md:text-4xl font-black text-white tracking-tight uppercase"
+  >
+    Command <span class="text-brand-teal">Center</span>
   </h1>
-  <p class="text-brand-light/60 mt-1">
-    Manage your projects, requests, and collaborations.
+  <p
+    class="text-brand-light/50 font-mono text-xs uppercase tracking-widest mt-1"
+  >
+    System Status: Operational
   </p>
 </div>
 
 <div class="flex flex-col lg:flex-row gap-8">
   <aside class="w-full lg:w-1/3 space-y-6">
     <div
-      class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.5)] relative overflow-hidden group"
+      class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden group"
     >
       <div
-        class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-teal to-brand-emerald"
+        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-teal to-brand-emerald"
       ></div>
 
       <div class="flex items-center gap-4 mb-6">
         <div
-          class="w-16 h-16 rounded-full bg-brand-dark border-2 border-brand-teal flex items-center justify-center text-xl font-black text-brand-light shadow-[0_0_20px_rgba(63,208,201,0.4)]"
+          class="w-16 h-16 rounded-2xl bg-brand-dark border-2 border-brand-teal/50 flex items-center justify-center text-xl font-black text-brand-teal shadow-[0_0_20px_rgba(63,208,201,0.2)]"
         >
-          {{ developer.full_name[0] }}
+          {{ developer.full_name[0]|upper }}
         </div>
         <div>
-          <h2 class="text-xl font-bold text-white">
+          <h2 class="text-xl font-bold text-white uppercase tracking-tight">
             {{ developer.full_name }}
           </h2>
-          <div class="flex items-center gap-1 text-sm text-yellow-400 mt-1">
+          <div
+            class="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-yellow-400/80 mt-1"
+          >
             <span>★</span>
-            <span class="font-bold text-white"
-              >{{ "%.1f"|format(avg_rating) }}</span
-            >
-            <span class="text-brand-light/40 font-normal ml-1">Avg Rating</span>
+            <span class="text-white">{{ "%.1f"|format(avg_rating) }}</span>
+            <span class="text-brand-light/30 font-normal ml-1">Rating</span>
           </div>
         </div>
       </div>
 
-      <div class="space-y-4 text-sm">
-        <div class="flex justify-between border-b border-white/10 pb-2">
-          <span class="text-brand-light/60">Location</span>
-          <span class="text-white font-medium"
-            >{{ developer.location or 'Not specified' }}</span
+      <div class="space-y-4 text-xs font-bold uppercase tracking-widest">
+        <div class="flex justify-between border-b border-white/5 pb-3">
+          <span class="text-brand-light/40">Location</span>
+          <span class="text-white"
+            >{{ developer.location or 'Undefined' }}</span
           >
         </div>
-        <div class="flex justify-between border-b border-white/10 pb-2">
-          <span class="text-brand-light/60">Experience</span>
-          <span class="text-white font-medium"
-            >{{ developer.years_experience }} Years</span
-          >
+        <div class="flex justify-between border-b border-white/5 pb-3">
+          <span class="text-brand-light/40">Experience</span>
+          <span class="text-white">{{ developer.years_experience }} Years</span>
         </div>
-        <div class="pt-2">
+        <div class="pt-4 flex items-center justify-between gap-3">
           <a
             href="{{ developer.contact_link }}"
             target="_blank"
-            class="text-brand-teal hover:text-brand-light text-sm font-bold flex items-center gap-2 transition-colors"
+            class="text-brand-teal hover:text-white text-[10px] font-black transition-colors"
           >
-            View Portfolio ↗
+            PORTFOLIO ↗
+          </a>
+          <a
+            href="{{ url_for('developers.edit_profile') }}"
+            class="bg-white hover:bg-brand-teal text-brand-dark px-4 py-2 rounded-xl text-[10px] font-black transition-all"
+          >
+            EDIT PROFILE
           </a>
         </div>
       </div>
     </div>
 
     <div
-      class="bg-black/20 inset-shadow-sm border border-white/5 p-6 rounded-3xl grid grid-cols-2 gap-4 text-center"
+      class="bg-black/20 border border-white/5 p-6 rounded-[2rem] grid grid-cols-2 gap-4 text-center"
     >
-      <div class="p-4 bg-white/5 rounded-2xl border border-white/10 shadow-sm">
-        <div class="text-3xl font-black text-brand-light">
+      <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+        <div class="text-3xl font-black text-white">
           {{ active_matches|length }}
         </div>
         <div
-          class="text-[10px] text-brand-light/50 font-bold uppercase tracking-widest mt-1"
+          class="text-[9px] text-brand-light/40 font-black uppercase tracking-[0.2em] mt-1"
         >
-          Active<br />Matches
+          Active<br />Collabs
         </div>
       </div>
-      <div class="p-4 bg-white/5 rounded-2xl border border-white/10 shadow-sm">
-        <div class="text-3xl font-black text-brand-light">
+      <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+        <div class="text-3xl font-black text-white">
           {{ my_projects|length }}
         </div>
         <div
-          class="text-[10px] text-brand-light/50 font-bold uppercase tracking-widest mt-1"
+          class="text-[9px] text-brand-light/40 font-black uppercase tracking-[0.2em] mt-1"
         >
-          My<br />Projects
+          Open<br />Listings
         </div>
       </div>
     </div>
   </aside>
 
-  <div class="w-full lg:w-2/3 space-y-8">
+  <div class="w-full lg:w-2/3 space-y-10">
     <section>
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-xl font-bold text-white flex items-center gap-2">
-          <span
-            class="w-2.5 h-2.5 rounded-full {% if incoming_requests %}bg-brand-teal animate-pulse shadow-[0_0_10px_rgba(63,208,201,0.8)]{% else %}bg-white/20{% endif %}"
-          ></span>
-          Incoming Requests
+      <div class="flex items-center gap-3 mb-6">
+        <span
+          class="w-2 h-2 rounded-full {% if incoming_requests %}bg-brand-teal animate-pulse shadow-[0_0_10px_#3FD0C9]{% else %}bg-white/10{% endif %}"
+        ></span>
+        <h3 class="text-sm font-black text-white uppercase tracking-[0.3em]">
+          Action Required
         </h3>
       </div>
 
       {% if incoming_requests %}
-      <div class="space-y-3">
+      <div class="space-y-4">
         {% for req in incoming_requests %}
         <div
-          class="bg-brand-teal/10 border border-brand-teal/40 p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-[0_4px_20px_rgba(63,208,201,0.15)] backdrop-blur-sm"
+          class="bg-brand-teal/5 border border-brand-teal/20 p-6 rounded-[2rem] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 backdrop-blur-md transition-all hover:border-brand-teal/40"
         >
           <div>
-            <div class="text-sm text-brand-light/80 mb-1">
-              Wants to join
-              <span class="text-white font-bold">{{ req.title }}</span>
+            <div
+              class="text-[10px] font-black text-brand-teal uppercase tracking-widest mb-1"
+            >
+              New Applicant for {{ req.title }}
             </div>
-            <div class="text-brand-teal font-black text-lg tracking-wide">
+            <div
+              class="text-white font-black text-xl uppercase tracking-tighter"
+            >
               {{ req.full_name }}
             </div>
             <a
               href="{{ url_for('developers.profile', developer_id=req.developer_id) }}"
-              class="text-xs text-white/60 hover:text-white mt-1 inline-block transition-colors border-b border-white/20"
-              >View Profile</a
+              class="text-[10px] text-brand-light/40 hover:text-white mt-2 inline-block transition-colors font-bold uppercase tracking-widest border-b border-white/10 pb-0.5"
             >
+              Check Credentials
+            </a>
           </div>
 
-          <div class="flex gap-2 w-full sm:w-auto">
+          <div class="flex gap-3 w-full sm:w-auto">
             <form
               action="{{ url_for('requests.accept', request_id=req.request_id) }}"
               method="POST"
-              class="flex-1 sm:flex-none"
+              class="flex-1"
             >
               <button
                 type="submit"
-                class="w-full sm:w-auto bg-brand-emerald hover:bg-brand-teal text-brand-dark font-black px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-brand-emerald/20 hover:scale-105"
+                class="w-full bg-brand-teal text-brand-dark font-black px-6 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:bg-white transition-all"
               >
                 Accept
               </button>
@@ -136,11 +148,11 @@
             <form
               action="{{ url_for('requests.reject', request_id=req.request_id) }}"
               method="POST"
-              class="flex-1 sm:flex-none"
+              class="flex-1"
             >
               <button
                 type="submit"
-                class="w-full sm:w-auto bg-transparent hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold px-5 py-2.5 rounded-xl transition-colors"
+                class="w-full bg-transparent border border-white/10 text-white/50 font-black px-6 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:border-red-500/50 hover:text-red-500 transition-all"
               >
                 Decline
               </button>
@@ -151,47 +163,49 @@
       </div>
       {% else %}
       <div
-        class="bg-black/20 border border-white/10 border-dashed p-8 rounded-3xl text-center text-brand-light/40 shadow-inner"
+        class="bg-white/5 border border-white/5 border-dashed p-10 rounded-[2rem] text-center text-brand-light/20"
       >
-        <span class="text-2xl block mb-2 opacity-50">📫</span>
-        No pending requests right now.
+        <p class="text-[10px] font-black uppercase tracking-[0.4em]">
+          Inbox Clear
+        </p>
       </div>
       {% endif %}
     </section>
 
     <section>
-      <h3 class="text-xl font-bold text-white mb-4">Active Collaborations</h3>
-
+      <h3 class="text-sm font-black text-white uppercase tracking-[0.3em] mb-6">
+        Active Deployments
+      </h3>
       {% if active_matches %}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {% for match in active_matches %}
         <div
-          class="bg-gradient-to-br from-white/10 to-transparent border border-brand-emerald/30 p-6 rounded-2xl relative overflow-hidden group hover:border-brand-emerald/60 transition-colors"
+          class="bg-gradient-to-br from-white/10 to-transparent border border-brand-emerald/20 p-6 rounded-[2rem] relative group hover:border-brand-emerald/50 transition-all"
         >
           <div
-            class="absolute top-4 right-4 w-2 h-2 bg-brand-emerald rounded-full shadow-[0_0_10px_#2EAF7D]"
+            class="absolute top-6 right-6 w-1.5 h-1.5 bg-brand-emerald rounded-full shadow-[0_0_10px_#2EAF7D]"
           ></div>
-
-          <h4 class="font-bold text-white text-lg mb-1">{{ match.title }}</h4>
-          <p
-            class="text-xs text-brand-light/60 mb-4 font-medium uppercase tracking-wider"
+          <h4
+            class="font-black text-white text-lg uppercase tracking-tight mb-1"
           >
-            Matched {{ match.matched_at.strftime('%b %d, %Y') }}
+            {{ match.title }}
+          </h4>
+          <p
+            class="text-[9px] text-brand-light/40 mb-6 font-bold uppercase tracking-widest"
+          >
+            EST. {{ match.matched_at.strftime('%b %d, %Y') }}
           </p>
 
-          <div
-            class="bg-black/30 p-3 rounded-xl border border-white/5 mb-5 shadow-inner"
-          >
+          <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-6">
             <span
-              class="text-[10px] text-brand-light/50 font-bold uppercase tracking-widest block mb-1"
-              >Partner Contact</span
+              class="text-[8px] text-brand-light/30 font-black uppercase tracking-[0.2em] block mb-2"
+              >Profile link</span
             >
             <a
               href="#"
-              class="text-sm font-mono text-brand-light hover:text-white break-all transition-colors"
+              class="text-xs font-mono text-brand-teal hover:text-white transition-colors"
+              >Click to open ↗</a
             >
-              Reveal in details ↗
-            </a>
           </div>
 
           {% if match.owner_id == developer.developer_id %}
@@ -201,9 +215,9 @@
           >
             <button
               type="submit"
-              class="w-full text-xs font-bold text-brand-emerald border border-brand-emerald/30 hover:bg-brand-emerald hover:text-brand-dark py-3 rounded-xl transition-all shadow-lg shadow-brand-emerald/5"
+              class="w-full text-[9px] font-black text-brand-emerald border border-brand-emerald/20 hover:bg-brand-emerald hover:text-brand-dark py-3 rounded-xl transition-all uppercase tracking-widest"
             >
-              Mark Project Completed
+              Mark as completed
             </button>
           </form>
           {% endif %}
@@ -212,78 +226,90 @@
       </div>
       {% else %}
       <div
-        class="bg-black/20 border border-white/10 border-dashed p-8 rounded-3xl text-center text-brand-light/40 shadow-inner"
+        class="bg-white/5 border border-white/5 p-10 rounded-[2rem] text-center text-brand-light/20"
       >
-        <span class="text-2xl block mb-2 opacity-50">🤝</span>
-        No active matches. Start browsing projects!
+        <p class="text-[10px] font-black uppercase tracking-[0.4em]">
+          No Active Collabs
+        </p>
       </div>
       {% endif %}
     </section>
 
     <section
-      class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-white/10 mt-6"
+      class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-10 border-t border-white/5"
     >
       <div>
-        <h3 class="text-lg font-bold text-white mb-4">My Listings</h3>
+        <h3
+          class="text-xs font-black text-white uppercase tracking-[0.3em] mb-6"
+        >
+          Open Listings
+        </h3>
         <div class="space-y-3">
           {% for proj in my_projects %}
           <a
             href="{{ url_for('projects.detail', project_id=proj.project_id) }}"
-            class="block bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-xl transition-all shadow-sm hover:shadow-md group"
+            class="block bg-white/5 border border-white/10 p-5 rounded-2xl hover:border-brand-teal/50 transition-all group"
           >
-            <div class="flex justify-between items-center mb-1">
+            <div class="flex justify-between items-start mb-2">
               <h4
-                class="font-bold text-white group-hover:text-brand-teal transition-colors"
+                class="font-black text-white text-sm uppercase group-hover:text-brand-teal transition-colors"
               >
                 {{ proj.title }}
               </h4>
               <span
-                class="text-[10px] uppercase font-black px-2 py-1 rounded bg-black/40 text-brand-light border border-white/5"
+                class="text-[8px] font-black px-2 py-1 rounded bg-brand-teal/10 text-brand-teal border border-brand-teal/20 uppercase tracking-widest"
               >
                 {{ proj.status }}
               </span>
             </div>
-            <p class="text-xs text-brand-light/60 font-medium">
-              {{ proj.slots_needed }} slots open
+            <p
+              class="text-[10px] text-brand-light/40 font-bold uppercase tracking-widest"
+            >
+              {{ proj.slots_needed }} Vacancies
             </p>
           </a>
           {% else %}
           <p
-            class="text-sm text-brand-light/40 italic pl-2 border-l-2 border-brand-light/20"
+            class="text-[10px] text-brand-light/20 font-black uppercase tracking-widest italic"
           >
-            You haven't posted any projects.
+            Null Set
           </p>
           {% endfor %}
         </div>
       </div>
 
       <div>
-        <h3 class="text-lg font-bold text-white mb-4">Sent Requests</h3>
+        <h3
+          class="text-xs font-black text-white uppercase tracking-[0.3em] mb-6"
+        >
+          Requests
+        </h3>
         <div class="space-y-3">
           {% for req in sent_requests %}
           <div
-            class="bg-white/5 border border-white/10 p-4 rounded-xl flex justify-between items-center shadow-sm"
+            class="bg-white/5 border {% if req.status == 'rejected' %}border-red-500/10 opacity-50{% else %}border-white/10{% endif %} p-5 rounded-2xl flex justify-between items-center transition-all"
           >
             <div>
-              <h4 class="font-bold text-white text-sm">{{ req.title }}</h4>
-              <p class="text-xs text-brand-light/50 mt-0.5">
+              <h4
+                class="font-black text-xs uppercase {% if req.status == 'rejected' %}text-white/30{% else %}text-white{% endif %} tracking-tight"
+              >
+                {{ req.title }}
+              </h4>
+              <p
+                class="text-[8px] text-brand-light/30 mt-1 font-bold uppercase tracking-widest"
+              >
                 {{ req.created_at.strftime('%b %d') }}
               </p>
             </div>
             <div>
               {% if req.status == 'pending' %}
               <span
-                class="text-[10px] font-black uppercase tracking-wider text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-2.5 py-1 rounded-lg"
+                class="text-[8px] font-black uppercase tracking-widest text-yellow-500 bg-yellow-500/5 border border-yellow-500/10 px-2 py-1 rounded-md"
                 >Pending</span
               >
-              {% elif req.status == 'accepted' %}
+              {% elif req.status == 'rejected' %}
               <span
-                class="text-[10px] font-black uppercase tracking-wider text-brand-emerald bg-brand-emerald/10 border border-brand-emerald/20 px-2.5 py-1 rounded-lg"
-                >Accepted</span
-              >
-              {% else %}
-              <span
-                class="text-[10px] font-black uppercase tracking-wider text-red-400 bg-red-400/10 border border-red-400/20 px-2.5 py-1 rounded-lg"
+                class="text-[8px] font-black uppercase tracking-widest text-red-500 bg-red-500/5 border border-red-500/10 px-2 py-1 rounded-md"
                 >Rejected</span
               >
               {% endif %}
@@ -291,9 +317,9 @@
           </div>
           {% else %}
           <p
-            class="text-sm text-brand-light/40 italic pl-2 border-l-2 border-brand-light/20"
+            class="text-[10px] text-brand-light/20 font-black uppercase tracking-widest italic"
           >
-            You haven't requested to join any projects.
+            No outgoing pings
           </p>
           {% endfor %}
         </div>

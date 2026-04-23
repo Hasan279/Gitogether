@@ -33,14 +33,18 @@ def complete(match_id):
 
     match = get_match_by_id(match_id)
     project = get_project_by_id(match['project_id'])
-    developer_id = get_developer_id(session['user_id'])
+    user_dev_id = get_developer_id(session['user_id'])
 
-    if project['owner_id'] != developer_id:
-        flash("Only the project owner can mark a project as completed", "error")
-        return redirect(url_for('matches.index'))
+    # Only the project owner can close the project
+    if project['owner_id'] != user_dev_id:
+        flash("You are not authorized to complete this project", "error")
+        return redirect(url_for('dashboard.index'))
 
     complete_match(match_id)
     update_project_status(project['project_id'], 'completed')
 
-    flash("Project marked as completed", "success")
-    return redirect(url_for('matches.index'))
+    rated_id = match['developer_id']
+
+    return render_template('ratings/rate.html', 
+                           match=match, 
+                           rated_id=rated_id)
