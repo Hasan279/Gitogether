@@ -71,8 +71,8 @@ gitogether/
 │   └── admin.py
 └── sql/
     ├── schema.sql
-    ├── views.sql
-    └── seed.sql
+    
+
 ```
 
 ---
