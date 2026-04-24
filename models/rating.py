@@ -15,7 +15,7 @@ def create_rating(match_id, rater_id, rated_id, score, review):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return rating_id
 
@@ -32,7 +32,7 @@ def get_rating_by_id(rating_id):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return rating_details
 
 def get_ratings_by_developer(developer_id):
@@ -50,7 +50,7 @@ def get_ratings_by_developer(developer_id):
     details = cur.fetchall()
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return details
 
 def get_average_rating(developer_id):
@@ -66,7 +66,7 @@ def get_average_rating(developer_id):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     if not average_rating:
         return 0
     return float(average_rating)
@@ -84,7 +84,7 @@ def check_existing_rating(match_id, rater_id):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
     return rating
 
@@ -101,7 +101,7 @@ def get_ratings_by_match(match_id):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
     return rating
 

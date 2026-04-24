@@ -11,7 +11,7 @@ def create_match(developer_id, project_id):
     match_id = cur.fetchone()['match_id']
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return match_id
 
 
@@ -27,7 +27,7 @@ def get_match_by_id(match_id):
     """, (match_id,))
     match = cur.fetchone()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return match
 
 def get_active_match_count(project_id):
@@ -40,7 +40,7 @@ def get_active_match_count(project_id):
     """, (project_id,))
     result = cur.fetchone()
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return result['member_count'] if result else 0
 
@@ -81,7 +81,7 @@ def get_active_matches_by_developer(developer_id):
     cur.execute(query, (developer_id, developer_id, developer_id))
     matches = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return matches
 
 
@@ -120,7 +120,7 @@ def get_completed_matches_by_developer(developer_id, limit=10):
     
     matches = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return matches
 
 
@@ -134,7 +134,7 @@ def complete_match(match_id):
                     """, (match_id,))
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 
 
@@ -147,7 +147,7 @@ def check_existing_match(developer_id, project_id):
                     """, (developer_id, project_id))
     match = cur.fetchone()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return match
 
 def get_unrated_team_members(project_id, rater_id):
@@ -176,7 +176,7 @@ def get_unrated_team_members(project_id, rater_id):
     
     unrated_dev = cur.fetchone() 
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return unrated_dev
 
@@ -202,4 +202,4 @@ def complete_project_matches(project_id):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)

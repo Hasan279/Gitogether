@@ -12,7 +12,7 @@ def create_user(email, password, role = "developer"):
     user_id = cur.fetchone()['user_id']
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return user_id
 
 def delete_user(user_id):
@@ -24,7 +24,7 @@ def delete_user(user_id):
                 """,(user_id))
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 def get_user_by_email(email):
     conn = get_connection()
@@ -36,7 +36,7 @@ def get_user_by_email(email):
     User = cur.fetchone()
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return User
 
 def get_user_by_id(user_id):
@@ -49,7 +49,7 @@ def get_user_by_id(user_id):
     User = cur.fetchone()
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return User
 
 def verify_password(plain_password,hashed_password):
@@ -64,7 +64,7 @@ def activate_user(user_id):
                 where user_id = %s """, (user_id))
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 def deactivate_user(user_id):
     conn = get_connection()
@@ -75,7 +75,7 @@ def deactivate_user(user_id):
                 where user_id = %s""", (user_id))
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 def create_developer_profile(user_id, full_name, bio, location, years_experience, contact_link, avatar_url=None):
     conn = get_connection()
@@ -88,7 +88,7 @@ def create_developer_profile(user_id, full_name, bio, location, years_experience
     developer_id = cur.fetchone()['developer_id']
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return developer_id
 
 def get_developer_by_user_id(user_id):
@@ -103,7 +103,7 @@ def get_developer_by_user_id(user_id):
     developer = cur.fetchone()
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return developer
 
 def get_developer_by_id(dev_id):
@@ -112,7 +112,7 @@ def get_developer_by_id(dev_id):
     cur.execute("SELECT * FROM Developer_Profiles WHERE developer_id = %s", (dev_id,))
     result = cur.fetchone()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return result
 
 def get_developer_id(user_id):
@@ -121,7 +121,7 @@ def get_developer_id(user_id):
     cur.execute("SELECT developer_id FROM Developer_Profiles WHERE user_id = %s", (user_id,))
     result = cur.fetchone()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return result['developer_id'] if result else None
 
 def get_developer_by_name(full_name):
@@ -136,7 +136,7 @@ def get_developer_by_name(full_name):
     developer = cur.fetchone()
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return developer 
 
 def update_developer_profile(user_id, full_name, bio, location, years_experience, contact_link, avatar_url=None):
@@ -153,7 +153,7 @@ def update_developer_profile(user_id, full_name, bio, location, years_experience
                 where user_id = %s """, (full_name, bio, location, years_experience, contact_link, avatar_url, user_id))
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 
 def get_all_developers(skill_filter=None, page=1, per_page=10):
@@ -212,7 +212,7 @@ def get_all_developers(skill_filter=None, page=1, per_page=10):
 
     developers = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return developers
 
 def delete_developer_profile(user_id):
@@ -222,7 +222,7 @@ def delete_developer_profile(user_id):
                 where user_id = %s """, (user_id))
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
     
     

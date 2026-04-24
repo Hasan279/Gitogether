@@ -12,7 +12,7 @@ def get_all_skills():
     all_skills = cur.fetchall()
     
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return all_skills
 
@@ -40,7 +40,7 @@ def add_skill(skill_name, category):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return skill_id
 
@@ -59,7 +59,7 @@ def get_developer_skills(developer_id):
     dev_skills = cur.fetchall()
     
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return dev_skills
 
@@ -76,7 +76,7 @@ def add_developer_skill(developer_id, skill_id, proficiency_level):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 
 def remove_developer_skill(developer_id, skill_id):
@@ -90,7 +90,7 @@ def remove_developer_skill(developer_id, skill_id):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 
 def get_project_skills(project_id):
@@ -107,7 +107,7 @@ def get_project_skills(project_id):
     proj_skills = cur.fetchall()
     
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return proj_skills
 
@@ -124,7 +124,7 @@ def add_project_skill(project_id, skill_id, is_required):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 
 def remove_project_skill(project_id, skill_id):
@@ -138,4 +138,4 @@ def remove_project_skill(project_id, skill_id):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)

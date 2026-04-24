@@ -15,7 +15,7 @@ def create_project(owner_id, title, description, location, slots_needed):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return project_id
 
@@ -55,7 +55,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
 
     projects = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return projects
 def get_dashboard_projects(owner_id):
     conn = get_connection()
@@ -67,7 +67,7 @@ def get_dashboard_projects(owner_id):
     """, (owner_id,))
     projects = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return projects
 
 def get_incoming_requests(owner_id):
@@ -83,7 +83,7 @@ def get_incoming_requests(owner_id):
     """, (owner_id,))
     requests = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return requests
 
 def get_sent_requests(developer_id):
@@ -98,7 +98,7 @@ def get_sent_requests(developer_id):
     """, (developer_id,))
     requests = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return requests
 
 def get_project_by_id(project_id):
@@ -115,7 +115,7 @@ def get_project_by_id(project_id):
     project = cur.fetchone()
     
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return project
 
@@ -133,7 +133,7 @@ def get_projects_by_owner(owner_id):
     projects = cur.fetchall()
     
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return projects
 
@@ -153,7 +153,7 @@ def update_project(project_id, title, description, location, slots_needed):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 
 def update_project_status(project_id, status):
@@ -168,7 +168,7 @@ def update_project_status(project_id, status):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 
 def delete_project(project_id):
@@ -182,4 +182,4 @@ def delete_project(project_id):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)

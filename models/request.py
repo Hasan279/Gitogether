@@ -15,7 +15,7 @@ def create_request(developer_id, project_id):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return request_id
 
@@ -32,7 +32,7 @@ def get_request_by_id(request_id):
     request = cur.fetchone()
     
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return request
 
@@ -57,7 +57,7 @@ def get_requests_by_project(project_id):
     pending_requests = cur.fetchall()
     
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return pending_requests
 
@@ -78,7 +78,7 @@ def get_requests_by_developer(developer_id):
     requests = cur.fetchall()
     
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return requests
 
@@ -112,7 +112,7 @@ def update_request_status(request_id, status):
     
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 
 def check_existing_request(developer_id, project_id):
@@ -127,6 +127,6 @@ def check_existing_request(developer_id, project_id):
     request = cur.fetchone()
     
     cur.close()
-    conn.close()
+    release_connection(conn)
     
     return request

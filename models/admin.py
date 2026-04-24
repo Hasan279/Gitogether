@@ -1,4 +1,4 @@
-from models.db import get_connection, get_cursor
+from models.db import *
 
 def get_global_stats():
     conn = get_connection()
@@ -12,7 +12,7 @@ def get_global_stats():
     """)
     stats = cur.fetchone()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return stats
 
 def get_all_projects_oversight(search_term=None):
@@ -32,7 +32,7 @@ def get_all_projects_oversight(search_term=None):
     cur.execute(query, tuple(params))
     projects = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return projects
 
 def get_all_ratings_oversight(search_term=None):
@@ -53,7 +53,7 @@ def get_all_ratings_oversight(search_term=None):
     cur.execute(query, tuple(params))
     ratings = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return ratings
 
 # --- NEW: DEVELOPER OVERSIGHT & TOGGLE ---
@@ -76,7 +76,7 @@ def get_all_developers_oversight(search_term=None):
     cur.execute(query, tuple(params))
     devs = cur.fetchall()
     cur.close()
-    conn.close()
+    release_connection(conn)
     return devs
 
 def toggle_user_status_admin(user_id):
@@ -90,7 +90,7 @@ def toggle_user_status_admin(user_id):
     """, (user_id,))
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 # --- DELETION ---
 
@@ -100,7 +100,7 @@ def delete_rating_admin(rating_id):
     cur.execute("DELETE FROM ratings WHERE rating_id = %s", (rating_id,))
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
 
 def delete_project_admin(project_id):
     conn = get_connection()
@@ -108,4 +108,4 @@ def delete_project_admin(project_id):
     cur.execute("DELETE FROM projects WHERE project_id = %s", (project_id,))
     conn.commit()
     cur.close()
-    conn.close()
+    release_connection(conn)
