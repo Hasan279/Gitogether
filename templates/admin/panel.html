@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% block content %}
+{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block
+content %}
 <div class="max-w-7xl mx-auto space-y-12 pb-20 px-4">
   <div class="flex justify-between items-end">
     <div>
@@ -109,10 +110,24 @@
           <tbody class="divide-y divide-white/5 text-white/80">
             {% for dev in developers %}
             <tr class="hover:bg-white/[0.02] transition-colors group">
-              <td
-                class="px-10 py-6 text-sm font-black uppercase tracking-tight text-white"
-              >
-                {{ dev.full_name or 'Profile Incomplete' }}
+              <td class="px-10 py-6">
+                <div class="flex items-center gap-4">
+                  {{ render_avatar(dev.full_name, dev.avatar_url, 'w-10 h-10')
+                  }}
+
+                  <div class="flex flex-col">
+                    <span
+                      class="text-sm font-black uppercase tracking-tight text-white leading-none mb-1"
+                    >
+                      {{ dev.full_name or 'Profile Incomplete' }}
+                    </span>
+                    <span
+                      class="text-[9px] text-brand-teal/50 font-black uppercase tracking-[0.2em]"
+                    >
+                      ID: #{{ dev.user_id }}
+                    </span>
+                  </div>
+                </div>
               </td>
               <td class="px-10 py-6 text-xs text-white/60 tracking-widest">
                 {{ dev.email }}
