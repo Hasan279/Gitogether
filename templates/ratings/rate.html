@@ -4,9 +4,22 @@
     class="bg-white/5 border border-white/10 p-10 rounded-[2.5rem] backdrop-blur-xl shadow-2xl"
   >
     <div class="mb-10 text-center">
+      {% if developer_name %}
+      <span
+        class="inline-block bg-brand-teal/10 text-brand-teal border border-brand-teal/20 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.3em] mb-4"
+      >
+        Team Review Queue
+      </span>
+
+      <h1 class="text-3xl font-black text-white uppercase tracking-tight">
+        Rating: <span class="text-brand-teal">{{ developer_name }}</span>
+      </h1>
+      {% else %}
       <h1 class="text-3xl font-black text-white uppercase tracking-tight">
         Rate <span class="text-brand-teal">Collaboration</span>
       </h1>
+      {% endif %}
+
       <p
         class="text-brand-light/40 text-[10px] font-black uppercase tracking-[0.2em] mt-2"
       >
@@ -20,11 +33,13 @@
       class="space-y-8"
     >
       <input type="hidden" name="rated_id" value="{{ rated_id }}" />
+
       <div class="flex flex-col items-center space-y-4">
         <label
           class="text-[10px] font-black text-brand-teal uppercase tracking-widest"
           >Select Score</label
         >
+
         <div class="flex flex-row-reverse justify-center gap-3">
           {% for i in range(5, 0, -1) %}
           <input
@@ -43,6 +58,7 @@
           {% endfor %}
         </div>
       </div>
+
       <div class="space-y-2">
         <label
           class="text-[10px] font-black text-brand-teal uppercase tracking-widest"
@@ -56,20 +72,31 @@
           required
         ></textarea>
       </div>
+
       <div class="flex flex-col gap-3 pt-4">
         <button
           type="submit"
-          class="w-full bg-brand-teal text-brand-dark font-black py-4 rounded-2xl uppercase tracking-widest text-xs hover:bg-white transition-all"
+          class="w-full bg-brand-teal text-brand-dark font-black py-4 rounded-2xl uppercase tracking-widest text-xs hover:bg-white transition-all shadow-lg shadow-brand-teal/10"
         >
-          Submit Rating
+          {% if developer_name %}Submit & Continue{% else %}Submit Rating{%
+          endif %}
         </button>
+
         <a
           href="{{ url_for('matches.index') }}"
-          class="text-center text-[10px] font-black text-white/20 hover:text-white uppercase tracking-widest transition-colors py-2"
-          >Cancel</a
+          class="text-center text-[10px] font-black text-white/20 hover:text-red-400 uppercase tracking-widest transition-colors py-2"
+          >Cancel Rating</a
         >
       </div>
     </form>
   </div>
 </div>
+
+<style>
+  .flex-row-reverse label:hover,
+  .flex-row-reverse label:hover ~ label,
+  .flex-row-reverse input:checked ~ label {
+    color: #facc15; /* Tailwind yellow-400 */
+  }
+</style>
 {% endblock %}

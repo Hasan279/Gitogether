@@ -152,8 +152,9 @@
             Admin Panel
           </a>
           {% else %}
+
           <div
-            class="hidden md:flex gap-10 text-sm font-black uppercase tracking-[0.25em] text-white/30 mr-4"
+            class="hidden md:flex gap-10 text-[10px] font-black uppercase tracking-[0.25em] text-white mr-4"
           >
             <a
               href="{{ url_for('projects.browse') }}"
@@ -165,7 +166,13 @@
               class="hover:text-brand-teal transition-colors"
               >Developers</a
             >
+            <a
+              href="{{ url_for('matches.index') }}"
+              class="hover:text-brand-teal transition-colors"
+              >History</a
+            >
           </div>
+
           <a
             href="{{ url_for('dashboard.index') }}"
             class="bg-brand-teal text-brand-dark px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-xl shadow-brand-teal/10"
