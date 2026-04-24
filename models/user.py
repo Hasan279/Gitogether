@@ -149,7 +149,7 @@ def update_developer_profile(user_id, full_name, bio, location, years_experience
                 location = %s,
                 years_experience = %s,
                 contact_link = %s,
-                avatar_url = %s,
+                avatar_url = %s
                 where user_id = %s """, (full_name, bio, location, years_experience, contact_link, avatar_url, user_id))
     conn.commit()
     cur.close()
