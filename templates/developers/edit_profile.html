@@ -184,8 +184,7 @@
               @click.away="open = false"
               class="absolute z-50 w-full mt-2 bg-brand-dark border border-white/10 rounded-xl shadow-2xl"
             >
-              {% for level in ['Beginner', 'Intermediate', 'Advanced', 'Expert']
-              %}
+              {% for level in ['beginner', 'intermediate', 'expert'] %}
               <div
                 @click="selected = '{{ level }}'; open = false"
                 class="px-4 py-3 text-xs text-brand-light/70 hover:bg-brand-teal/20 hover:text-brand-teal cursor-pointer uppercase font-bold tracking-widest"
