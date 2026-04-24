@@ -18,7 +18,7 @@ def index():
     developer_id = developer['developer_id']
 
     all_my_projects = get_projects_by_owner(developer_id)
-    my_projects = [p for p in all_my_projects if p['status'] == 'open']
+    my_projects = [p for p in all_my_projects if p['status'] == 'active']
 
     all_incoming = []
     for project in all_my_projects:

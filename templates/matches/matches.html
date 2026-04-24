@@ -29,13 +29,29 @@
             {{ match.title }}
           </h3>
           <p
-            class="text-[10px] font-bold text-brand-light/40 uppercase tracking-widest"
+            class="text-[10px] font-bold text-brand-light/40 uppercase tracking-widest mb-6"
           >
             {{ match.location or 'Remote' }}
           </p>
+
+          <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-4">
+            <span
+              class="text-[8px] text-brand-light/30 font-black uppercase tracking-[0.2em] block mb-2"
+              >Team</span
+            >
+            <div class="flex flex-wrap gap-2">
+              {% for member in match.team_members %}
+              <span
+                class="text-[10px] font-bold text-white/80 uppercase px-2 py-1 bg-white/5 border border-white/10 rounded-md"
+              >
+                {{ member.name }}
+              </span>
+              {% endfor %}
+            </div>
+          </div>
         </div>
 
-        <div class="mt-8 flex flex-col gap-3">
+        <div class="mt-4 flex flex-col gap-3">
           <a
             href="{{ url_for('projects.detail', project_id=match.project_id) }}"
             class="text-center text-[10px] font-black text-white border border-white/10 py-3 rounded-xl uppercase hover:bg-white hover:text-brand-dark transition-all"
@@ -44,17 +60,12 @@
           </a>
 
           {% if match.owner_id == session.get('developer_id') %}
-          <form
-            action="{{ url_for('matches.complete', match_id=match.match_id) }}"
-            method="POST"
+          <a
+            href="{{ url_for('matches.review_team', project_id=match.project_id) }}"
+            class="text-center w-full bg-brand-teal text-brand-dark text-[10px] font-black py-3 rounded-xl uppercase hover:bg-white transition-all shadow-lg shadow-brand-teal/10"
           >
-            <button
-              type="submit"
-              class="w-full bg-brand-teal text-brand-dark text-[10px] font-black py-3 rounded-xl uppercase hover:bg-white transition-all shadow-lg shadow-brand-teal/10"
-            >
-              Mark Finished
-            </button>
-          </form>
+            Mark Finished & Rate Team
+          </a>
           {% endif %}
         </div>
       </div>
@@ -86,11 +97,26 @@
       <div
         class="bg-white/5 border border-white/5 p-8 rounded-[2.5rem] opacity-80 hover:opacity-100 transition-all"
       >
-        <h3 class="text-lg font-black text-white/60 uppercase mb-6">
+        <h3 class="text-lg font-black text-white/60 uppercase mb-4">
           {{ match.title }}
         </h3>
 
-        {% if not match.already_rated %}
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span
+            class="text-[8px] text-brand-light/40 uppercase tracking-widest block w-full"
+            >Collaborators:</span
+          >
+          {% for member in match.team_members %}
+          <span
+            class="text-[9px] font-bold text-white/50 uppercase px-2 py-1 bg-black/20 border border-white/5 rounded-md"
+          >
+            {{ member.name }}
+          </span>
+          {% endfor %}
+        </div>
+
+        {% if match.owner_id != session.get('developer_id') %} {% if not
+        match.already_rated %}
         <form
           action="{{ url_for('ratings.rate', match_id=match.match_id) }}"
           method="GET"
@@ -99,7 +125,7 @@
             type="submit"
             class="w-full bg-white text-brand-dark text-[10px] font-black py-4 rounded-xl uppercase hover:bg-brand-teal transition-all shadow-xl"
           >
-            Rate Collaboration
+            Rate Project Leader
           </button>
         </form>
         {% else %}
@@ -107,6 +133,12 @@
           class="w-full bg-white/5 text-brand-teal/40 text-[9px] font-black uppercase py-4 rounded-xl text-center border border-white/5"
         >
           Rating Submitted
+        </div>
+        {% endif %} {% else %}
+        <div
+          class="w-full bg-brand-teal/10 text-brand-teal text-[9px] font-black uppercase py-4 rounded-xl text-center border border-brand-teal/20"
+        >
+          Project Closed
         </div>
         {% endif %}
       </div>

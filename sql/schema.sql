@@ -31,7 +31,7 @@ CREATE TABLE Projects (
     description TEXT,
     location VARCHAR(100),
     slots_needed INT DEFAULT 1,
-    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('open', 'in_progress', 'completed')),
+    status VARCHAR(20) DEFAULT 'open' CHECK (status IN ('open', ,'closed','in_progress', 'completed')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

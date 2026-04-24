@@ -33,7 +33,17 @@
             >{{ project.location or 'Remote' }}</span
           >
         </div>
-
+        <div class="mb-1 flex items-center gap-2">
+          <span
+            class="text-[8px] font-black uppercase tracking-[0.2em] text-brand-teal/50"
+            >Lead:</span
+          >
+          <span
+            class="text-[10px] font-bold text-white/60 uppercase tracking-wide"
+          >
+            {{ project.full_name or 'N/A' }}
+          </span>
+        </div>
         <h3
           class="text-xl font-black text-white uppercase tracking-tighter mb-2 group-hover:text-brand-teal transition"
         >

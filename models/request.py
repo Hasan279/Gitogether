@@ -101,19 +101,14 @@ def update_request_status(request_id, status):
         developer_id = result['developer_id']
         project_id = result['project_id']
         
+        # Add the accepted dev to the project
         cur.execute("""
             INSERT INTO Matches (developer_id, project_id, status)
             VALUES (%s, %s, 'active')
         """, (developer_id, project_id))
         
-        # optional: reject other pending requests
-        cur.execute("""
-            UPDATE Requests
-            SET status = 'rejected'
-            WHERE project_id = %s
-            AND request_id != %s
-            AND status = 'pending'
-        """, (project_id, request_id))
+        # NOTE: The auto-reject block has been completely removed so 
+        # other developers can still be accepted!
     
     conn.commit()
     cur.close()

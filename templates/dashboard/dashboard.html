@@ -174,22 +174,34 @@
 
     <section>
       <h3 class="text-sm font-black text-white uppercase tracking-[0.3em] mb-6">
-        Active Deployments
+        Active Projects
       </h3>
-      {% if active_matches %}
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {% for match in active_matches %}
         <div
           class="bg-gradient-to-br from-white/10 to-transparent border border-brand-emerald/20 p-6 rounded-[2rem] relative group hover:border-brand-emerald/50 transition-all"
         >
-          <div
-            class="absolute top-6 right-6 w-1.5 h-1.5 bg-brand-emerald rounded-full shadow-[0_0_10px_#2EAF7D]"
-          ></div>
-          <h4
-            class="font-black text-white text-lg uppercase tracking-tight mb-1"
-          >
-            {{ match.title }}
-          </h4>
+          <div class="flex justify-between items-start mb-2">
+            <h4 class="font-black text-white text-lg uppercase tracking-tight">
+              {{ match.title }}
+            </h4>
+
+            {% if match.owner_id == developer.developer_id %}
+            <span
+              class="bg-brand-teal/10 text-brand-teal border border-brand-teal/30 px-2 py-0.5 rounded-md text-[7px] font-black uppercase tracking-[0.2em]"
+            >
+              Lead: Me
+            </span>
+            {% else %}
+            <span
+              class="bg-white/5 text-white/40 border border-white/10 px-2 py-0.5 rounded-md text-[7px] font-black uppercase tracking-[0.2em]"
+            >
+              Lead: {{ match.owner_name }}
+            </span>
+            {% endif %}
+          </div>
+
           <p
             class="text-[9px] text-brand-light/40 mb-6 font-bold uppercase tracking-widest"
           >
@@ -198,41 +210,43 @@
 
           <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-6">
             <span
-              class="text-[8px] text-brand-light/30 font-black uppercase tracking-[0.2em] block mb-2"
-              >Profile link</span
+              class="text-[8px] text-brand-light/30 font-black uppercase tracking-[0.2em] block mb-3"
             >
-            <a
-              href="#"
-              class="text-xs font-mono text-brand-teal hover:text-white transition-colors"
-              >Click to open ↗</a
-            >
+              Team
+            </span>
+
+            <div class="flex flex-wrap gap-3">
+              {% for member in match.team_members %}
+              <div
+                class="flex items-center gap-2 bg-white/5 pr-3 py-1 rounded-full border border-white/10"
+              >
+                <div
+                  class="w-6 h-6 rounded-full bg-brand-teal flex items-center justify-center text-[10px] font-bold text-brand-dark"
+                >
+                  {{ member.name[0]|upper }}
+                </div>
+                <span
+                  class="text-[10px] font-bold text-white/80 uppercase tracking-tight"
+                >
+                  {{ member.name }}
+                </span>
+              </div>
+              {% endfor %}
+            </div>
           </div>
 
-          {% if match.owner_id == developer.developer_id %}
-          <form
-            action="{{ url_for('matches.complete', match_id=match.match_id) }}"
-            method="POST"
+          {% if match.owner_id == developer.developer_id %} {% if match.owner_id
+          == developer.developer_id %}
+          <a
+            href="{{ url_for('matches.review_team', project_id=match.project_id) }}"
+            class="block text-center w-full text-[9px] font-black text-brand-emerald border border-brand-emerald/20 hover:bg-brand-emerald hover:text-brand-dark py-3 rounded-xl transition-all uppercase tracking-widest"
           >
-            <button
-              type="submit"
-              class="w-full text-[9px] font-black text-brand-emerald border border-brand-emerald/20 hover:bg-brand-emerald hover:text-brand-dark py-3 rounded-xl transition-all uppercase tracking-widest"
-            >
-              Mark as completed
-            </button>
-          </form>
-          {% endif %}
+            Mark Finished & Rate Team
+          </a>
+          {% endif %} {% endif %}
         </div>
         {% endfor %}
       </div>
-      {% else %}
-      <div
-        class="bg-white/5 border border-white/5 p-10 rounded-[2rem] text-center text-brand-light/20"
-      >
-        <p class="text-[10px] font-black uppercase tracking-[0.4em]">
-          No Active Collabs
-        </p>
-      </div>
-      {% endif %}
     </section>
 
     <section
