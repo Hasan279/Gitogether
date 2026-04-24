@@ -24,6 +24,7 @@ def send(project_id):
         flash("You have already sent a request for this project", "error")
         return redirect(url_for('projects.detail', project_id=project_id))
 
+    # We do NOT check slots here. Anyone can apply!
     create_request(developer_id, project_id)
     flash("Request sent successfully", "success")
     return redirect(url_for('projects.detail', project_id=project_id))
@@ -38,7 +39,6 @@ def accept(request_id):
     project = get_project_by_id(req['project_id'])
     developer_id = get_developer_id(session['user_id'])
   
-    
     if int(project['owner_id']) != int(developer_id):
         flash("You are not authorized to accept this request", "error")
         return redirect(url_for('dashboard.index'))
@@ -48,15 +48,20 @@ def accept(request_id):
         flash("A match already exists for this developer and project", "error")
         return redirect(url_for('dashboard.index'))
 
+    current_members = get_active_match_count(req['project_id'])
+    if current_members >= project['slots_needed']:
+        flash("Cannot accept. This project has already reached its member limit!", "error")
+        return redirect(url_for('dashboard.index'))
+
     update_request_status(request_id, 'accepted')
 
-    current_members = get_active_match_count(req['project_id'])
+    new_member_count = current_members + 1
     
-    if current_members >= project['slots_needed']:
-        update_project_status(req['project_id'], 'closed')
-        flash("Request accepted! Your team is now full. Project locked.", "success")
+    if new_member_count >= project['slots_needed']:
+        update_project_status(req['project_id'], 'active')
+        flash("Request accepted! Your team is now full. Project hidden from marketplace.", "success")
     else:
-        remaining = project['slots_needed'] - current_members
+        remaining = project['slots_needed'] - new_member_count
         flash(f"Request accepted! {remaining} slot(s) remaining.", "success")
 
     return redirect(url_for('dashboard.index'))

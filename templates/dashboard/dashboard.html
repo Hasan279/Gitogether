@@ -1,4 +1,5 @@
 {% extends 'base.html' %} {% block content %}
+<meta http-equiv="refresh" content="120" />
 <div class="mb-8">
   <h1
     class="text-3xl md:text-4xl font-black text-white tracking-tight uppercase"
@@ -200,7 +201,7 @@
           <p
             class="text-[9px] text-brand-light/40 mb-6 font-bold uppercase tracking-widest"
           >
-            EST. {{ match.matched_at.strftime('%b %d, %Y') }}
+            Date posted: {{ match.matched_at.strftime('%b %d, %Y') }}
           </p>
 
           <div class="bg-black/40 p-4 rounded-2xl border border-white/5 mb-6">
@@ -265,16 +266,24 @@
               >
                 {{ proj.title }}
               </h4>
+              {% if proj.status == 'open' %}
+              <span
+                class="text-[8px] font-black px-2 py-1 rounded bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 uppercase tracking-widest"
+              >
+                Marketplace Live
+              </span>
+              {% else %}
               <span
                 class="text-[8px] font-black px-2 py-1 rounded bg-brand-teal/10 text-brand-teal border border-brand-teal/20 uppercase tracking-widest"
               >
-                {{ proj.status }}
+                In Progress
               </span>
+              {% endif %}
             </div>
             <p
               class="text-[10px] text-brand-light/40 font-bold uppercase tracking-widest"
             >
-              {{ proj.slots_needed }} Vacancies
+              Slots remaining: {{ proj.remaining_slots }}
             </p>
           </a>
           {% else %}

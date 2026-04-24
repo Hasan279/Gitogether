@@ -3,21 +3,39 @@ from models.project import *
 from models.skill import *
 from models.user import *
 from models.request import *
+from models.match import get_active_match_count 
 
 bp = Blueprint('projects', __name__)
-
 
 @bp.route('/projects')
 def browse():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
 
+    # Get filters from URL
     skill_filter = request.args.get('skill', None)
+    search_query = request.args.get('q', '').strip()
     page = int(request.args.get('page', 1))
-    projects = get_all_open_projects(skill_filter=skill_filter, page=page)
+    
     skills = get_all_skills()
 
-    return render_template('projects/browse.html', projects=projects, skills=skills, page=page, skill_filter=skill_filter)
+    if search_query:
+        projects = get_projects_by_name(search_query)
+    else:
+        projects = get_all_open_projects(skill_filter=skill_filter, page=page)
+
+    for p in projects:
+        active_count = get_active_match_count(p['project_id'])
+        p['remaining_slots'] = max(0, p['slots_needed'] - active_count)
+
+    return render_template(
+        'projects/browse.html', 
+        projects=projects, 
+        skills=skills, 
+        page=page, 
+        skill_filter=skill_filter,
+        search_query=search_query  
+    )
 
 
 @bp.route('/projects/<int:project_id>')

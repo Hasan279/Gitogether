@@ -11,19 +11,25 @@ def browse():
         return redirect(url_for('auth.login'))
 
     skill_filter = request.args.get('skill', '')
+    search_query = request.args.get('q', '').strip() # New: Name search
     page = request.args.get('page', 1, type=int)
     
-    developers = get_all_developers(
-        skill_filter=skill_filter if skill_filter else None, 
-        page=page
-    )
     skills = get_all_skills()
+
+    if search_query:
+        developers = get_developer_by_name(search_query)
+    else:
+        developers = get_all_developers(
+            skill_filter=skill_filter if skill_filter else None, 
+            page=page
+        )
 
     return render_template('developers/browse.html', 
                            developers=developers, 
                            skills=skills, 
                            page=page, 
-                           skill_filter=skill_filter)
+                           skill_filter=skill_filter,
+                           search_query=search_query) 
 
 @bp.route('/developers/<int:developer_id>')
 def profile(developer_id):

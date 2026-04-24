@@ -137,6 +137,22 @@ def get_projects_by_owner(owner_id):
     
     return projects
 
+def get_projects_by_name(search_term):
+    conn = get_connection()
+    cur = get_cursor(conn)
+    
+    cur.execute("""
+        SELECT p.*, dp.full_name as owner_name
+        FROM Projects p
+        JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
+        WHERE p.title ILIKE %s AND p.status = 'open'
+        ORDER BY p.created_at DESC
+    """, (f'%{search_term}%',))
+    
+    projects = cur.fetchall()
+    cur.close()
+    release_connection(conn)
+    return projects
 
 def update_project(project_id, title, description, location, slots_needed):
     conn = get_connection()

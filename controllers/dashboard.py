@@ -4,9 +4,9 @@ from models.project import get_projects_by_owner
 from models.request import get_requests_by_developer, get_requests_by_project
 from models.match import get_active_matches_by_developer, get_completed_matches_by_developer
 from models.rating import get_average_rating
+from models.match import get_active_match_count, get_active_matches_by_developer, get_completed_matches_by_developer 
 
 bp = Blueprint('dashboard', __name__)
-
 
 @bp.route('/dashboard')
 def index():
@@ -18,7 +18,13 @@ def index():
     developer_id = developer['developer_id']
 
     all_my_projects = get_projects_by_owner(developer_id)
-    my_projects = [p for p in all_my_projects if p['status'] == 'active']
+    
+    #for listings
+    my_projects = [p for p in all_my_projects if((p['status'] == 'open'))]
+
+    for p in my_projects:
+        active_count = get_active_match_count(p['project_id'])
+        p['remaining_slots'] = max(0, p['slots_needed'] - active_count)
 
     all_incoming = []
     for project in all_my_projects:

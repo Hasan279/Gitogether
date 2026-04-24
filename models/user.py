@@ -128,16 +128,17 @@ def get_developer_by_name(full_name):
     conn = get_connection()
     cur = get_cursor(conn)
     cur.execute("""
-               SELECT dp.*, u.email, u.role
-                FROM developer_profiles dp
-                JOIN users u ON u.user_id = dp.user_id
-                where full_name = (%s)
-                """,(full_name))
-    developer = cur.fetchone()
+        SELECT dp.*, u.email, u.role
+        FROM developer_profiles dp
+        JOIN users u ON u.user_id = dp.user_id
+        WHERE dp.full_name ILIKE %s
+    """, (f'%{full_name}%',))
+    developer = cur.fetchall()
     conn.commit()
     cur.close()
     release_connection(conn)
     return developer 
+
 
 def update_developer_profile(user_id, full_name, bio, location, years_experience, contact_link, avatar_url=None):
     conn = get_connection()
