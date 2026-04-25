@@ -3,7 +3,7 @@ from models.project import *
 from models.skill import *
 from models.user import *
 from models.request import *
-from models.match import get_active_match_count 
+from models.match import get_active_match_counts_for_projects
 
 bp = Blueprint('projects', __name__)
 
@@ -24,8 +24,10 @@ def browse():
     else:
         projects = get_all_open_projects(skill_filter=skill_filter, page=page)
 
+    project_ids = [p['project_id'] for p in projects]
+    active_counts = get_active_match_counts_for_projects(project_ids)
     for p in projects:
-        active_count = get_active_match_count(p['project_id'])
+        active_count = active_counts.get(p['project_id'], 0)
         p['remaining_slots'] = max(0, p['slots_needed'] - active_count)
 
     return render_template(

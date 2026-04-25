@@ -44,6 +44,26 @@ def get_active_match_count(project_id):
     
     return result['member_count'] if result else 0
 
+
+def get_active_match_counts_for_projects(project_ids):
+    if not project_ids:
+        return {}
+
+    conn = get_connection()
+    cur = get_cursor(conn)
+    cur.execute("""
+        SELECT project_id, COUNT(*) AS member_count
+        FROM Matches
+        WHERE status = 'active'
+          AND project_id = ANY(%s)
+        GROUP BY project_id
+    """, (project_ids,))
+    rows = cur.fetchall()
+    cur.close()
+    release_connection(conn)
+
+    return {row['project_id']: row['member_count'] for row in rows}
+
 def get_active_matches_by_developer(developer_id):
     conn = get_connection()
     cur = get_cursor(conn)

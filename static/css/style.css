@@ -34,6 +34,7 @@
 /* Smooth page transitions */
 body {
     animation: fadein 0.2s ease-in;
+    
 }
 
 @keyframes fadein {

@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gitogether | Find Your Next Coding Partner</title>
 
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script defer src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
@@ -102,6 +105,8 @@
             src="{{ url_for('static', filename='images/logo.png') }}"
             class="w-full h-full object-contain group-hover:scale-110 transition-transform"
             alt="GT"
+            fetchpriority="high"
+            decoding="async"
             onerror="this.style.display = 'none'"
           />
         </div>
@@ -313,6 +318,8 @@
           <img
             src="{{ url_for('static', filename='images/logo.png') }}"
             class="h-6 w-auto grayscale brightness-200"
+            loading="lazy"
+            decoding="async"
             onerror="this.style.display = 'none'"
           />
           <span class="text-xs font-black uppercase tracking-widest text-white">

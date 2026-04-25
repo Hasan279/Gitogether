@@ -8,7 +8,7 @@ from models.match import (
 )
 from models.project import get_project_by_id
 from models.user import get_developer_id
-from models.rating import check_existing_rating
+from models.rating import get_rated_match_ids
 
 bp = Blueprint('matches', __name__)
 
@@ -22,8 +22,10 @@ def index():
     session['developer_id'] = developer_id
     completed_matches = get_completed_matches_by_developer(developer_id)
     
+    completed_match_ids = [match['match_id'] for match in completed_matches]
+    rated_match_ids = get_rated_match_ids(developer_id, completed_match_ids)
     for match in completed_matches:
-        match['already_rated'] = bool(check_existing_rating(match['match_id'], developer_id))
+        match['already_rated'] = match['match_id'] in rated_match_ids
         
     return render_template('matches/matches.html',
                            active_matches=active_matches,

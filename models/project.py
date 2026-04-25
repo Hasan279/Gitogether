@@ -57,6 +57,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
     cur.close()
     release_connection(conn)
     return projects
+
 def get_dashboard_projects(owner_id):
     conn = get_connection()
     cur = get_cursor(conn)

@@ -83,6 +83,33 @@ def get_requests_by_developer(developer_id):
     return requests
 
 
+def get_pending_requests_by_owner(owner_id):
+    conn = get_connection()
+    cur = get_cursor(conn)
+
+    cur.execute("""
+        SELECT r.request_id, r.status, r.created_at,
+               r.project_id, p.title,
+               dp.developer_id, dp.full_name, dp.bio, dp.location,
+               dp.years_experience, dp.contact_link, dp.avatar_url,
+               u.email
+        FROM Requests r
+        JOIN Projects p ON r.project_id = p.project_id
+        JOIN Developer_Profiles dp ON r.developer_id = dp.developer_id
+        JOIN Users u ON dp.user_id = u.user_id
+        WHERE p.owner_id = %s
+          AND r.status = 'pending'
+        ORDER BY r.created_at DESC
+    """, (owner_id,))
+
+    pending_requests = cur.fetchall()
+
+    cur.close()
+    release_connection(conn)
+
+    return pending_requests
+
+
 def update_request_status(request_id, status):
     conn = get_connection()
     cur = get_cursor(conn)
@@ -101,14 +128,12 @@ def update_request_status(request_id, status):
         developer_id = result['developer_id']
         project_id = result['project_id']
         
-        # Add the accepted dev to the project
         cur.execute("""
             INSERT INTO Matches (developer_id, project_id, status)
             VALUES (%s, %s, 'active')
         """, (developer_id, project_id))
         
-        # NOTE: The auto-reject block has been completely removed so 
-        # other developers can still be accepted!
+       
     
     conn.commit()
     cur.close()

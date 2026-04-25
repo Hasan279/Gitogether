@@ -1,10 +1,13 @@
 from flask import Blueprint, render_template, session, redirect, url_for
-from models.user import get_developer_by_user_id, get_developer_id
+from models.user import get_developer_by_user_id
 from models.project import get_projects_by_owner
-from models.request import get_requests_by_developer, get_requests_by_project
-from models.match import get_active_matches_by_developer, get_completed_matches_by_developer
+from models.request import get_requests_by_developer, get_pending_requests_by_owner
 from models.rating import get_average_rating
-from models.match import get_active_match_count, get_active_matches_by_developer, get_completed_matches_by_developer 
+from models.match import (
+    get_active_match_counts_for_projects,
+    get_active_matches_by_developer,
+    get_completed_matches_by_developer,
+)
 
 bp = Blueprint('dashboard', __name__)
 
@@ -22,16 +25,13 @@ def index():
     #for listings
     my_projects = [p for p in all_my_projects if((p['status'] == 'open'))]
 
+    project_ids = [p['project_id'] for p in my_projects]
+    active_counts = get_active_match_counts_for_projects(project_ids)
     for p in my_projects:
-        active_count = get_active_match_count(p['project_id'])
+        active_count = active_counts.get(p['project_id'], 0)
         p['remaining_slots'] = max(0, p['slots_needed'] - active_count)
 
-    all_incoming = []
-    for project in all_my_projects:
-        reqs = get_requests_by_project(project['project_id'])
-        all_incoming.extend(reqs)
-    
-    incoming_requests = [r for r in all_incoming if r['status'] == 'pending']
+    incoming_requests = get_pending_requests_by_owner(developer_id)
 
     all_sent = get_requests_by_developer(developer_id)
     sent_requests = [r for r in all_sent if r['status'] in ['pending', 'rejected']]

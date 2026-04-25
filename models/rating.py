@@ -88,6 +88,27 @@ def check_existing_rating(match_id, rater_id):
 
     return rating
 
+
+def get_rated_match_ids(rater_id, match_ids):
+    if not match_ids:
+        return set()
+
+    conn = get_connection()
+    cur = get_cursor(conn)
+
+    cur.execute("""
+        SELECT match_id
+        FROM Ratings
+        WHERE rater_id = %s
+          AND match_id = ANY(%s)
+    """, (rater_id, match_ids))
+
+    rows = cur.fetchall()
+    cur.close()
+    release_connection(conn)
+
+    return {row['match_id'] for row in rows}
+
 def get_ratings_by_match(match_id):
     conn = get_connection()
     cur = get_cursor(conn)
