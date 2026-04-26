@@ -161,6 +161,16 @@
         </div>
         {% endfor %}
       </div>
+      {% if not show_all_reviews and reviews|length >= 20 %}
+      <div class="pt-2">
+        <a
+          href="{{ url_for('developers.profile', developer_id=developer['developer_id'], all_reviews=1) }}"
+          class="inline-block text-[10px] font-black uppercase tracking-widest text-brand-teal hover:text-white transition-colors"
+        >
+          View all reviews
+        </a>
+      </div>
+      {% endif %}
     </div>
   </div>
 

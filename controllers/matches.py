@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, url_for, flash
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash
 from models.match import (
     get_active_matches_by_developer, 
     get_completed_matches_by_developer, 
@@ -18,7 +18,10 @@ def index():
         return redirect(url_for('auth.login'))
 
     developer_id = get_developer_id(session['user_id'])
-    active_matches = get_active_matches_by_developer(developer_id)
+    show_all_active = request.args.get('all_active', '0') == '1'
+    active_matches = get_active_matches_by_developer(
+        developer_id, limit=None if show_all_active else 12
+    )
     session['developer_id'] = developer_id
     completed_matches = get_completed_matches_by_developer(developer_id)
     
@@ -29,7 +32,8 @@ def index():
         
     return render_template('matches/matches.html',
                            active_matches=active_matches,
-                           completed_matches=completed_matches)
+                           completed_matches=completed_matches,
+                           show_all_active=show_all_active)
 
 
 @bp.route('/projects/<int:project_id>/review_team', methods=['GET'])

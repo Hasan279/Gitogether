@@ -6,7 +6,6 @@ from models.rating import get_average_rating
 from models.match import (
     get_active_match_counts_for_projects,
     get_active_matches_by_developer,
-    get_completed_matches_by_developer,
 )
 
 bp = Blueprint('dashboard', __name__)
@@ -23,7 +22,7 @@ def index():
     all_my_projects = get_projects_by_owner(developer_id)
     
     #for listings
-    my_projects = [p for p in all_my_projects if((p['status'] == 'open'))]
+    my_projects = [p for p in all_my_projects if p['status'] == 'open'][:12]
 
     project_ids = [p['project_id'] for p in my_projects]
     active_counts = get_active_match_counts_for_projects(project_ids)
@@ -31,13 +30,13 @@ def index():
         active_count = active_counts.get(p['project_id'], 0)
         p['remaining_slots'] = max(0, p['slots_needed'] - active_count)
 
-    incoming_requests = get_pending_requests_by_owner(developer_id)
+    incoming_requests = get_pending_requests_by_owner(developer_id, limit=10)
 
-    all_sent = get_requests_by_developer(developer_id)
-    sent_requests = [r for r in all_sent if r['status'] in ['pending', 'rejected']]
+    sent_requests = get_requests_by_developer(
+        developer_id, statuses=['pending', 'rejected']
+    )[:12]
 
-    active_matches = get_active_matches_by_developer(developer_id)
-    completed_matches = get_completed_matches_by_developer(developer_id, limit=3)
+    active_matches = get_active_matches_by_developer(developer_id, limit=8)
     avg_rating = get_average_rating(developer_id)
 
     return render_template('dashboard/dashboard.html',
@@ -46,7 +45,6 @@ def index():
                            incoming_requests=incoming_requests,
                            sent_requests=sent_requests,
                            active_matches=active_matches,
-                           completed_matches=completed_matches,
                            avg_rating=avg_rating)
 
 @bp.route('/rules')

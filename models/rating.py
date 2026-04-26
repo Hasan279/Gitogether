@@ -35,17 +35,23 @@ def get_rating_by_id(rating_id):
     release_connection(conn)
     return rating_details
 
-def get_ratings_by_developer(developer_id):
+def get_ratings_by_developer(developer_id, limit=20):
     conn = get_connection()
     cur = get_cursor(conn)
-    
-    cur.execute("""
+
+    query = """
         SELECT r.*, dp.full_name as reviewer_name
         FROM ratings r
         JOIN developer_profiles dp ON r.rater_id = dp.developer_id
         WHERE r.rated_id = %s
         ORDER BY r.created_at DESC
-    """, (developer_id,))
+    """
+    params = [developer_id]
+    if limit is not None:
+        query += "\n LIMIT %s"
+        params.append(limit)
+
+    cur.execute(query, tuple(params))
 
     details = cur.fetchall()
     conn.commit()

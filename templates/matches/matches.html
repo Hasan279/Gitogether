@@ -71,6 +71,16 @@
       </div>
       {% endfor %}
     </div>
+    {% if not show_all_active %}
+    <div class="pt-3">
+      <a
+        href="{{ url_for('matches.index', all_active=1) }}"
+        class="inline-block text-[10px] font-black uppercase tracking-widest text-brand-teal hover:text-white transition-colors"
+      >
+        View all active projects
+      </a>
+    </div>
+    {% endif %}
     {% else %}
     <div
       class="bg-black/20 border border-white/5 border-dashed p-12 rounded-[2.5rem] text-center"

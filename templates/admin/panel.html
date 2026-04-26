@@ -24,6 +24,24 @@ content %}
     </div>
   </div>
 
+  <div class="flex justify-end">
+    {% if show_all %}
+    <a
+      href="{{ url_for('admin.panel', project_q=project_q, review_q=review_q, dev_q=dev_q) }}"
+      class="text-[10px] font-black uppercase tracking-widest text-white/50 hover:text-white transition-colors"
+    >
+      Back to fast view
+    </a>
+    {% else %}
+    <a
+      href="{{ url_for('admin.panel', project_q=project_q, review_q=review_q, dev_q=dev_q, all=1) }}"
+      class="text-[10px] font-black uppercase tracking-widest text-brand-teal hover:text-white transition-colors"
+    >
+      Show all rows
+    </a>
+    {% endif %}
+  </div>
+
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
     {% set stat_items = [ ('Users', stats.total_users, 'Total User Base'),
     ('Projects', stats.active_projects, 'Live Listings'), ('Matches',

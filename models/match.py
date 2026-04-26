@@ -64,7 +64,7 @@ def get_active_match_counts_for_projects(project_ids):
 
     return {row['project_id']: row['member_count'] for row in rows}
 
-def get_active_matches_by_developer(developer_id):
+def get_active_matches_by_developer(developer_id, limit=None):
     conn = get_connection()
     cur = get_cursor(conn)
     
@@ -97,8 +97,13 @@ def get_active_matches_by_developer(developer_id):
         GROUP BY p.project_id, p.title, p.location, p.owner_id,lead_dp.full_name
         ORDER BY matched_at DESC
     """
-    # Notice we pass the ID three times now
-    cur.execute(query, (developer_id, developer_id, developer_id))
+
+    params = [developer_id, developer_id, developer_id]
+    if limit is not None:
+        query += "\n LIMIT %s"
+        params.append(limit)
+
+    cur.execute(query, tuple(params))
     matches = cur.fetchall()
     cur.close()
     release_connection(conn)

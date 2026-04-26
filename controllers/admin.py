@@ -24,11 +24,13 @@ def panel():
     p_search = request.args.get('project_q', '').strip()
     r_search = request.args.get('review_q', '').strip()
     d_search = request.args.get('dev_q', '').strip()
+    show_all = request.args.get('all', '0') == '1'
+    row_limit = None if show_all else 100
 
     stats = get_global_stats()
-    projects = get_all_projects_oversight(search_term=p_search)
-    ratings = get_all_ratings_oversight(search_term=r_search)
-    developers = get_all_developers_oversight(search_term=d_search)
+    projects = get_all_projects_oversight(search_term=p_search, limit=row_limit)
+    ratings = get_all_ratings_oversight(search_term=r_search, limit=row_limit)
+    developers = get_all_developers_oversight(search_term=d_search, limit=row_limit)
 
     return render_template('admin/panel.html', 
                            stats=stats, 
@@ -37,7 +39,8 @@ def panel():
                            developers=developers,
                            project_q=p_search,
                            review_q=r_search,
-                           dev_q=d_search)
+                           dev_q=d_search,
+                           show_all=show_all)
 
 @bp.route('/admin/delete_project/<int:project_id>', methods=['POST'])
 def delete_project_admin(project_id):

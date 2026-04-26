@@ -138,17 +138,23 @@ def get_projects_by_owner(owner_id):
     
     return projects
 
-def get_projects_by_name(search_term):
+def get_projects_by_name(search_term, limit=20):
     conn = get_connection()
     cur = get_cursor(conn)
-    
-    cur.execute("""
+
+    query = """
         SELECT p.*, dp.full_name as owner_name
         FROM Projects p
         JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
         WHERE p.title ILIKE %s AND p.status = 'open'
         ORDER BY p.created_at DESC
-    """, (f'%{search_term}%',))
+    """
+    params = [f'%{search_term}%']
+    if limit is not None:
+        query += "\n LIMIT %s"
+        params.append(limit)
+
+    cur.execute(query, tuple(params))
     
     projects = cur.fetchall()
     cur.close()

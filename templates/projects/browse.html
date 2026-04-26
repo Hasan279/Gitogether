@@ -1,5 +1,4 @@
 {% extends 'base.html' %} {% block content %}
-<meta http-equiv="refresh" content="120" />
 <div class="max-w-6xl mx-auto space-y-8">
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
@@ -57,6 +56,13 @@
         class="text-[9px] font-black uppercase tracking-widest text-white/20 hover:text-red-500 transition-colors ml-2 underline"
         >Clear</a
       >
+      {% if not show_all %}
+      <a
+        href="{{ url_for('projects.browse', q=search_query, skill=skill_filter, all=1) }}"
+        class="text-[9px] font-black uppercase tracking-widest text-brand-teal hover:text-white transition-colors ml-2 underline"
+        >Show all results</a
+      >
+      {% endif %}
     </div>
     {% endif %}
   </div>

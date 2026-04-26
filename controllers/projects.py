@@ -15,12 +15,13 @@ def browse():
     # Get filters from URL
     skill_filter = request.args.get('skill', None)
     search_query = request.args.get('q', '').strip()
+    show_all = request.args.get('all', '0') == '1'
     page = int(request.args.get('page', 1))
     
     skills = get_all_skills()
 
     if search_query:
-        projects = get_projects_by_name(search_query)
+        projects = get_projects_by_name(search_query, limit=None if show_all else 20)
     else:
         projects = get_all_open_projects(skill_filter=skill_filter, page=page)
 
@@ -36,7 +37,8 @@ def browse():
         skills=skills, 
         page=page, 
         skill_filter=skill_filter,
-        search_query=search_query  
+        search_query=search_query,
+        show_all=show_all
     )
 
 

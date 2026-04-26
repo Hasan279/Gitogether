@@ -62,18 +62,29 @@ def get_requests_by_project(project_id):
     return pending_requests
 
 
-def get_requests_by_developer(developer_id):
+def get_requests_by_developer(developer_id, statuses=None):
     conn = get_connection()
     cur = get_cursor(conn)
-    
-    cur.execute("""
-        SELECT r.request_id, r.status, r.created_at,
-               p.project_id, p.title, p.status AS project_status, p.owner_id
-        FROM Requests r
-        JOIN Projects p ON r.project_id = p.project_id
-        WHERE r.developer_id = %s
-        ORDER BY r.created_at DESC
-    """, (developer_id,))
+
+    if statuses:
+        cur.execute("""
+            SELECT r.request_id, r.status, r.created_at,
+                   p.project_id, p.title, p.status AS project_status, p.owner_id
+            FROM Requests r
+            JOIN Projects p ON r.project_id = p.project_id
+            WHERE r.developer_id = %s
+              AND r.status = ANY(%s)
+            ORDER BY r.created_at DESC
+        """, (developer_id, statuses))
+    else:
+        cur.execute("""
+            SELECT r.request_id, r.status, r.created_at,
+                   p.project_id, p.title, p.status AS project_status, p.owner_id
+            FROM Requests r
+            JOIN Projects p ON r.project_id = p.project_id
+            WHERE r.developer_id = %s
+            ORDER BY r.created_at DESC
+        """, (developer_id,))
     
     requests = cur.fetchall()
     
@@ -83,11 +94,11 @@ def get_requests_by_developer(developer_id):
     return requests
 
 
-def get_pending_requests_by_owner(owner_id):
+def get_pending_requests_by_owner(owner_id, limit=None):
     conn = get_connection()
     cur = get_cursor(conn)
 
-    cur.execute("""
+    query = """
         SELECT r.request_id, r.status, r.created_at,
                r.project_id, p.title,
                dp.developer_id, dp.full_name, dp.bio, dp.location,
@@ -100,7 +111,14 @@ def get_pending_requests_by_owner(owner_id):
         WHERE p.owner_id = %s
           AND r.status = 'pending'
         ORDER BY r.created_at DESC
-    """, (owner_id,))
+    """
+
+    params = [owner_id]
+    if limit is not None:
+        query += "\n LIMIT %s"
+        params.append(limit)
+
+    cur.execute(query, tuple(params))
 
     pending_requests = cur.fetchall()
 

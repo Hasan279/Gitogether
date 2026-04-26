@@ -15,7 +15,7 @@ def get_global_stats():
     release_connection(conn)
     return stats
 
-def get_all_projects_oversight(search_term=None):
+def get_all_projects_oversight(search_term=None, limit=100):
     conn = get_connection()
     cur = get_cursor(conn)
     query = """
@@ -29,13 +29,16 @@ def get_all_projects_oversight(search_term=None):
         params.extend([f'%{search_term}%', f'%{search_term}%'])
         
     query += " ORDER BY p.created_at DESC"
+    if limit is not None:
+        query += " LIMIT %s"
+        params.append(limit)
     cur.execute(query, tuple(params))
     projects = cur.fetchall()
     cur.close()
     release_connection(conn)
     return projects
 
-def get_all_ratings_oversight(search_term=None):
+def get_all_ratings_oversight(search_term=None, limit=100):
     conn = get_connection()
     cur = get_cursor(conn)
     query = """
@@ -50,6 +53,9 @@ def get_all_ratings_oversight(search_term=None):
         params.extend([f'%{search_term}%', f'%{search_term}%', f'%{search_term}%'])
         
     query += " ORDER BY r.created_at DESC"
+    if limit is not None:
+        query += " LIMIT %s"
+        params.append(limit)
     cur.execute(query, tuple(params))
     ratings = cur.fetchall()
     cur.close()
@@ -58,7 +64,7 @@ def get_all_ratings_oversight(search_term=None):
 
 # --- NEW: DEVELOPER OVERSIGHT & TOGGLE ---
 
-def get_all_developers_oversight(search_term=None):
+def get_all_developers_oversight(search_term=None, limit=100):
     conn = get_connection()
     cur = get_cursor(conn)
     query = """
@@ -73,6 +79,9 @@ def get_all_developers_oversight(search_term=None):
         params.extend([f'%{search_term}%', f'%{search_term}%'])
         
     query += " ORDER BY u.created_at DESC"
+    if limit is not None:
+        query += " LIMIT %s"
+        params.append(limit)
     cur.execute(query, tuple(params))
     devs = cur.fetchall()
     cur.close()

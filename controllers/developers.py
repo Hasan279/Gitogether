@@ -12,12 +12,13 @@ def browse():
 
     skill_filter = request.args.get('skill', '')
     search_query = request.args.get('q', '').strip() # New: Name search
+    show_all = request.args.get('all', '0') == '1'
     page = request.args.get('page', 1, type=int)
     
     skills = get_all_skills()
 
     if search_query:
-        developers = get_developer_by_name(search_query)
+        developers = get_developer_by_name(search_query, limit=None if show_all else 20)
     else:
         developers = get_all_developers(
             skill_filter=skill_filter if skill_filter else None, 
@@ -29,7 +30,8 @@ def browse():
                            skills=skills, 
                            page=page, 
                            skill_filter=skill_filter,
-                           search_query=search_query) 
+                           search_query=search_query,
+                           show_all=show_all) 
 
 @bp.route('/developers/<int:developer_id>')
 def profile(developer_id):
@@ -44,13 +46,17 @@ def profile(developer_id):
 
     skills = get_developer_skills(developer_id)
     avg_rating = get_average_rating(developer_id)
-    reviews = get_ratings_by_developer(developer_id)
+    show_all_reviews = request.args.get('all_reviews', '0') == '1'
+    reviews = get_ratings_by_developer(
+        developer_id, limit=None if show_all_reviews else 20
+    )
 
     return render_template('developers/profile.html',
                            developer=developer_data,
                            developer_skills=skills,
                            avg_rating=avg_rating,
-                           reviews=reviews)
+                           reviews=reviews,
+                           show_all_reviews=show_all_reviews)
     
 @bp.route('/developers/edit_profile', methods=['GET', 'POST'])
 def edit_profile():

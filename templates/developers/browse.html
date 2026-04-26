@@ -1,5 +1,4 @@
 {% extends 'base.html' %} {% block content %}
-<meta http-equiv="refresh" content="120" />
 <div class="max-w-6xl mx-auto space-y-10">
   <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
     <div class="space-y-2">
@@ -93,6 +92,14 @@
       >
         Clear
       </a>
+      {% if search_query and not show_all %}
+      <a
+        href="{{ url_for('developers.browse', q=search_query, skill=skill_filter, all=1) }}"
+        class="text-[9px] font-black text-brand-teal hover:text-white uppercase tracking-widest underline ml-2"
+      >
+        Show all results
+      </a>
+      {% endif %}
       {% endif %}
     </form>
   </div>

@@ -124,15 +124,22 @@ def get_developer_id(user_id):
     release_connection(conn)
     return result['developer_id'] if result else None
 
-def get_developer_by_name(full_name):
+def get_developer_by_name(full_name, limit=20):
     conn = get_connection()
     cur = get_cursor(conn)
-    cur.execute("""
+    query = """
         SELECT dp.*, u.email, u.role
         FROM developer_profiles dp
         JOIN users u ON u.user_id = dp.user_id
         WHERE dp.full_name ILIKE %s
-    """, (f'%{full_name}%',))
+        ORDER BY dp.full_name ASC
+    """
+    params = [f'%{full_name}%']
+    if limit is not None:
+        query += "\n LIMIT %s"
+        params.append(limit)
+
+    cur.execute(query, tuple(params))
     developer = cur.fetchall()
     conn.commit()
     cur.close()
