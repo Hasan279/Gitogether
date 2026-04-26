@@ -108,12 +108,37 @@ DEBUG=True
 
 Go to your Supabase project → SQL Editor → paste the contents of `sql/schema.sql` → Run.
 
-**6. Start the app**
+**6. (Recommended) Run performance indexes**
+
+After your schema is created, run `sql/performance_indexes.sql` once in Supabase SQL Editor.
+This adds indexes that speed up dashboard/project/match/rating queries.
+
+**7. Start the app**
 ```bash
 python app.py
 ```
 
 Visit `http://localhost:5000` in your browser.
+
+---
+
+## Optional: Build Tailwind Locally (Production)
+
+This repo includes Tailwind build setup files (`package.json`, `tailwind.config.js`, `static/css/tailwind.input.css`).
+
+1. Install [Node.js](https://nodejs.org/) (LTS).
+2. Run:
+
+```bash
+npm install
+npm run build:css
+```
+
+To keep CSS rebuilding while you edit templates:
+
+```bash
+npm run watch:css
+```
 
 ---
 
