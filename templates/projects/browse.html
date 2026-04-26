@@ -119,11 +119,14 @@
           method="POST"
           class="flex-1"
         >
+          {% set already_joined = project.project_id in joined_project_ids %}
+          {% set already_requested = project.project_id in requested_project_ids %}
           <button
             type="submit"
-            class="w-full bg-brand-emerald hover:bg-brand-teal text-brand-dark text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition shadow-lg"
+            {% if already_requested or already_joined %}disabled{% endif %}
+            class="w-full text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition shadow-lg {% if already_joined %}bg-white/20 border border-white/20 text-white/40 cursor-not-allowed shadow-none{% elif already_requested %}bg-white/20 border border-white/20 text-white/40 cursor-not-allowed shadow-none{% else %}bg-brand-emerald hover:bg-brand-teal text-brand-dark{% endif %}"
           >
-            Join
+            {% if already_joined %}Already Joined{% elif already_requested %}Request Sent{% else %}Join{% endif %}
           </button>
         </form>
         {% endif %}

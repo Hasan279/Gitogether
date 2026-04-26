@@ -173,3 +173,20 @@ def check_existing_request(developer_id, project_id):
     release_connection(conn)
     
     return request
+
+
+def check_pending_request(developer_id, project_id):
+    conn = get_connection()
+    cur = get_cursor(conn)
+
+    cur.execute("""
+        SELECT * FROM Requests
+        WHERE developer_id = %s AND project_id = %s AND status = 'pending'
+    """, (developer_id, project_id))
+
+    request = cur.fetchone()
+
+    cur.close()
+    release_connection(conn)
+
+    return request

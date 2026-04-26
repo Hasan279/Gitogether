@@ -1,5 +1,5 @@
 from flask import Blueprint, session, redirect, url_for, flash
-from models.request import create_request, get_request_by_id, update_request_status, check_existing_request
+from models.request import create_request, get_request_by_id, update_request_status, check_pending_request
 from models.match import *
 from models.user import get_developer_id
 from models.project import *
@@ -19,7 +19,7 @@ def send(project_id):
         flash("You cannot request to join your own project", "error")
         return redirect(url_for('projects.detail', project_id=project_id))
 
-    existing = check_existing_request(developer_id, project_id)
+    existing = check_pending_request(developer_id, project_id)
     if existing:
         flash("You have already sent a request for this project", "error")
         return redirect(url_for('projects.detail', project_id=project_id))

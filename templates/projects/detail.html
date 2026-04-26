@@ -156,7 +156,7 @@
         </h4>
       </div>
 
-      <!-- <div id="join-section">
+      <div id="join-section">
         {% if current_user_id %} {% if current_user_id != project.owner_id %}
         <form
           action="{{ url_for('requests.send', project_id=project.project_id) }}"
@@ -165,20 +165,21 @@
         >
           <button
             type="submit"
-            class="w-full bg-brand-emerald hover:bg-brand-teal text-brand-dark font-black py-4 rounded-2xl transition-all shadow-xl hover:scale-[1.02] active:scale-95 uppercase tracking-widest text-sm shadow-brand-emerald/10"
+            {% if existing_request or already_joined %}disabled{% endif %}
+            class="w-full font-black py-4 text-sm uppercase tracking-widest border-2 transition-all duration-75 {% if already_joined %}bg-white/20 border-white/20 text-white/40 cursor-not-allowed shadow-none{% elif existing_request %}bg-white/20 border-white/20 text-white/40 cursor-not-allowed shadow-none{% else %}border-brand-teal bg-brand-teal text-brand-dark shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] hover:brightness-110 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none{% endif %}"
           >
-            Request to Join Team
+            {% if already_joined %}Already Joined{% elif existing_request %}Request Sent{% else %}Request to Join Team{% endif %}
           </button>
         </form>
         {% endif %} {% else %}
         <a
           href="{{ url_for('auth.login') }}"
-          class="block w-full bg-white/10 text-white text-center font-black py-4 rounded-2xl border border-white/10 hover:bg-white/20 transition uppercase tracking-widest text-sm"
+          class="block w-full border-2 border-brand-teal bg-brand-teal text-brand-dark text-center font-black py-4 rounded-none shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] hover:brightness-110 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-75 uppercase tracking-widest text-sm"
         >
           Login to Join
         </a>
         {% endif %}
-      </div> -->
+      </div>
     </div>
   </div>
 </div>

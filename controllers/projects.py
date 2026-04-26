@@ -3,7 +3,7 @@ from models.project import *
 from models.skill import *
 from models.user import *
 from models.request import *
-from models.match import get_active_match_counts_for_projects
+from models.match import get_active_match_counts_for_projects, check_existing_match
 
 bp = Blueprint('projects', __name__)
 
@@ -25,6 +25,17 @@ def browse():
     else:
         projects = get_all_open_projects(skill_filter=skill_filter, page=page)
 
+    current_user_id = session.get('developer_id') or session.get('user_id')
+    requested_project_ids = set()
+    joined_project_ids = set()
+    if current_user_id:
+        for p in projects:
+            if current_user_id != p.get('owner_id'):
+                if check_existing_match(current_user_id, p['project_id']):
+                    joined_project_ids.add(p['project_id'])
+                elif check_pending_request(current_user_id, p['project_id']):
+                    requested_project_ids.add(p['project_id'])
+
     project_ids = [p['project_id'] for p in projects]
     active_counts = get_active_match_counts_for_projects(project_ids)
     for p in projects:
@@ -38,7 +49,9 @@ def browse():
         page=page, 
         skill_filter=skill_filter,
         search_query=search_query,
-        show_all=show_all
+        show_all=show_all,
+        requested_project_ids=requested_project_ids,
+        joined_project_ids=joined_project_ids
     )
 
 
@@ -46,6 +59,13 @@ def browse():
 def detail(project_id):
     project = get_project_by_id(project_id) 
     raw_skills = get_project_skills(project_id) 
+    current_user_id = session.get('developer_id') or session.get('user_id')
+    existing_request = False
+    already_joined = False
+    if current_user_id and current_user_id != project['owner_id']:
+        already_joined = check_existing_match(current_user_id, project_id) is not None
+        if not already_joined:
+            existing_request = check_pending_request(current_user_id, project_id) is not None
     
     # group by category
     grouped_skills = {}
@@ -57,7 +77,9 @@ def detail(project_id):
         
     return render_template('projects/detail.html', 
                            project=project, 
-                           grouped_skills=grouped_skills)
+                           grouped_skills=grouped_skills,
+                           existing_request=existing_request,
+                           already_joined=already_joined)
 
 
 @bp.route('/projects/create', methods=['GET', 'POST'])
