@@ -137,7 +137,7 @@
         >
           {{ dev.location }}
         </div>
-        <p class="text-brand-light/60 text-xs leading-relaxed line-clamp-2 h-8">
+        <p class="text-brand-light/60 text-xs leading-relaxed line-clamp-2 min-h-[2.5rem]">
           {{ dev.bio or "This developer prefers to let their code speak for
           itself." }}
         </p>
@@ -147,7 +147,7 @@
         <div class="flex flex-wrap gap-2">
           {% if dev.skills %} {% for skill in dev.skills[:3] %}
           <span
-            class="bg-black/20 border border-white/10 text-white font-mono text-[9px] px-2.5 py-1 rounded-md uppercase"
+            class="bg-black/20 border border-white/10 text-white font-mono text-[10px] px-3 py-1.5 rounded-md uppercase"
             >{{ skill }}</span
           >
           {% endfor %} {% else %}
