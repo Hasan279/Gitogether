@@ -21,7 +21,6 @@ def index():
 
     all_my_projects = get_projects_by_owner(developer_id)
     
-    #for listings
     my_projects = [p for p in all_my_projects if p['status'] == 'open'][:12]
 
     project_ids = [p['project_id'] for p in my_projects]

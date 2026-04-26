@@ -62,8 +62,6 @@ def get_all_ratings_oversight(search_term=None, limit=100):
     release_connection(conn)
     return ratings
 
-# --- NEW: DEVELOPER OVERSIGHT & TOGGLE ---
-
 def get_all_developers_oversight(search_term=None, limit=100):
     conn = get_connection()
     cur = get_cursor(conn)
@@ -91,7 +89,6 @@ def get_all_developers_oversight(search_term=None, limit=100):
 def toggle_user_status_admin(user_id):
     conn = get_connection()
     cur = get_cursor(conn)
-    # The WHERE clause ensures you can't accidentally deactivate admins
     cur.execute("""
         UPDATE users 
         SET is_active = NOT is_active 
@@ -100,8 +97,6 @@ def toggle_user_status_admin(user_id):
     conn.commit()
     cur.close()
     release_connection(conn)
-
-# --- DELETION ---
 
 def delete_rating_admin(rating_id):
     conn = get_connection()

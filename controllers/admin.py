@@ -56,7 +56,6 @@ def delete_rating_admin(rating_id):
     flash("Rating deleted.", "success")
     return redirect(url_for('admin.panel'))
 
-# --- NEW: TOGGLE ROUTE ---
 @bp.route('/admin/toggle_user/<int:user_id>', methods=['POST'])
 def toggle_user(user_id):
     if not admin_required(): return redirect(url_for('auth.login'))

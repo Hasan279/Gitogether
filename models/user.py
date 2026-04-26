@@ -185,7 +185,6 @@ def get_all_developers(skill_filter=None, page=1, per_page=10):
             LEFT JOIN skills s ON ds.skill_id = s.skill_id
             LEFT JOIN ratings r ON dp.developer_id = r.rated_id
             
-            -- THIS IS THE ONLY CHANGED PART:
             WHERE dp.developer_id IN (
                 SELECT developer_id 
                 FROM developer_skills ds2 
