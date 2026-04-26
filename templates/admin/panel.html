@@ -405,4 +405,27 @@ content %}
     </section>
   </div>
 </div>
+<script>
+  (function () {
+    const key = "scroll:" + window.location.pathname + window.location.search;
+    const savedY = sessionStorage.getItem(key);
+    if (savedY !== null) {
+      window.scrollTo(0, parseInt(savedY, 10) || 0);
+    }
+
+    let ticking = false;
+    const saveScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        sessionStorage.setItem(key, String(window.scrollY));
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", saveScroll, { passive: true });
+    window.addEventListener("beforeunload", saveScroll);
+    window.addEventListener("pagehide", saveScroll);
+  })();
+</script>
 {% endblock %}
