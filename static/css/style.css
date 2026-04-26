@@ -4,16 +4,16 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: #0F0E47;
+    background: #09090B;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #505081;
-    border-radius: 3px;
+    background: #00E5FF;
+    border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #8686AC;
+    background: #FAFAFA;
 }
 
 /* Line clamp for project/bio descriptions */
@@ -44,13 +44,14 @@ body {
 
 /* Select option background fix for dark theme */
 select option {
-    background-color: #272757;
-    color: #ffffff;
+    background-color: #18181B;
+    color: #FAFAFA;
 }
 
 /* Table row hover */
 tr:hover td {
-    background-color: rgba(80, 80, 129, 0.2) !important;
+    background-color: rgba(0, 229, 255, 0.10) !important;
+    box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.25);
 }
 
 /* Flash message animation */
