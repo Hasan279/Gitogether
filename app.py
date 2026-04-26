@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, render_template, session, url_for
 from config import SECRET_KEY, DEBUG
 
 app = Flask(__name__)
@@ -17,7 +17,9 @@ app.register_blueprint(admin.bp)
 
 @app.route('/')
 def home():
-    return redirect(url_for('auth.login'))
+    if 'user_id' in session:
+        return redirect(url_for('dashboard.index'))
+    return render_template('home.html')
 
 if __name__ == "__main__":
     app.run(debug=DEBUG)
