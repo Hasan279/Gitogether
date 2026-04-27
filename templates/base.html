@@ -163,6 +163,20 @@
         transform: translate(4px, 4px);
         box-shadow: none;
       }
+
+      /* Global sharp edges everywhere */
+      [class*="rounded"] {
+        border-radius: 0 !important;
+      }
+
+      button,
+      input,
+      select,
+      textarea,
+      .street-btn,
+      a[class*="px-"][class*="py-"] {
+        border-radius: 0 !important;
+      }
     </style>
   </head>
 
