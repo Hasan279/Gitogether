@@ -1,13 +1,29 @@
-{% macro render_avatar(name, url=None, size='w-10 h-10') %}
+{% macro render_avatar(name, url=None, size='w-10 h-10', width=80, height=80, lazy=true) %}
 <div
   class="{{ size }} rounded-xl overflow-hidden border border-white/10 flex-shrink-0 bg-brand-dark/50"
 >
+  {% set transformed_url = url %}
+  {% if url and 'res.cloudinary.com' in url and '/upload/' in url %}
+  {% set transformed_url = url|replace('/upload/', '/upload/f_auto,q_auto,c_fill,g_face,w_' ~ width ~ ',h_' ~ height ~ '/')
+  %}
+  {% endif %}
   {% if url %}
-  <img src="{{ url }}" class="w-full h-full object-cover" />
+  <img
+    src="{{ transformed_url }}"
+    alt="{{ name }}"
+    class="w-full h-full object-cover"
+    loading="{{ 'lazy' if lazy else 'eager' }}"
+    decoding="async"
+    referrerpolicy="no-referrer"
+  />
   {% else %}
   <img
     src="https://ui-avatars.com/api/?name={{ name|urlencode }}&background=3FD0C9&color=02353C&bold=true"
     class="w-full h-full"
+    alt="{{ name }}"
+    loading="{{ 'lazy' if lazy else 'eager' }}"
+    decoding="async"
+    referrerpolicy="no-referrer"
   />
   {% endif %}
 </div>

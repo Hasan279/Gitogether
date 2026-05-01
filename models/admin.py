@@ -66,7 +66,7 @@ def get_all_developers_oversight(search_term=None, limit=100):
     conn = get_connection()
     cur = get_cursor(conn)
     query = """
-        SELECT u.user_id, u.email, u.is_active, dp.full_name
+        SELECT u.user_id, u.email, u.is_active, dp.full_name, dp.avatar_url
         FROM users u
         LEFT JOIN developer_profiles dp ON u.user_id = dp.user_id
         WHERE u.role = 'developer'

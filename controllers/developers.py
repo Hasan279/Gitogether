@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, session, redirect, url_fo
 from models.user import *
 from models.skill import *
 from models.rating import get_average_rating, get_ratings_by_developer
+import cloudinary.uploader
 
 bp = Blueprint('developers', __name__)
 
@@ -10,6 +11,7 @@ def browse():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
 
+    current_developer_id = get_developer_id(session['user_id'])
     skill_filter = request.args.get('skill', '')
     search_query = request.args.get('q', '').strip() # New: Name search
     show_all = request.args.get('all', '0') == '1'
@@ -24,6 +26,12 @@ def browse():
             skill_filter=skill_filter if skill_filter else None, 
             page=page
         )
+
+    if current_developer_id:
+        developers = [
+            dev for dev in developers
+            if dev.get('developer_id') != current_developer_id
+        ]
 
     return render_template('developers/browse.html', 
                            developers=developers, 
@@ -64,6 +72,9 @@ def edit_profile():
         return redirect(url_for('auth.login'))
 
     u_id = session['user_id']
+    
+    # FIX 1: Use user_id to get the developer profile, not the dev_id!
+    developer = get_developer_by_user_id(u_id)
 
     if request.method == 'POST':
         full_name = request.form.get('full_name')
@@ -72,17 +83,38 @@ def edit_profile():
         years_exp = request.form.get('years_experience')
         link = request.form.get('contact_link')
         
-        update_developer_profile(u_id, full_name, bio, location, years_exp, link)
-        flash("Profile updated!", "success")
+        # FIX 2: Match the 'name' attribute from your HTML form ('avatar_file')
+        image = request.files.get('avatar_file')  
+
+        # Handle image upload to Cloudinary if an image is provided
+        if image and image.filename != '':
+            try:
+                # Use Cloudinary API to upload image (and force it to a square)
+                upload_result = cloudinary.uploader.upload(
+                    image,
+                    folder="developer_avatars",
+                    transformation=[{'width': 200, 'height': 200, 'crop': 'fill'}]
+                )
+                avatar_url = upload_result['secure_url']
+            except Exception as e:
+                flash(f'Image upload failed: {e}', 'error')
+                return redirect(url_for('developers.edit_profile'))
+        else:
+            # Use .get() safely to keep existing image if no new one
+            avatar_url = developer.get('avatar_url') if developer else None  
+
+        # Update the developer profile in the database
+        update_developer_profile(u_id, full_name, bio, location, years_exp, link, avatar_url)
+        flash('Profile updated successfully!', 'success')
         return redirect(url_for('developers.edit_profile'))
 
-    dev = get_developer_by_user_id(u_id)
+    # FIX 3: Fetch the skills so the HTML page doesn't crash!
     skills = get_all_skills()
-    dev_skills = get_developer_skills(dev['developer_id'])
-    
+    dev_skills = get_developer_skills(developer['developer_id']) if developer else []
+
     return render_template('developers/edit_profile.html', 
-                           developer=dev, 
-                           all_skills=skills, 
+                           developer=developer,
+                           all_skills=skills,
                            dev_skills=dev_skills)
 @bp.route('/developers/skills/add', methods=['POST'])
 def add_skill():

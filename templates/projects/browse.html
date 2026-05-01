@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block content %}
 <div class="max-w-6xl mx-auto space-y-8">
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
@@ -83,7 +83,8 @@
             >{{ project.location or 'Remote' }}</span
           >
         </div>
-        <div class="mb-1 flex items-center gap-2">
+        <div class="mb-2 flex items-center gap-2">
+          {{ render_avatar(project.full_name or 'Lead Developer', project.avatar_url, 'w-7 h-7', 56, 56) }}
           <span
             class="text-[8px] font-black uppercase tracking-[0.2em] text-brand-teal/50"
             >Lead:</span

@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block content %}
 <div class="max-w-6xl mx-auto space-y-12 pb-20">
   <div>
     <h1 class="text-4xl font-black text-white uppercase tracking-tighter">
@@ -41,11 +41,12 @@
             >
             <div class="flex flex-wrap gap-2">
               {% for member in match.team_members %}
-              <span
-                class="text-[10px] font-bold text-white/80 uppercase px-2 py-1 bg-white/5 border border-white/10 rounded-md"
+              <div
+                class="text-[10px] font-bold text-white/80 uppercase px-2 py-1 bg-white/5 border border-white/10 rounded-md flex items-center gap-2"
               >
-                {{ member.name }}
-              </span>
+                {{ render_avatar(member.name, member.avatar, 'w-5 h-5', 40, 40) }}
+                <span>{{ member.name }}</span>
+              </div>
               {% endfor %}
             </div>
           </div>
@@ -117,11 +118,12 @@
             >Collaborators:</span
           >
           {% for member in match.team_members %}
-          <span
-            class="text-[9px] font-bold text-white/50 uppercase px-2 py-1 bg-black/20 border border-white/5 rounded-md"
+          <div
+            class="text-[9px] font-bold text-white/50 uppercase px-2 py-1 bg-black/20 border border-white/5 rounded-md flex items-center gap-2"
           >
-            {{ member.name }}
-          </span>
+            {{ render_avatar(member.name, member.avatar, 'w-5 h-5', 40, 40) }}
+            <span>{{ member.name }}</span>
+          </div>
           {% endfor %}
         </div>
 

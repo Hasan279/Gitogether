@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block content %}
 <div class="max-w-6xl mx-auto space-y-10">
   <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
     <div class="space-y-2">
@@ -110,11 +110,8 @@
       class="group relative bg-gradient-to-br from-white/10 to-transparent border border-white/10 rounded-[2rem] p-8 transition-all hover:border-brand-teal/50 hover:shadow-2xl"
     >
       <div class="flex items-start justify-between mb-6">
-        <div
-          class="w-16 h-16 rounded-2xl bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center text-2xl font-black text-brand-teal shadow-inner"
-        >
-          {{ dev.full_name[0]|upper }}
-        </div>
+        {{ render_avatar(dev.full_name, dev.avatar_url, 'w-16 h-16', 128, 128, false)
+        }}
         <div class="text-right">
           <span
             class="block text-[10px] font-black text-brand-teal uppercase tracking-widest"

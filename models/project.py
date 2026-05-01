@@ -28,7 +28,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
 
     if skill_filter:
         cur.execute("""
-            SELECT p.*, dp.full_name,
+            SELECT p.*, dp.full_name, dp.avatar_url,
                    COALESCE(AVG(r.score), 0) AS avg_rating
             FROM Projects p
             JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
@@ -42,7 +42,7 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
         """, (skill_filter, per_page, offset))
     else:
         cur.execute("""
-            SELECT p.*, dp.full_name,
+            SELECT p.*, dp.full_name, dp.avatar_url,
                    COALESCE(AVG(r.score), 0) AS avg_rating
             FROM Projects p
             JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
@@ -143,7 +143,7 @@ def get_projects_by_name(search_term, limit=20):
     cur = get_cursor(conn)
 
     query = """
-        SELECT p.*, dp.full_name as owner_name
+        SELECT p.*, dp.full_name, dp.full_name as owner_name, dp.avatar_url
         FROM Projects p
         JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
         WHERE p.title ILIKE %s AND p.status = 'open'
