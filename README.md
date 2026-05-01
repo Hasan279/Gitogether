@@ -122,26 +122,6 @@ Visit `http://localhost:5000` in your browser.
 
 ---
 
-## Optional: Build Tailwind Locally (Production)
-
-This repo includes Tailwind build setup files (`package.json`, `tailwind.config.js`, `static/css/tailwind.input.css`).
-
-1. Install [Node.js](https://nodejs.org/) (LTS).
-2. Run:
-
-```bash
-npm install
-npm run build:css
-```
-
-To keep CSS rebuilding while you edit templates:
-
-```bash
-npm run watch:css
-```
-
----
-
 ## Contributors
 
 | Name | GitHub |
