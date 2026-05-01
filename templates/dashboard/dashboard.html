@@ -1,4 +1,5 @@
-{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block content %}
+{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block
+content %}
 <div class="mb-8">
   <h1
     class="text-3xl md:text-4xl font-black text-white tracking-tight uppercase"
@@ -7,7 +8,10 @@
   </h1>
 </div>
 
-<div class="grid grid-cols-1 xl:grid-cols-[22rem_minmax(0,1fr)] gap-8 items-start">
+<div
+  class="grid grid-cols-1 xl:grid-cols-[22rem_minmax(0,1fr)] gap-8 items-start"
+>
+  <!-- LEFT COLUMN (SIDEBAR) -->
   <aside class="w-full space-y-6">
     <div
       class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-8 shadow-2xl relative overflow-hidden group min-h-[22rem]"
@@ -17,7 +21,8 @@
       ></div>
 
       <div class="flex items-center gap-4 mb-6">
-        {{ render_avatar(developer.full_name, developer.avatar_url, 'w-16 h-16', 128, 128, false) }}
+        {{ render_avatar(developer.full_name, developer.avatar_url, 'w-16 h-16',
+        128, 128, false) }}
         <div>
           <h2 class="text-xl font-bold text-white uppercase tracking-tight">
             {{ developer.full_name }}
@@ -77,7 +82,9 @@
       <div
         class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-white/20 p-4 min-h-[8.5rem] flex flex-col items-center justify-center text-center shadow-2xl"
       >
-        <div class="text-3xl font-black text-white">{{ my_projects|length }}</div>
+        <div class="text-3xl font-black text-white">
+          {{ my_projects|length }}
+        </div>
         <div
           class="text-[9px] text-brand-light/40 font-black uppercase tracking-[0.2em] mt-1 leading-relaxed"
         >
@@ -87,6 +94,7 @@
     </section>
   </aside>
 
+  <!-- RIGHT COLUMN -->
   <div class="w-full space-y-8">
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="bg-white/5 border border-white/10 p-6 space-y-4">
@@ -151,7 +159,9 @@
             <span
               class="w-2 h-2 {% if incoming_requests %}bg-brand-teal animate-pulse shadow-[0_0_10px_#629FAD]{% else %}bg-white/10{% endif %}"
             ></span>
-            <h3 class="text-xs font-black text-white uppercase tracking-[0.3em]">
+            <h3
+              class="text-xs font-black text-white uppercase tracking-[0.3em]"
+            >
               Incoming Requests
             </h3>
           </div>
@@ -168,24 +178,25 @@
             class="bg-brand-dark/40 border border-brand-teal/20 p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition-all hover:border-brand-teal/40"
           >
             <div class="flex items-start gap-3">
-              {{ render_avatar(req.full_name, req.avatar_url, 'w-12 h-12', 96, 96) }}
+              {{ render_avatar(req.full_name, req.avatar_url, 'w-12 h-12', 96,
+              96) }}
               <div>
-              <div
-                class="text-[10px] font-black text-brand-teal uppercase tracking-widest mb-1"
-              >
-                New Applicant for {{ req.title }}
-              </div>
-              <div
-                class="text-white font-black text-lg uppercase tracking-tighter whitespace-nowrap"
-              >
-                {{ req.full_name }}
-              </div>
-              <a
-                href="{{ url_for('developers.profile', developer_id=req.developer_id) }}"
-                class="text-[10px] text-brand-light/40 hover:text-white mt-2 inline-block transition-colors font-bold uppercase tracking-widest border-b border-white/10 pb-0.5"
-              >
-                Check Credentials
-              </a>
+                <div
+                  class="text-[10px] font-black text-brand-teal uppercase tracking-widest mb-1"
+                >
+                  New Applicant for {{ req.title }}
+                </div>
+                <div
+                  class="text-white font-black text-lg uppercase tracking-tighter whitespace-nowrap"
+                >
+                  {{ req.full_name }}
+                </div>
+                <a
+                  href="{{ url_for('developers.profile', developer_id=req.developer_id) }}"
+                  class="text-[10px] text-brand-light/40 hover:text-white mt-2 inline-block transition-colors font-bold uppercase tracking-widest border-b border-white/10 pb-0.5"
+                >
+                  Check Credentials
+                </a>
               </div>
             </div>
 
@@ -243,12 +254,15 @@
         </a>
       </div>
 
+      <!-- Compacted Cards & Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {% for match in active_matches %}
+        <!-- Reduced padding from p-6 to p-5 -->
         <div
-          class="bg-gradient-to-br from-white/10 to-transparent border border-brand-emerald/20 p-6 relative group hover:border-brand-emerald/50 transition-all"
+          class="bg-gradient-to-br from-white/10 to-transparent border border-brand-emerald/20 p-[36.2px] relative group hover:border-brand-emerald/50 transition-all"
         >
-          <div class="flex justify-between items-start mb-2">
+          <!-- Reduced margin-bottom -->
+          <div class="flex justify-between items-start mb-1">
             <h4 class="font-black text-white text-lg uppercase tracking-tight">
               {{ match.title }}
             </h4>
@@ -268,25 +282,28 @@
             {% endif %}
           </div>
 
+          <!-- Reduced margin-bottom from mb-6 to mb-3 -->
           <p
-            class="text-[9px] text-brand-light/40 mb-6 font-bold uppercase tracking-widest"
+            class="text-[9px] text-brand-light/40 mb-3 font-bold uppercase tracking-widest"
           >
             Date posted: {{ match.matched_at.strftime('%b %d, %Y') }}
           </p>
 
-          <div class="bg-black/40 p-4 border border-white/5 mb-6">
+          <!-- Tighter team box (p-3 instead of p-4, mb-4 instead of mb-6) -->
+          <div class="bg-black/40 p-3 border border-white/5 mb-4">
             <span
-              class="text-[8px] text-brand-light/30 font-black uppercase tracking-[0.2em] block mb-3"
+              class="text-[8px] text-brand-light/30 font-black uppercase tracking-[0.2em] block mb-2"
             >
               Team
             </span>
 
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-2">
               {% for member in match.team_members %}
               <div
                 class="flex items-center gap-2 bg-white/5 pr-3 py-1 border border-white/10"
               >
-                {{ render_avatar(member.name, member.avatar, 'w-6 h-6', 48, 48) }}
+                {{ render_avatar(member.name, member.avatar, 'w-5 h-5', 48, 48)
+                }}
                 <span
                   class="text-[10px] font-bold text-white/80 uppercase tracking-tight"
                 >
@@ -298,9 +315,10 @@
           </div>
 
           {% if match.owner_id == developer.developer_id %}
+          <!-- Slightly thinner button (py-2.5 instead of py-3) -->
           <a
             href="{{ url_for('matches.review_team', project_id=match.project_id) }}"
-            class="block text-center w-full text-[9px] font-black text-brand-emerald border border-brand-emerald/20 hover:bg-brand-emerald hover:text-brand-dark py-3 transition-all uppercase tracking-widest"
+            class="block text-center w-full text-[9px] font-black text-brand-emerald border border-brand-emerald/20 hover:bg-brand-emerald hover:text-brand-dark py-2.5 transition-all uppercase tracking-widest"
           >
             Mark Finished & Rate Team
           </a>
@@ -310,6 +328,7 @@
       </div>
     </section>
 
+    <!-- Requests stays at the bottom of the right column -->
     <section>
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-xs font-black text-white uppercase tracking-[0.3em]">
