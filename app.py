@@ -3,13 +3,11 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-# 1. Added the Cloudinary variables to your config import
 from config import SECRET_KEY, DEBUG, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
-# 2. Initialize Cloudinary right here before your blueprints load
 cloudinary.config(
     cloud_name = CLOUDINARY_CLOUD_NAME,
     api_key = CLOUDINARY_API_KEY,
