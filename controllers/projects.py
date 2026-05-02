@@ -25,7 +25,8 @@ def browse():
     else:
         projects = get_all_open_projects(skill_filter=skill_filter, page=page)
 
-    current_user_id = session.get('developer_id') or session.get('user_id')
+    current_user_id = get_developer_id(session['user_id'])
+    projects = [p for p in projects if p.get('owner_id') != current_user_id]
     requested_project_ids = set()
     joined_project_ids = set()
     if current_user_id:

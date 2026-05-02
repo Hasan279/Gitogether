@@ -6,7 +6,7 @@ from models.match import (
     get_unrated_team_members, 
     complete_project_matches
 )
-from models.project import get_project_by_id
+from models.project import get_project_by_id, get_projects_by_owner
 from models.user import get_developer_id
 from models.rating import get_rated_match_ids
 
@@ -24,6 +24,7 @@ def index():
     )
     session['developer_id'] = developer_id
     completed_matches = get_completed_matches_by_developer(developer_id)
+    my_listings = [p for p in get_projects_by_owner(developer_id) if p['status'] == 'open']
     
     completed_match_ids = [match['match_id'] for match in completed_matches]
     rated_match_ids = get_rated_match_ids(developer_id, completed_match_ids)
@@ -33,6 +34,7 @@ def index():
     return render_template('matches/matches.html',
                            active_matches=active_matches,
                            completed_matches=completed_matches,
+                           my_listings=my_listings,
                            show_all_active=show_all_active)
 
 

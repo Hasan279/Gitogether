@@ -21,7 +21,7 @@ def index():
 
     all_my_projects = get_projects_by_owner(developer_id)
     
-    my_projects = [p for p in all_my_projects if p['status'] == 'open'][:12]
+    my_projects = [p for p in all_my_projects if p['status'] == 'open'][:2]
 
     project_ids = [p['project_id'] for p in my_projects]
     active_counts = get_active_match_counts_for_projects(project_ids)
@@ -35,7 +35,7 @@ def index():
         developer_id, statuses=['pending', 'rejected']
     )[:12]
 
-    active_matches = get_active_matches_by_developer(developer_id, limit=8)
+    active_matches = get_active_matches_by_developer(developer_id, limit=4)
     avg_rating = get_average_rating(developer_id)
 
     return render_template('dashboard/dashboard.html',

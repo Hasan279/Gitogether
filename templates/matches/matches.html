@@ -97,6 +97,57 @@
 
   <section class="space-y-6">
     <h2
+      class="text-xs font-black text-white uppercase tracking-widest border-l-2 border-brand-emerald pl-4"
+    >
+      My Listings
+    </h2>
+
+    {% if my_listings %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for project in my_listings %}
+      <div
+        class="bg-white/5 border border-brand-emerald/20 p-8 rounded-[2.5rem] flex flex-col justify-between hover:border-brand-emerald/40 transition-all backdrop-blur-md"
+      >
+        <div>
+          <h3 class="text-xl font-black text-white uppercase mb-2">
+            {{ project.title }}
+          </h3>
+          <p
+            class="text-[10px] font-bold text-brand-light/40 uppercase tracking-widest mb-4"
+          >
+            {{ project.location or 'Remote' }}
+          </p>
+          <span
+            class="inline-block text-[8px] font-black uppercase tracking-widest text-brand-emerald border border-brand-emerald/30 bg-brand-emerald/10 px-3 py-1 rounded-full"
+          >
+            Marketplace Live
+          </span>
+        </div>
+
+        <a
+          href="{{ url_for('projects.detail', project_id=project.project_id) }}"
+          class="mt-6 text-center text-[10px] font-black text-brand-emerald border border-brand-emerald/20 py-3 rounded-xl uppercase hover:bg-brand-emerald hover:text-brand-dark transition-all"
+        >
+          View Listing
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div
+      class="bg-black/20 border border-white/5 border-dashed p-12 rounded-[2.5rem] text-center"
+    >
+      <p
+        class="text-[10px] font-black text-brand-light/20 uppercase tracking-[0.4em]"
+      >
+        No marketplace listings yet.
+      </p>
+    </div>
+    {% endif %}
+  </section>
+
+  <section class="space-y-6">
+    <h2
       class="text-xs font-black text-white uppercase tracking-widest border-l-2 border-white/20 pl-4"
     >
       Completed
