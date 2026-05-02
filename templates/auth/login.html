@@ -88,7 +88,7 @@
     </form>
 
     <p class="mt-8 text-center text-sm text-brand-light/60">
-      Don't have an axcount?
+      Don't have an account?
       <a
         href="{{ url_for('auth.register') }}"
         class="text-brand-teal font-semibold hover:underline"
@@ -109,7 +109,10 @@
       const show = input.type === "password";
       input.type = show ? "text" : "password";
       toggle.setAttribute("aria-pressed", show ? "true" : "false");
-      toggle.setAttribute("aria-label", show ? "Hide password" : "Show password");
+      toggle.setAttribute(
+        "aria-label",
+        show ? "Hide password" : "Show password",
+      );
       eye.classList.toggle("hidden", show);
       eyeOff.classList.toggle("hidden", !show);
     });
