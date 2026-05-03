@@ -21,11 +21,12 @@ def index():
 
     all_my_projects = get_projects_by_owner(developer_id)
     
-    my_projects = [p for p in all_my_projects if p['status'] == 'open'][:2]
+    all_open_projects = [p for p in all_my_projects if p['status'] == 'open']
+    my_projects = all_open_projects[:2]  # only 2 shown in the widget
 
-    project_ids = [p['project_id'] for p in my_projects]
+    project_ids = [p['project_id'] for p in all_open_projects]
     active_counts = get_active_match_counts_for_projects(project_ids)
-    for p in my_projects:
+    for p in all_open_projects:
         active_count = active_counts.get(p['project_id'], 0)
         p['remaining_slots'] = max(0, p['slots_needed'] - active_count)
 
@@ -35,15 +36,18 @@ def index():
         developer_id, statuses=['pending', 'rejected']
     )[:12]
 
-    active_matches = get_active_matches_by_developer(developer_id, limit=4)
+    all_active_matches = get_active_matches_by_developer(developer_id)
+    active_matches = all_active_matches[:4]  # only 4 shown in the widget
     avg_rating = get_average_rating(developer_id)
 
     return render_template('dashboard/dashboard.html',
                            developer=developer,
                            my_projects=my_projects,
+                           open_listings_count=len(all_open_projects),
                            incoming_requests=incoming_requests,
                            sent_requests=sent_requests,
                            active_matches=active_matches,
+                           active_matches_count=len(all_active_matches),
                            avg_rating=avg_rating)
 
 @bp.route('/rules')
