@@ -126,7 +126,7 @@ Visit `http://localhost:5000` in your browser.
 
 | Name | GitHub |
 |------|--------|
-| HasanWaseem | [@AreebSaeed](https://github.com/Hasan279) |
+| HasanWaseem | [@HasanWaseem](https://github.com/Hasan279) |
 | AnasKhan | [@AnasKhan](https://github.com/AnasKhan-1) |
 | AreebSaeed | [@AreebSaeed](https://github.com/AreebSaeed) |
 
