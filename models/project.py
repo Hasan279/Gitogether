@@ -29,12 +29,15 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10, exclude_owner_
     if skill_filter:
         query = """
             SELECT p.*, dp.full_name, dp.avatar_url,
-                   COALESCE(AVG(r.score), 0) AS avg_rating
+                   COALESCE(AVG(r.score), 0) AS avg_rating,
+                   ARRAY_REMOVE(ARRAY_AGG(DISTINCT s_all.skill_name), NULL) AS required_skills
             FROM Projects p
             JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
             LEFT JOIN Ratings r ON dp.developer_id = r.rated_id
             JOIN Project_Skills ps ON p.project_id = ps.project_id
             JOIN Skills s ON ps.skill_id = s.skill_id
+            LEFT JOIN Project_Skills ps_all ON p.project_id = ps_all.project_id
+            LEFT JOIN Skills s_all ON ps_all.skill_id = s_all.skill_id
             WHERE p.status = 'open' AND s.skill_name = %s
         """
         params = [skill_filter]
@@ -51,10 +54,13 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10, exclude_owner_
     else:
         query = """
             SELECT p.*, dp.full_name, dp.avatar_url,
-                   COALESCE(AVG(r.score), 0) AS avg_rating
+                   COALESCE(AVG(r.score), 0) AS avg_rating,
+                   ARRAY_REMOVE(ARRAY_AGG(DISTINCT s_all.skill_name), NULL) AS required_skills
             FROM Projects p
             JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
             LEFT JOIN Ratings r ON dp.developer_id = r.rated_id
+            LEFT JOIN Project_Skills ps_all ON p.project_id = ps_all.project_id
+            LEFT JOIN Skills s_all ON ps_all.skill_id = s_all.skill_id
             WHERE p.status = 'open'
         """
         params = []
@@ -187,18 +193,41 @@ def get_projects_by_owner(owner_id):
     
     return projects
 
-def get_projects_by_name(search_term, limit=20):
+def get_projects_by_name(search_term, skill_filter=None, limit=20, exclude_owner_id=None):
     conn = get_connection()
     cur = get_cursor(conn)
 
     query = """
-        SELECT p.*, dp.full_name, dp.full_name as owner_name, dp.avatar_url
+        SELECT p.*, dp.full_name, dp.full_name as owner_name, dp.avatar_url,
+               ARRAY_REMOVE(ARRAY_AGG(DISTINCT s_all.skill_name), NULL) AS required_skills
         FROM Projects p
         JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
-        WHERE p.title ILIKE %s AND p.status = 'open'
+        LEFT JOIN Project_Skills ps_all ON p.project_id = ps_all.project_id
+        LEFT JOIN Skills s_all ON ps_all.skill_id = s_all.skill_id
+        WHERE (p.title ILIKE %s OR dp.full_name ILIKE %s) AND p.status = 'open'
+    """
+    params = [f'%{search_term}%', f'%{search_term}%']
+
+    if skill_filter:
+        query += """
+        AND EXISTS (
+            SELECT 1
+            FROM Project_Skills ps_filter
+            JOIN Skills s_filter ON ps_filter.skill_id = s_filter.skill_id
+            WHERE ps_filter.project_id = p.project_id
+              AND s_filter.skill_name = %s
+        )
+        """
+        params.append(skill_filter)
+
+    if exclude_owner_id is not None:
+        query += " AND p.owner_id != %s"
+        params.append(exclude_owner_id)
+
+    query += """
+        GROUP BY p.project_id, dp.developer_id
         ORDER BY p.created_at DESC
     """
-    params = [f'%{search_term}%']
     if limit is not None:
         query += "\n LIMIT %s"
         params.append(limit)

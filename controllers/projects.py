@@ -27,7 +27,12 @@ def browse():
     total_pages = 1
 
     if search_query:
-        projects = get_projects_by_name(search_query, limit=None if show_all else 20)
+        projects = get_projects_by_name(
+            search_query,
+            skill_filter=skill_filter,
+            limit=None if show_all else 20,
+            exclude_owner_id=current_user_id
+        )
     else:
         total_projects = count_open_projects(
             skill_filter=skill_filter,
