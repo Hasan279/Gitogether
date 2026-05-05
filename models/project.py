@@ -20,14 +20,14 @@ def create_project(owner_id, title, description, location, slots_needed):
     return project_id
 
 
-def get_all_open_projects(skill_filter=None, page=1, per_page=10):
+def get_all_open_projects(skill_filter=None, page=1, per_page=10, exclude_owner_id=None):
     offset = (page - 1) * per_page
 
     conn = get_connection()
     cur = get_cursor(conn)
 
     if skill_filter:
-        cur.execute("""
+        query = """
             SELECT p.*, dp.full_name, dp.avatar_url,
                    COALESCE(AVG(r.score), 0) AS avg_rating
             FROM Projects p
@@ -36,22 +36,38 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
             JOIN Project_Skills ps ON p.project_id = ps.project_id
             JOIN Skills s ON ps.skill_id = s.skill_id
             WHERE p.status = 'open' AND s.skill_name = %s
+        """
+        params = [skill_filter]
+        if exclude_owner_id is not None:
+            query += " AND p.owner_id != %s"
+            params.append(exclude_owner_id)
+        query += """
             GROUP BY p.project_id, dp.developer_id
             ORDER BY avg_rating DESC, p.created_at DESC
             LIMIT %s OFFSET %s
-        """, (skill_filter, per_page, offset))
+        """
+        params.extend([per_page, offset])
+        cur.execute(query, tuple(params))
     else:
-        cur.execute("""
+        query = """
             SELECT p.*, dp.full_name, dp.avatar_url,
                    COALESCE(AVG(r.score), 0) AS avg_rating
             FROM Projects p
             JOIN Developer_Profiles dp ON p.owner_id = dp.developer_id
             LEFT JOIN Ratings r ON dp.developer_id = r.rated_id
             WHERE p.status = 'open'
+        """
+        params = []
+        if exclude_owner_id is not None:
+            query += " AND p.owner_id != %s"
+            params.append(exclude_owner_id)
+        query += """
             GROUP BY p.project_id, dp.developer_id
             ORDER BY avg_rating DESC, p.created_at DESC
             LIMIT %s OFFSET %s
-        """, (per_page, offset))
+        """
+        params.extend([per_page, offset])
+        cur.execute(query, tuple(params))
 
     projects = cur.fetchall()
     cur.close()

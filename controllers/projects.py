@@ -21,7 +21,7 @@ def browse():
     
     skills = get_all_skills()
 
-    per_page = 10
+    per_page = 9
     current_user_id = get_developer_id(session['user_id'])
     has_pagination = not search_query
     total_pages = 1
@@ -41,10 +41,9 @@ def browse():
         projects = get_all_open_projects(
             skill_filter=skill_filter,
             page=page,
-            per_page=per_page
+            per_page=per_page,
+            exclude_owner_id=current_user_id
         )
-
-    projects = [p for p in projects if p.get('owner_id') != current_user_id]
     requested_project_ids = set()
     joined_project_ids = set()
     if current_user_id:
