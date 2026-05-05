@@ -1,4 +1,6 @@
-# Gitogether 🤝
+![Gitogether Logo](static/images/logo.png)
+
+# Gitogether
 
 A platform where developers find each other. Post a project, discover collaborators, and build something together.
 
@@ -23,12 +25,12 @@ Finding the right person to build with is hard. Gitogether makes it simple — c
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | HTML, CSS, JavaScript |
-| Backend | Python, Flask |
-| Database | PostgreSQL (hosted on Supabase) |
-| DB Driver | psycopg2 |
+| Layer     | Technology                      |
+| --------- | ------------------------------- |
+| Frontend  | HTML, CSS, JavaScript           |
+| Backend   | Python, Flask                   |
+| Database  | PostgreSQL (hosted on Supabase) |
+| DB Driver | psycopg2                        |
 
 ---
 
@@ -71,7 +73,7 @@ gitogether/
 │   └── admin.py
 └── sql/
     ├── schema.sql
-    
+
 
 ```
 
@@ -80,12 +82,14 @@ gitogether/
 ## Getting Started
 
 **1. Clone the repo**
+
 ```bash
 git clone https://github.com/your-username/gitogether.git
 cd gitogether
 ```
 
 **2. Create a virtual environment**
+
 ```bash
 python -m venv venv
 source venv/bin/activate      # Mac/Linux
@@ -93,11 +97,13 @@ venv\Scripts\activate         # Windows
 ```
 
 **3. Install dependencies**
+
 ```bash
 pip install -r requirements.txt
 ```
 
 **4. Set up your `.env` file**
+
 ```
 DATABASE_URL=postgresql://postgres:[password]@[host].supabase.co:5432/postgres
 SECRET_KEY=your_secret_key_here
@@ -114,6 +120,7 @@ After your schema is created, run `sql/performance_indexes.sql` once in Supabase
 This adds indexes that speed up dashboard/project/match/rating queries.
 
 **7. Start the app**
+
 ```bash
 python app.py
 ```
@@ -124,10 +131,10 @@ Visit `http://localhost:5000` in your browser.
 
 ## Developers
 
-| Name | GitHub |
-|------|--------|
-| HasanWaseem | [@HasanWaseem](https://github.com/Hasan279) |
-| AnasKhan | [@AnasKhan](https://github.com/AnasKhan-1) |
-| AreebSaeed | [@AreebSaeed](https://github.com/AreebSaeed) |
+| Name        | GitHub                                       |
+| ----------- | -------------------------------------------- |
+| HasanWaseem | [@HasanWaseem](https://github.com/Hasan279)  |
+| AnasKhan    | [@AnasKhan](https://github.com/AnasKhan-1)   |
+| AreebSaeed  | [@AreebSaeed](https://github.com/AreebSaeed) |
 
 ---
