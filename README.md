@@ -1,6 +1,4 @@
-![Gitogether Logo](static/images/logo.png)
-
-# Gitogether
+# <img src="static/images/logo.png" alt="Gitogether Logo" width="45" align="center"> Gitogether
 
 A platform where developers find each other. Post a project, discover collaborators, and build something together.
 
