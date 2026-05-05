@@ -1,9 +1,10 @@
-{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block content %}
+{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block
+content %}
 <div class="max-w-6xl mx-auto space-y-8">
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <h1 class="text-4xl font-black text-white uppercase tracking-tighter">
-        Active Projects
+        Active<span class="text-brand-teal"> Projects</span>
       </h1>
       <p class="text-brand-light/60 text-sm mt-1">
         Discover and join projects.
@@ -109,8 +110,14 @@
         >{{ search_query or 'All Projects' }}</span
       >
       {% if skill_filter %}
-      <span class="text-[9px] font-black uppercase tracking-widest text-brand-light/30">Skill:</span>
-      <span class="text-[9px] font-black uppercase tracking-widest text-brand-teal">{{ skill_filter }}</span>
+      <span
+        class="text-[9px] font-black uppercase tracking-widest text-brand-light/30"
+        >Skill:</span
+      >
+      <span
+        class="text-[9px] font-black uppercase tracking-widest text-brand-teal"
+        >{{ skill_filter }}</span
+      >
       {% endif %}
       <a
         href="{{ url_for('projects.browse') }}"
@@ -131,7 +138,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for project in projects %}
     <div
-      class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col h-full hover:border-brand-teal/50 transition-colors group"
+      class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md rounded-3xl p-6 flex flex-col h-full transition-colors group border border-brand-teal/40 hover:border-brand-teal"
     >
       <div class="flex-1">
         <div class="flex justify-between items-start mb-4">
@@ -145,7 +152,8 @@
           >
         </div>
         <div class="mb-2 flex items-center gap-2">
-          {{ render_avatar(project.full_name or 'Lead Developer', project.avatar_url, 'w-7 h-7', 56, 56) }}
+          {{ render_avatar(project.full_name or 'Lead Developer',
+          project.avatar_url, 'w-7 h-7', 56, 56) }}
           <span
             class="text-[8px] font-black uppercase tracking-[0.2em] text-brand-teal/50"
             >Lead:</span
@@ -167,7 +175,9 @@
         {% if project.required_skills %}
         <div class="flex flex-wrap gap-2 mb-4">
           {% for skill in project.required_skills[:3] %}
-          <span class="bg-white/5 border border-white/10 text-brand-light text-[9px] font-black uppercase tracking-widest px-2.5 py-1">
+          <span
+            class="bg-white/5 border border-white/10 text-brand-light text-[9px] font-black uppercase tracking-widest px-2.5 py-1"
+          >
             {{ skill }}
           </span>
           {% endfor %}
@@ -190,14 +200,22 @@
           method="POST"
           class="flex-1"
         >
-          {% set already_joined = project.project_id in joined_project_ids %}
-          {% set already_requested = project.project_id in requested_project_ids %}
+          {% set already_joined = project.project_id in joined_project_ids %} {%
+          set already_requested = project.project_id in requested_project_ids %}
           <button
             type="submit"
-            {% if already_requested or already_joined %}disabled{% endif %}
+            {%
+            if
+            already_requested
+            or
+            already_joined
+            %}disabled{%
+            endif
+            %}
             class="w-full text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition shadow-lg {% if already_joined %}bg-white/20 border border-white/20 text-white/40 cursor-not-allowed shadow-none{% elif already_requested %}bg-white/20 border border-white/20 text-white/40 cursor-not-allowed shadow-none{% else %}bg-brand-emerald hover:bg-brand-teal text-brand-dark{% endif %}"
           >
-            {% if already_joined %}Already Joined{% elif already_requested %}Request Sent{% else %}Join{% endif %}
+            {% if already_joined %}Already Joined{% elif already_requested
+            %}Request Sent{% else %}Join{% endif %}
           </button>
         </form>
         {% endif %}
@@ -240,7 +258,9 @@
     </span>
     {% endif %}
 
-    <span class="text-[10px] font-black uppercase tracking-widest text-brand-teal">
+    <span
+      class="text-[10px] font-black uppercase tracking-widest text-brand-teal"
+    >
       Page {{ page }} / {{ total_pages }}
     </span>
 
