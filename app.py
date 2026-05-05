@@ -2,11 +2,13 @@ from flask import Flask, redirect, render_template, session, url_for
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from flask_wtf.csrf import CSRFProtect
 
 from config import SECRET_KEY, DEBUG, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
+csrf = CSRFProtect(app)
 
 cloudinary.config(
     cloud_name = CLOUDINARY_CLOUD_NAME,

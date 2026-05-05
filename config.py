@@ -12,5 +12,3 @@ CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
-print("DB URL:", DATABASE_URL)
-print("cloudinary name: ",CLOUDINARY_CLOUD_NAME)

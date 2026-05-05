@@ -11,14 +11,35 @@ def submit(match_id):
         return redirect(url_for('auth.login'))
 
     match = get_match_by_id(match_id)
+    if not match:
+        flash("Invalid match", "error")
+        return redirect(url_for('matches.index'))
+
     rater_id = get_developer_id(session['user_id'])
-    rated_id = request.form.get('rated_id')
-    score = int(request.form.get('score'))
+    if not rater_id:
+        flash("Unauthorized action", "error")
+        return redirect(url_for('auth.login'))
+
+    score_raw = request.form.get('score', '').strip()
+    try:
+        score = int(score_raw)
+    except ValueError:
+        flash("Score must be between 1 and 5", "error")
+        return redirect(url_for('ratings.rate', match_id=match_id))
+
     review = request.form.get('review', '').strip()
+
+    if match['owner_id'] == rater_id:
+        rated_id = match['developer_id']
+    elif match['developer_id'] == rater_id:
+        rated_id = match['owner_id']
+    else:
+        flash("You are not part of this match", "error")
+        return redirect(url_for('matches.index'))
 
     if score < 1 or score > 5:
         flash("Score must be between 1 and 5", "error")
-        return redirect(request.referrer)
+        return redirect(url_for('ratings.rate', match_id=match_id))
 
     existing = check_existing_rating(match_id, rater_id)
     if existing:
@@ -40,11 +61,21 @@ def rate(match_id):
         return redirect(url_for('auth.login'))
 
     match = get_match_by_id(match_id)
+    if not match:
+        flash("Invalid match", "error")
+        return redirect(url_for('matches.index'))
+
     user_dev_id = get_developer_id(session['user_id'])
+    if not user_dev_id:
+        flash("Unauthorized action", "error")
+        return redirect(url_for('auth.login'))
 
     if match['owner_id'] == user_dev_id:
         target_id = match['developer_id']
-    else:
+    elif match['developer_id'] == user_dev_id:
         target_id = match['owner_id']
+    else:
+        flash("You are not part of this match", "error")
+        return redirect(url_for('matches.index'))
 
     return render_template('ratings/rate.html', match=match, rated_id=target_id)

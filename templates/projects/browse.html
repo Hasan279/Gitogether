@@ -150,6 +150,46 @@
     </div>
     {% endfor %}
   </div>
+
+  {% if has_pagination and total_pages > 1 %}
+  <div
+    class="mt-8 flex items-center justify-center gap-4 border border-white/10 bg-white/5 px-4 py-3 rounded-2xl"
+  >
+    {% if page > 1 %}
+    <a
+      href="{{ url_for('projects.browse', page=page-1, skill=skill_filter) }}"
+      class="px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition"
+    >
+      Previous
+    </a>
+    {% else %}
+    <span
+      class="px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-white/5 border border-white/10 text-white/30 rounded-xl"
+    >
+      Previous
+    </span>
+    {% endif %}
+
+    <span class="text-[10px] font-black uppercase tracking-widest text-brand-teal">
+      Page {{ page }} / {{ total_pages }}
+    </span>
+
+    {% if page < total_pages %}
+    <a
+      href="{{ url_for('projects.browse', page=page+1, skill=skill_filter) }}"
+      class="px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-brand-teal text-brand-dark hover:bg-white border border-brand-teal rounded-xl transition"
+    >
+      Next
+    </a>
+    {% else %}
+    <span
+      class="px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-white/5 border border-white/10 text-white/30 rounded-xl"
+    >
+      Next
+    </span>
+    {% endif %}
+  </div>
+  {% endif %}
 </div>
 <script>
   (function () {

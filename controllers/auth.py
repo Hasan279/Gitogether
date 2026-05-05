@@ -1,7 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from models.user import *
+import time
+from collections import defaultdict
 
 bp = Blueprint('auth', __name__)
+FAILED_LOGINS_BY_IP = defaultdict(list)
+MAX_LOGIN_ATTEMPTS = 5
+LOGIN_WINDOW_SECONDS = 300
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -51,6 +56,20 @@ def login():
     if request.method == 'GET':
         return render_template('auth/login.html')
 
+    client_ip = request.headers.get('X-Forwarded-For', request.remote_addr or '')
+    if ',' in client_ip:
+        client_ip = client_ip.split(',')[0].strip()
+    now = time.time()
+    attempts = [
+        ts for ts in FAILED_LOGINS_BY_IP[client_ip]
+        if now - ts <= LOGIN_WINDOW_SECONDS
+    ]
+    FAILED_LOGINS_BY_IP[client_ip] = attempts
+
+    if len(attempts) >= MAX_LOGIN_ATTEMPTS:
+        flash("Too many login attempts. Please try again in a few minutes.", "error")
+        return redirect(url_for('auth.login'))
+
     email = request.form.get('email', '').strip()
     password = request.form.get('password', '').strip()
 
@@ -60,12 +79,16 @@ def login():
 
     user = get_user_by_email(email)
     if not user or not verify_password(password, user['password_hash']):
+        FAILED_LOGINS_BY_IP[client_ip].append(now)
         flash("Invalid email or password", "error")
         return redirect(url_for('auth.login'))
 
     if not user['is_active']:
+        FAILED_LOGINS_BY_IP[client_ip].append(now)
         flash("Your account has been deactivated", "error")
         return redirect(url_for('auth.login'))
+
+    FAILED_LOGINS_BY_IP.pop(client_ip, None)
 
     dev = get_developer_by_user_id(user['user_id'])
 

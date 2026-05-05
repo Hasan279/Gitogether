@@ -58,6 +58,39 @@ def get_all_open_projects(skill_filter=None, page=1, per_page=10):
     release_connection(conn)
     return projects
 
+
+def count_open_projects(skill_filter=None, exclude_owner_id=None):
+    conn = get_connection()
+    cur = get_cursor(conn)
+
+    query = """
+        SELECT COUNT(DISTINCT p.project_id) AS total
+        FROM Projects p
+    """
+    params = []
+
+    if skill_filter:
+        query += """
+            JOIN Project_Skills ps ON p.project_id = ps.project_id
+            JOIN Skills s ON ps.skill_id = s.skill_id
+        """
+
+    query += " WHERE p.status = 'open'"
+
+    if skill_filter:
+        query += " AND s.skill_name = %s"
+        params.append(skill_filter)
+
+    if exclude_owner_id is not None:
+        query += " AND p.owner_id != %s"
+        params.append(exclude_owner_id)
+
+    cur.execute(query, tuple(params))
+    row = cur.fetchone()
+    cur.close()
+    release_connection(conn)
+    return row['total'] if row else 0
+
 def get_dashboard_projects(owner_id):
     conn = get_connection()
     cur = get_cursor(conn)

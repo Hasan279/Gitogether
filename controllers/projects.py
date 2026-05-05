@@ -4,6 +4,7 @@ from models.skill import *
 from models.user import *
 from models.request import *
 from models.match import get_active_match_counts_for_projects, check_existing_match
+import math
 
 bp = Blueprint('projects', __name__)
 
@@ -20,12 +21,29 @@ def browse():
     
     skills = get_all_skills()
 
+    per_page = 10
+    current_user_id = get_developer_id(session['user_id'])
+    has_pagination = not search_query
+    total_pages = 1
+
     if search_query:
         projects = get_projects_by_name(search_query, limit=None if show_all else 20)
     else:
-        projects = get_all_open_projects(skill_filter=skill_filter, page=page)
+        total_projects = count_open_projects(
+            skill_filter=skill_filter,
+            exclude_owner_id=current_user_id
+        )
+        total_pages = max(1, math.ceil(total_projects / per_page))
+        if page < 1:
+            page = 1
+        if page > total_pages:
+            page = total_pages
+        projects = get_all_open_projects(
+            skill_filter=skill_filter,
+            page=page,
+            per_page=per_page
+        )
 
-    current_user_id = get_developer_id(session['user_id'])
     projects = [p for p in projects if p.get('owner_id') != current_user_id]
     requested_project_ids = set()
     joined_project_ids = set()
@@ -51,6 +69,8 @@ def browse():
         skill_filter=skill_filter,
         search_query=search_query,
         show_all=show_all,
+        has_pagination=has_pagination,
+        total_pages=total_pages,
         requested_project_ids=requested_project_ids,
         joined_project_ids=joined_project_ids
     )
