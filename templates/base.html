@@ -185,7 +185,7 @@
     class="h-full bg-brand-dark text-brand-light selection:bg-brand-teal selection:text-brand-dark"
   >
     <nav
-      class="nav-accent flex items-center justify-between py-10 px-6 md:px-10 lg:px-12 max-w-[1440px] mx-auto"
+      class="nav-accent flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between py-10 px-6 md:px-10 lg:px-12 max-w-[1440px] mx-auto"
     >
       <a href="/" class="flex items-center gap-4 group">
         <div class="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center">
@@ -206,7 +206,7 @@
         </span>
       </a>
 
-      <div class="flex items-center gap-12">
+      <div class="flex flex-wrap items-center justify-end gap-4 sm:gap-12">
         {% if request.endpoint == 'auth.login' %}
         <div class="flex items-center gap-6">
           <span
@@ -236,7 +236,7 @@
         </div>
 
         {% else %} {% if session.user_id %}
-        <div class="flex items-center gap-12">
+        <div class="flex flex-wrap items-center justify-end gap-4 sm:gap-12">
           {% if session.get('role', '')|lower == 'admin' %}
           <a
             href="{{ url_for('admin.panel') }}"
@@ -246,7 +246,9 @@
           </a>
           {% else %}
 
-          <div class="hidden md:flex gap-10 items-center mr-6">
+          <div
+            class="flex flex-wrap gap-4 sm:gap-6 md:gap-10 items-center justify-end mr-0 md:mr-6"
+          >
             <a
               href="{{ url_for('projects.browse') }}"
               class="group flex flex-col items-center gap-1.5"
