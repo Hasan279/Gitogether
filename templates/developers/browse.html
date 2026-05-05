@@ -107,7 +107,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for dev in developers %}
     <div
-      class="group relative bg-gradient-to-br from-white/10 to-transparent border border-white/10 rounded-[2rem] p-8 transition-all hover:border-brand-teal/50 hover:shadow-2xl"
+      class="group relative bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md border border-brand-teal/40 rounded-3xl p-8 transition-all hover:border-brand-teal hover:shadow-2xl shadow-[0_0_18px_rgba(0,229,255,0.08)] hover:shadow-[0_0_22px_rgba(0,229,255,0.18)]"
     >
       <div class="flex items-start justify-between mb-6">
         {{ render_avatar(dev.full_name, dev.avatar_url, 'w-16 h-16', 128, 128, false)
