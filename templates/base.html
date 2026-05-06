@@ -470,6 +470,8 @@
         if (!loader) return;
 
         let hideTimer = null;
+        let clickFallbackTimer = null;
+        let pendingPageNavigation = false;
         const showLoader = () => {
           if (hideTimer) {
             clearTimeout(hideTimer);
@@ -480,24 +482,64 @@
         };
 
         const hideLoader = () => {
+          if (clickFallbackTimer) {
+            clearTimeout(clickFallbackTimer);
+            clickFallbackTimer = null;
+          }
+          pendingPageNavigation = false;
           hideTimer = setTimeout(() => {
             loader.classList.remove("show");
             loader.setAttribute("aria-hidden", "true");
           }, 120);
         };
 
-        document.addEventListener("submit", () => showLoader(), true);
+        document.addEventListener(
+          "submit",
+          () => {
+            pendingPageNavigation = true;
+            showLoader();
+          },
+          true
+        );
         document.addEventListener("click", (event) => {
           const link = event.target.closest("a[href]");
           if (!link) return;
-          const href = link.getAttribute("href");
-          if (!href || href.startsWith("#") || href.startsWith("javascript:")) {
+          if (
+            link.target === "_blank" ||
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey ||
+            event.button !== 0 ||
+            link.hasAttribute("download")
+          ) {
             return;
           }
+          const href = link.getAttribute("href");
+          if (
+            !href ||
+            href.startsWith("#") ||
+            href.startsWith("javascript:") ||
+            href.startsWith("mailto:") ||
+            href.startsWith("tel:")
+          ) {
+            return;
+          }
+          pendingPageNavigation = true;
           showLoader();
+          // Failsafe: if click does not trigger real navigation, hide loader.
+          clickFallbackTimer = setTimeout(() => {
+            if (document.visibilityState === "visible") {
+              hideLoader();
+            }
+          }, 800);
         });
 
-        window.addEventListener("beforeunload", showLoader);
+        window.addEventListener("beforeunload", () => {
+          if (pendingPageNavigation) {
+            showLoader();
+          }
+        });
         window.addEventListener("pageshow", hideLoader);
         window.addEventListener("load", hideLoader);
 

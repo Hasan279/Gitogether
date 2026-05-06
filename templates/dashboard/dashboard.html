@@ -341,16 +341,16 @@ content %}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {% for req in sent_requests %}
         <div
-          class="bg-white/5 border {% if req.status == 'rejected' %}border-red-500/10 opacity-50{% else %}border-white/10{% endif %} p-5 flex justify-between items-center transition-all"
+          class="bg-white/5 border {% if req.status == 'rejected' %}border-red-500/30{% else %}border-white/10{% endif %} p-5 flex justify-between items-center transition-all"
         >
           <div>
             <h4
-              class="font-black text-xs uppercase {% if req.status == 'rejected' %}text-white/30{% else %}text-white{% endif %} tracking-tight"
+              class="font-black text-xs uppercase {% if req.status == 'rejected' %}text-white/85{% else %}text-white{% endif %} tracking-tight"
             >
               {{ req.title }}
             </h4>
             <p
-              class="text-[8px] text-brand-light/30 mt-1 font-bold uppercase tracking-widest"
+              class="text-[8px] {% if req.status == 'rejected' %}text-brand-light/70{% else %}text-brand-light/30{% endif %} mt-1 font-bold uppercase tracking-widest"
             >
               {{ req.created_at.strftime('%b %d') }}
             </p>

@@ -68,22 +68,34 @@ def get_requests_by_developer(developer_id, statuses=None):
 
     if statuses:
         cur.execute("""
-            SELECT r.request_id, r.status, r.created_at,
-                   p.project_id, p.title, p.status AS project_status, p.owner_id
-            FROM Requests r
-            JOIN Projects p ON r.project_id = p.project_id
-            WHERE r.developer_id = %s
-              AND r.status = ANY(%s)
-            ORDER BY r.created_at DESC
+            SELECT latest.request_id, latest.status, latest.created_at,
+                   latest.project_id, latest.title, latest.project_status, latest.owner_id
+            FROM (
+                SELECT DISTINCT ON (p.project_id)
+                       r.request_id, r.status, r.created_at,
+                       p.project_id, p.title, p.status AS project_status, p.owner_id
+                FROM Requests r
+                JOIN Projects p ON r.project_id = p.project_id
+                WHERE r.developer_id = %s
+                  AND r.status = ANY(%s)
+                ORDER BY p.project_id, r.created_at DESC, r.request_id DESC
+            ) AS latest
+            ORDER BY latest.created_at DESC, latest.request_id DESC
         """, (developer_id, statuses))
     else:
         cur.execute("""
-            SELECT r.request_id, r.status, r.created_at,
-                   p.project_id, p.title, p.status AS project_status, p.owner_id
-            FROM Requests r
-            JOIN Projects p ON r.project_id = p.project_id
-            WHERE r.developer_id = %s
-            ORDER BY r.created_at DESC
+            SELECT latest.request_id, latest.status, latest.created_at,
+                   latest.project_id, latest.title, latest.project_status, latest.owner_id
+            FROM (
+                SELECT DISTINCT ON (p.project_id)
+                       r.request_id, r.status, r.created_at,
+                       p.project_id, p.title, p.status AS project_status, p.owner_id
+                FROM Requests r
+                JOIN Projects p ON r.project_id = p.project_id
+                WHERE r.developer_id = %s
+                ORDER BY p.project_id, r.created_at DESC, r.request_id DESC
+            ) AS latest
+            ORDER BY latest.created_at DESC, latest.request_id DESC
         """, (developer_id,))
     
     requests = cur.fetchall()
