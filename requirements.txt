@@ -1,6 +1,6 @@
-cloudinary==1.44.2
-Flask==3.1.3
-flask_wtf==1.3.0
-psycopg2-binary==2.9.11
-python-dotenv==1.2.2
-python_bcrypt==0.3.2
+cloudinary
+Flask
+flask_wtf
+psycopg2-binary
+python-dotenv
+python_bcryp

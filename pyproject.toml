@@ -1,9 +1,0 @@
-[project]
-name = "gitogether"
-version = "0.1.0"
-requires-python = ">=3.11"
-
-# Vercel installs from requirements.txt; this file pins the Python runtime
-# and the WSGI entry for the Flask app (module app.py, variable app).
-[tool.vercel]
-entrypoint = "app:app"
