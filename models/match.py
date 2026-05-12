@@ -81,7 +81,8 @@ def get_active_matches_by_developer(developer_id, limit=None):
                 json_build_object(
                     'name', dp.full_name,
                     'avatar', dp.avatar_url,
-                    'id', dp.developer_id
+                    'id', dp.developer_id,
+                    'contact_link', dp.contact_link
                 )
             ) as team_members
         FROM Matches m
@@ -126,7 +127,8 @@ def get_completed_matches_by_developer(developer_id, limit=10):
                 json_build_object(
                     'name', dp.full_name,
                     'avatar', dp.avatar_url,
-                    'id', dp.developer_id
+                    'id', dp.developer_id,
+                    'contact_link', dp.contact_link
                 )
             ) as team_members
         FROM Matches m

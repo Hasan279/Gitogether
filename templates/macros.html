@@ -28,3 +28,18 @@
   {% endif %}
 </div>
 {% endmacro %}
+
+{% macro team_member_chip(member, avatar_size='w-5 h-5', avatar_w=40, avatar_h=40, extra_classes='') %}
+{% set profile_href = url_for('developers.profile', developer_id=member.id) %}
+{% set raw_link = (member.contact_link or '')|trim %}
+{% set href = raw_link if raw_link and raw_link != '#' else profile_href %}
+<a
+  href="{{ href }}"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="inline-flex items-center gap-2 bg-white/5 pr-3 py-1 border border-white/10 rounded-md hover:border-brand-teal/50 hover:bg-white/10 transition-all cursor-pointer no-underline {{ extra_classes }}"
+>
+  {{ render_avatar(member.name, member.avatar, avatar_size, avatar_w, avatar_h) }}
+  <span class="text-[10px] font-bold text-white/80 uppercase tracking-tight">{{ member.name }}</span>
+</a>
+{% endmacro %}

@@ -1,4 +1,4 @@
-{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block
+{% from 'macros.html' import render_avatar, team_member_chip %} {% extends 'base.html' %} {% block
 content %}
 <div class="mb-8">
   <h1
@@ -296,17 +296,7 @@ content %}
 
             <div class="flex flex-wrap gap-2">
               {% for member in match.team_members %}
-              <div
-                class="flex items-center gap-2 bg-white/5 pr-3 py-1 border border-white/10"
-              >
-                {{ render_avatar(member.name, member.avatar, 'w-5 h-5', 48, 48)
-                }}
-                <span
-                  class="text-[10px] font-bold text-white/80 uppercase tracking-tight"
-                >
-                  {{ member.name }}
-                </span>
-              </div>
+              {{ team_member_chip(member, 'w-5 h-5', 48, 48) }}
               {% endfor %}
             </div>
           </div>

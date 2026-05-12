@@ -1,4 +1,4 @@
-{% from 'macros.html' import render_avatar %} {% extends 'base.html' %} {% block content %}
+{% from 'macros.html' import render_avatar, team_member_chip %} {% extends 'base.html' %} {% block content %}
 <div class="max-w-6xl mx-auto space-y-12 pb-20">
   <div>
     <h1 class="text-4xl font-black text-white uppercase tracking-tighter">
@@ -41,12 +41,7 @@
             >
             <div class="flex flex-wrap gap-2">
               {% for member in match.team_members %}
-              <div
-                class="text-[10px] font-bold text-white/80 uppercase px-2 py-1 bg-white/5 border border-white/10 rounded-md flex items-center gap-2"
-              >
-                {{ render_avatar(member.name, member.avatar, 'w-5 h-5', 40, 40) }}
-                <span>{{ member.name }}</span>
-              </div>
+              {{ team_member_chip(member) }}
               {% endfor %}
             </div>
           </div>
@@ -169,12 +164,7 @@
             >Collaborators:</span
           >
           {% for member in match.team_members %}
-          <div
-            class="text-[9px] font-bold text-white/50 uppercase px-2 py-1 bg-black/20 border border-white/5 rounded-md flex items-center gap-2"
-          >
-            {{ render_avatar(member.name, member.avatar, 'w-5 h-5', 40, 40) }}
-            <span>{{ member.name }}</span>
-          </div>
+          {{ team_member_chip(member, extra_classes='bg-black/20 border-white/5 [&_span]:text-white/50') }}
           {% endfor %}
         </div>
 
