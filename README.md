@@ -38,6 +38,10 @@ Finding the right person to build with is hard. Gitogether makes it simple — c
 gitogether/
 ├── app.py                  # Entry point
 ├── config.py               # Environment config
+├── pyproject.toml          # Python version + Vercel entrypoint
+├── vercel.json             # Vercel project config
+├── .vercelignore           # Files omitted from serverless bundle
+├── .env.example            # Example env vars (copy to .env locally)
 ├── .env                    # Credentials (not committed)
 ├── requirements.txt
 ├── static/
@@ -124,6 +128,19 @@ python app.py
 ```
 
 Visit `http://localhost:5000` in your browser.
+
+---
+
+## Deploying to Vercel
+
+This repo is set up for [Vercel’s Flask backend](https://vercel.com/docs/frameworks/backend/flask): root `app.py` exports a Flask instance named `app`, with `pyproject.toml` (`[tool.vercel] entrypoint = "app:app"`) and `vercel.json` for tooling. Vercel installs dependencies from `requirements.txt`.
+
+1. Push the project to GitHub (or GitLab / Bitbucket).
+2. In [Vercel](https://vercel.com), create a project and import the repository. Vercel should detect Python/Flask automatically.
+3. Under **Project → Settings → Environment Variables**, add the same values you use locally (see `.env.example`): `DATABASE_URL`, `SECRET_KEY`, and your Cloudinary keys. Use a hosted PostgreSQL URL (for example Supabase or Neon); `postgres://` URLs are normalized to `postgresql://` in `config.py`.
+4. Deploy. Optional: install the [Vercel CLI](https://vercel.com/docs/cli) and run `vercel` from the project root for previews and production deploys.
+
+**Notes:** Serverless functions work best with an external database and SSL. The app uses a small connection pool when `VERCEL=1` (set automatically on Vercel). Run `sql/schema.sql` (and optional `sql/request_cleanup_trigger.sql`) against your production database before going live.
 
 ---
 
