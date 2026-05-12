@@ -1,6 +1,6 @@
-cloudinary
 Flask
-flask_wtf
+flask-wtf
 psycopg2-binary
 python-dotenv
-python_bcryp
+bcrypt
+cloudinary
