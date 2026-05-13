@@ -257,7 +257,8 @@ content %}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {% for match in active_matches %}
         <div
-          class="bg-gradient-to-br from-white/10 to-transparent border border-brand-emerald/20 p-[30.9px] relative group hover:border-brand-emerald/50 transition-all"
+          onclick="window.location.href='{{ url_for('projects.detail', project_id=match.project_id) }}'"
+          class="bg-gradient-to-br from-white/10 to-transparent border border-brand-emerald/20 p-[30.9px] relative group hover:border-brand-emerald/50 transition-all cursor-pointer"
         >
           <div class="flex justify-between items-start mb-1">
             <h4 class="font-black text-white text-lg uppercase tracking-tight">
@@ -304,6 +305,7 @@ content %}
           {% if match.owner_id == developer.developer_id %}
           <!-- Slightly thinner button (py-2.5 instead of py-3) -->
           <a
+            onclick="event.stopPropagation()"
             href="{{ url_for('matches.review_team', project_id=match.project_id) }}"
             class="block text-center w-full text-[9px] font-black text-brand-emerald border border-brand-emerald/20 hover:bg-brand-emerald hover:text-brand-dark py-2.5 transition-all uppercase tracking-widest"
           >
@@ -331,7 +333,8 @@ content %}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {% for req in sent_requests %}
         <div
-          class="bg-white/5 border {% if req.status == 'rejected' %}border-red-500/30{% else %}border-white/10{% endif %} p-5 flex justify-between items-center transition-all"
+          onclick="window.location.href='{{ url_for('projects.detail', project_id=req.project_id) }}'"
+          class="bg-white/5 border {% if req.status == 'rejected' %}border-red-500/30{% else %}border-white/10{% endif %} p-5 flex justify-between items-center transition-all cursor-pointer hover:bg-white/10"
         >
           <div>
             <h4

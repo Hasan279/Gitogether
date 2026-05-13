@@ -138,7 +138,8 @@ content %}
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for project in projects %}
     <div
-      class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md rounded-3xl p-6 flex flex-col h-full transition-colors group border border-brand-teal/40 hover:border-brand-teal"
+      onclick="window.location.href='{{ url_for('projects.detail', project_id=project.project_id) }}'"
+      class="bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md rounded-3xl p-6 flex flex-col h-full transition-colors group border border-brand-teal/40 hover:border-brand-teal cursor-pointer"
     >
       <div class="flex-1">
         <div class="flex justify-between items-start mb-4">
@@ -187,6 +188,7 @@ content %}
 
       <div class="pt-4 border-t border-white/10 mt-auto flex gap-2">
         <a
+          onclick="event.stopPropagation()"
           href="{{ url_for('projects.detail', project_id=project.project_id) }}"
           class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-center py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition"
         >
@@ -196,6 +198,7 @@ content %}
         {% set current_user_id = session.developer_id or session.user_id %} {%
         if current_user_id and current_user_id != project.owner_id %}
         <form
+          onclick="event.stopPropagation()"
           action="{{ url_for('requests.send', project_id=project.project_id) }}"
           method="POST"
           class="flex-1"
