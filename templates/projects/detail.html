@@ -34,6 +34,11 @@
     current_user_id == project.owner_id %}
     <div class="flex gap-2">
       <a
+        href="{{ url_for('projects.chat', project_id=project.project_id) }}"
+        class="bg-brand-teal text-brand-dark px-4 py-2 rounded-xl text-xs font-bold transition uppercase tracking-tighter shadow-sm"
+        >Project Chat</a
+      >
+      <a
         href="{{ url_for('projects.edit', project_id=project.project_id) }}"
         class="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2 rounded-xl text-xs font-bold transition uppercase tracking-tighter shadow-sm"
         >Modify</a
@@ -153,6 +158,14 @@
 
       <div id="join-section">
         {% if current_user_id %} {% if current_user_id != project.owner_id %}
+        {% if already_joined %}
+        <a
+          href="{{ url_for('projects.chat', project_id=project.project_id) }}"
+          class="block w-full border-2 border-brand-teal bg-brand-teal text-brand-dark text-center font-black py-4 rounded-none shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] hover:brightness-110 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-75 uppercase tracking-widest text-sm"
+        >
+          Open Project Chat
+        </a>
+        {% else %}
         <form
           action="{{ url_for('requests.send', project_id=project.project_id) }}"
           method="POST"
@@ -160,12 +173,13 @@
         >
           <button
             type="submit"
-            {% if existing_request or already_joined %}disabled{% endif %}
-            class="w-full font-black py-4 text-sm uppercase tracking-widest border-2 transition-all duration-75 {% if already_joined %}bg-white/20 border-white/20 text-white/40 cursor-not-allowed shadow-none{% elif existing_request %}bg-white/20 border-white/20 text-white/40 cursor-not-allowed shadow-none{% else %}border-brand-teal bg-brand-teal text-brand-dark shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] hover:brightness-110 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none{% endif %}"
+            {% if existing_request %}disabled{% endif %}
+            class="w-full font-black py-4 text-sm uppercase tracking-widest border-2 transition-all duration-75 {% if existing_request %}bg-white/20 border-white/20 text-white/40 cursor-not-allowed shadow-none{% else %}border-brand-teal bg-brand-teal text-brand-dark shadow-[4px_4px_0px_0px_rgba(0,229,255,1)] hover:brightness-110 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none{% endif %}"
           >
-            {% if already_joined %}Already Joined{% elif existing_request %}Request Sent{% else %}Request to Join Team{% endif %}
+            {% if existing_request %}Request Sent{% else %}Request to Join Team{% endif %}
           </button>
         </form>
+        {% endif %}
         {% endif %} {% else %}
         <a
           href="{{ url_for('auth.login') }}"

@@ -76,3 +76,11 @@ CREATE TABLE Ratings (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (match_id, rater_id)
 );
+
+CREATE TABLE Project_Messages (
+    message_id SERIAL PRIMARY KEY,
+    project_id INT NOT NULL REFERENCES Projects(project_id) ON DELETE CASCADE,
+    sender_id INT NOT NULL REFERENCES Developer_Profiles(developer_id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -4,6 +4,8 @@ from models.skill import *
 from models.user import *
 from models.request import *
 from models.match import get_active_match_counts_for_projects, check_existing_match
+from models.message import get_project_messages, create_message
+from config import SUPABASE_URL, SUPABASE_ANON_KEY
 import math
 
 bp = Blueprint('projects', __name__)
@@ -223,3 +225,50 @@ def delete(project_id):
     delete_project(project_id)
     flash("Project deleted successfully", "success")
     return redirect(url_for('dashboard.index'))
+
+@bp.route('/projects/<int:project_id>/chat')
+def chat(project_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+        
+    project = get_project_by_id(project_id)
+    if not project:
+        flash("Project not found", "error")
+        return redirect(url_for('projects.browse'))
+        
+    developer_id = get_developer_id(session['user_id'])
+    # verify user is owner or part of match
+    if project['owner_id'] != developer_id:
+        match = check_existing_match(developer_id, project_id)
+        if not match or match['status'] != 'active':
+            flash("You must be an active member of this project to view the chat.", "error")
+            return redirect(url_for('projects.detail', project_id=project_id))
+            
+    messages = get_project_messages(project_id)
+    
+    return render_template('projects/chat.html', 
+                           project=project, 
+                           messages=messages, 
+                           current_developer_id=developer_id,
+                           supabase_url=SUPABASE_URL,
+                           supabase_anon_key=SUPABASE_ANON_KEY)
+
+@bp.route('/projects/<int:project_id>/messages', methods=['POST'])
+def send_message(project_id):
+    if 'user_id' not in session:
+        return {'status': 'unauthorized'}, 401
+        
+    developer_id = get_developer_id(session['user_id'])
+    project = get_project_by_id(project_id)
+    
+    if project['owner_id'] != developer_id:
+        match = check_existing_match(developer_id, project_id)
+        if not match or match['status'] != 'active':
+            return {'status': 'unauthorized'}, 401
+            
+    content = request.json.get('content')
+    if not content or not content.strip():
+        return {'status': 'empty'}, 400
+        
+    create_message(project_id, developer_id, content.strip())
+    return {'status': 'ok'}

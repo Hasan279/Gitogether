@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <a href="{{ url_for('projects.detail', project_id=project.project_id) }}" class="text-brand-teal hover:text-white text-xs font-black uppercase tracking-widest transition-colors inline-flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Project
+    </a>
+    <h1 class="text-2xl font-black text-white tracking-tighter uppercase">{{ project.title }} Chat</h1>
+  </div>
+
+  <div class="bg-brand-surface border border-white/10 p-6 shadow-2xl relative flex flex-col h-[600px]">
+    <div id="chat-box" class="flex-1 overflow-y-auto space-y-4 pr-2 flex flex-col p-4 bg-black/20">
+      {% for msg in messages %}
+        <div class="message flex flex-col max-w-[70%] {% if msg.sender_id == current_developer_id %}msg-mine self-end text-right{% else %}msg-theirs self-start text-left{% endif %}">
+          <span class="text-[10px] font-bold text-white/50 mb-1 uppercase">{{ msg.sender_name }}</span>
+          <div class="px-4 py-3 text-sm text-white {% if msg.sender_id == current_developer_id %}bg-brand-teal text-brand-dark rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm{% else %}bg-white/10 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm border border-white/5{% endif %}">
+            {{ msg.content }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="mt-4 border-t border-white/10 pt-4">
+      <form id="chat-form" class="flex gap-4">
+        <input type="text" id="chat-input" class="flex-1 bg-black/50 border border-white/20 text-white px-4 py-3 focus:outline-none focus:border-brand-teal transition-colors" placeholder="Type a message..." required autocomplete="off">
+        <button type="submit" class="street-btn px-8 py-3">Send</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "{{ supabase_url or '' }}";
+  const supabaseKey = "{{ supabase_anon_key or '' }}";
+  const projectId = {{ project.project_id }};
+  const currentUserId = {{ current_developer_id }};
+  
+  const supabase = supabaseUrl && supabaseKey ? supabase.createClient(supabaseUrl, supabaseKey) : null;
+  const chatBox = document.getElementById('chat-box');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+
+  function scrollToBottom() {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+  
+  scrollToBottom();
+
+  if (supabase) {
+      supabase
+        .channel(`project-${projectId}-chat`)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_messages', filter: `project_id=eq.${projectId}` }, payload => {
+          const msg = payload.new;
+          if (msg.sender_id === currentUserId) return; 
+          
+          const bubbleContainer = document.createElement('div');
+          bubbleContainer.className = "message flex flex-col max-w-[70%] msg-theirs self-start text-left";
+          
+          const nameSpan = document.createElement('span');
+          nameSpan.className = "text-[10px] font-bold text-white/50 mb-1 uppercase";
+          nameSpan.innerText = "Team Member"; 
+          
+          const textDiv = document.createElement('div');
+          textDiv.className = "px-4 py-3 text-sm text-white bg-white/10 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm border border-white/5";
+          textDiv.innerText = msg.content;
+          
+          bubbleContainer.appendChild(nameSpan);
+          bubbleContainer.appendChild(textDiv);
+          chatBox.appendChild(bubbleContainer);
+          scrollToBottom();
+        })
+        .subscribe();
+  } else {
+      console.warn("Supabase Realtime is not active because SUPABASE_URL or SUPABASE_ANON_KEY is missing in .env.");
+      // Fallback: Smart Polling every 5 seconds if tab is visible
+      setInterval(() => {
+          if (document.visibilityState === 'visible') {
+             // To implement polling, we'd fetch messages and append new ones.
+             // For now, reload the chat to see new messages.
+          }
+      }, 5000);
+  }
+
+  chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const content = chatInput.value.trim();
+    if (!content) return;
+    
+    chatInput.value = '';
+    
+    // Optimistic UI update
+    const bubbleContainer = document.createElement('div');
+    bubbleContainer.className = "message flex flex-col max-w-[70%] msg-mine self-end text-right";
+    
+    const nameSpan = document.createElement('span');
+    nameSpan.className = "text-[10px] font-bold text-white/50 mb-1 uppercase";
+    nameSpan.innerText = "You";
+    
+    const textDiv = document.createElement('div');
+    textDiv.className = "px-4 py-3 text-sm text-white bg-brand-teal text-brand-dark rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm";
+    textDiv.innerText = content;
+    
+    bubbleContainer.appendChild(nameSpan);
+    bubbleContainer.appendChild(textDiv);
+    chatBox.appendChild(bubbleContainer);
+    scrollToBottom();
+
+    await fetch(`/projects/${projectId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({ content })
+    });
+  });
+</script>
+{% endblock %}
