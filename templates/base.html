@@ -666,7 +666,8 @@
 
         document.addEventListener(
           "submit",
-          () => {
+          (event) => {
+            if (event.target.closest('[data-no-loader]')) return;
             pendingPageNavigation = true;
             showLoader();
           },
@@ -699,11 +700,12 @@
           pendingPageNavigation = true;
           showLoader();
           // Failsafe: if click does not trigger real navigation, hide loader.
+          // Increased from 800ms to 8000ms so it doesn't hide prematurely on slower DB queries
           clickFallbackTimer = setTimeout(() => {
             if (document.visibilityState === "visible") {
               hideLoader();
             }
-          }, 800);
+          }, 8000);
         });
 
         window.addEventListener("beforeunload", () => {
