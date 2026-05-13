@@ -169,7 +169,9 @@
       [class*="rounded"] {
         border-radius: 0 !important;
       }
-
+      [x-cloak] {
+        display: none !important;
+      }
       button,
       input,
       select,
@@ -185,99 +187,277 @@
     class="h-full bg-brand-dark text-brand-light selection:bg-brand-teal selection:text-brand-dark"
   >
     <nav
-      class="nav-accent flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between py-10 px-6 md:px-10 lg:px-12 max-w-[1440px] mx-auto"
+      x-data="{ mobileMenuOpen: false }"
+      class="nav-accent py-6 px-6 md:px-10 lg:px-12 max-w-[1440px] mx-auto"
     >
-      <a href="/" class="flex items-center gap-4 group">
-        <div class="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center">
-          <img
-            src="{{ url_for('static', filename='images/logo.png') }}"
-            class="w-full h-full object-contain group-hover:scale-110 transition-transform"
-            alt="GT"
-            fetchpriority="high"
-            decoding="async"
-            onerror="this.style.display = 'none'"
-          />
-        </div>
-        <span
-          class="font-black tracking-tighter text-3xl uppercase leading-none"
+      <div class="flex items-center justify-between">
+        <!-- Brand / Logo -->
+        <a href="/" class="flex items-center gap-4 group">
+          <div class="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center">
+            <img
+              src="{{ url_for('static', filename='images/logo.png') }}"
+              class="w-full h-full object-contain group-hover:scale-110 transition-transform"
+              alt="GT"
+              fetchpriority="high"
+              decoding="async"
+              onerror="this.style.display = 'none'"
+            />
+          </div>
+          <span
+            class="font-black tracking-tighter text-3xl uppercase leading-none"
+          >
+            <span class="text-brand-teal">GIT</span
+            ><span class="text-white">OGETHER</span>
+          </span>
+        </a>
+
+        <!-- Mobile Menu Button (Hamburger) -->
+        <button
+          @click="mobileMenuOpen = !mobileMenuOpen"
+          class="md:hidden text-brand-teal p-2 focus:outline-none active:scale-95 transition-transform"
         >
-          <span class="text-brand-teal">GIT</span
-          ><span class="text-white">OGETHER</span>
-        </span>
-      </a>
+          <svg
+            x-show="!mobileMenuOpen"
+            class="w-7 h-7"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+          <svg
+            x-show="mobileMenuOpen"
+            x-cloak
+            class="w-7 h-7"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
 
-      <div class="flex flex-wrap items-center justify-end gap-4 sm:gap-12">
-        {% if request.endpoint == 'auth.login' %}
-        <div class="flex items-center gap-6">
-          <span
-            class="text-sm font-bold text-white/20 uppercase tracking-widest hidden sm:inline"
-            >New here?</span
-          >
-          <a
-            href="{{ url_for('auth.register') }}"
-            class="street-btn px-6 py-2.5 text-sm inline-block active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
-          >
-            Join Now
-          </a>
-        </div>
-
-        {% elif request.endpoint == 'auth.register' %}
-        <div class="flex items-center gap-6">
-          <span
-            class="text-sm font-bold text-white/20 uppercase tracking-widest hidden sm:inline"
-            >Already a member?</span
-          >
-          <a
-            href="{{ url_for('auth.login') }}"
-            class="street-btn px-6 py-2.5 text-sm inline-block active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
-          >
-            Login
-          </a>
-        </div>
-
-        {% else %} {% if session.user_id %}
-        <div class="flex flex-wrap items-center justify-end gap-4 sm:gap-12">
-          {% if session.get('role', '')|lower == 'admin' %}
-          <a
-            href="{{ url_for('admin.panel') }}"
-            class="street-btn text-sm px-6 py-2.5 inline-block active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
-          >
-            Admin Panel
-          </a>
-          {% else %}
-
-          <div
-            class="flex flex-wrap gap-4 sm:gap-6 md:gap-10 items-center justify-end mr-0 md:mr-6"
-          >
+        <!-- DESKTOP NAVIGATION (Hidden on mobile) -->
+        <div
+          class="hidden md:flex flex-wrap items-center justify-end gap-4 lg:gap-12"
+        >
+          {% if request.endpoint == 'auth.login' %}
+          <div class="flex items-center gap-6">
+            <span
+              class="text-sm font-bold text-white/20 uppercase tracking-widest"
+              >New here?</span
+            >
             <a
-              href="{{ url_for('projects.browse') }}"
-              class="group flex flex-col items-center gap-1.5"
+              href="{{ url_for('auth.register') }}"
+              class="street-btn px-6 py-2.5 text-sm inline-block active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
+              >Join Now</a
+            >
+          </div>
+          {% elif request.endpoint == 'auth.register' %}
+          <div class="flex items-center gap-6">
+            <span
+              class="text-sm font-bold text-white/20 uppercase tracking-widest"
+              >Already a member?</span
+            >
+            <a
+              href="{{ url_for('auth.login') }}"
+              class="street-btn px-6 py-2.5 text-sm inline-block active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
+              >Login</a
+            >
+          </div>
+          {% else %} {% if session.user_id %}
+          <div class="flex flex-wrap items-center justify-end gap-4 lg:gap-12">
+            {% if session.get('role', '')|lower == 'admin' %}
+            <a
+              href="{{ url_for('admin.panel') }}"
+              class="street-btn text-sm px-6 py-2.5 inline-block active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
+              >Admin Panel</a
+            >
+            {% else %}
+            <div
+              class="flex gap-6 lg:gap-10 items-center justify-end mr-0 md:mr-6"
+            >
+              <a
+                href="{{ url_for('projects.browse') }}"
+                class="group flex flex-col items-center gap-1.5"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="w-5 h-5 text-brand-light/50 group-hover:text-brand-teal transition-all duration-300"
+                >
+                  <path
+                    d="M5.127 3.502 5.25 3.5h9.5c.041 0 .082 0 .123.002A2.251 2.251 0 0 0 12.75 2h-5.5a2.25 2.25 0 0 0-2.123 1.502ZM1 10.25A2.25 2.25 0 0 1 3.25 8h13.5A2.25 2.25 0 0 1 19 10.25v5.5A2.25 2.25 0 0 1 16.75 18H3.25A2.25 2.25 0 0 1 1 15.75v-5.5ZM3.25 6.5c-.04 0-.082 0-.123.002A2.25 2.25 0 0 1 5.25 5h9.5c.98 0 1.814.627 2.123 1.502a3.819 3.819 0 0 0-.123-.002H3.25Z"
+                  />
+                </svg>
+                <span
+                  class="text-[9px] font-black uppercase tracking-[0.2em] text-brand-light/50 group-hover:text-white transition-colors"
+                  >Browse Projects</span
+                >
+              </a>
+              <a
+                href="{{ url_for('developers.browse') }}"
+                class="group flex flex-col items-center gap-1.5"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="w-5 h-5 text-brand-light/50 group-hover:text-brand-teal transition-all duration-300"
+                >
+                  <g fill-rule="evenodd" clip-rule="evenodd">
+                    <path
+                      d="M5 9a2 2 0 1 0 0-4a2 2 0 0 0 0 4Zm0 1a3 3 0 1 0 0-6a3 3 0 0 0 0 6Z"
+                    />
+                    <path
+                      d="M3.854 8.896a.5.5 0 0 1 0 .708l-.338.337A3.47 3.47 0 0 0 2.5 12.394v1.856a.5.5 0 1 1-1 0v-1.856a4.47 4.47 0 0 1 1.309-3.16l.337-.338a.5.5 0 0 1 .708 0Zm11.792-.3a.5.5 0 0 0 0 .708l.338.337A3.469 3.469 0 0 1 17 12.094v2.156a.5.5 0 0 0 1 0v-2.156a4.47 4.47 0 0 0-1.309-3.16l-.337-.338a.5.5 0 0 0-.708 0Z"
+                    />
+                    <path
+                      d="M14 9a2 2 0 1 1 0-4a2 2 0 0 1 0 4Zm0 1a3 3 0 1 1 0-6a3 3 0 0 1 0 6Zm-4.5 3.25a2.5 2.5 0 0 0-2.5 2.5v1.3a.5.5 0 0 1-1 0v-1.3a3.5 3.5 0 0 1 7 0v1.3a.5.5 0 1 1-1 0v-1.3a2.5 2.5 0 0 0-2.5-2.5Z"
+                    />
+                    <path
+                      d="M9.5 11.75a2 2 0 1 0 0-4a2 2 0 0 0 0 4Zm0 1a3 3 0 1 0 0-6a3 3 0 0 0 0 6Z"
+                    />
+                  </g>
+                </svg>
+                <span
+                  class="text-[9px] font-black uppercase tracking-[0.2em] text-brand-light/50 group-hover:text-white transition-colors"
+                  >Find Developers</span
+                >
+              </a>
+              <a
+                href="{{ url_for('matches.index') }}"
+                class="group flex flex-col items-center gap-1.5"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="w-5 h-5 text-brand-light/50 group-hover:text-brand-teal transition-all duration-300"
+                >
+                  <path
+                    d="M22.5 12c0-5.799-4.701-10.5-10.5-10.5c-1.798 0-3.493.453-4.975 1.251A10.55 10.55 0 0 0 3.5 5.834V2.5h-2v7h7v-2H4.787a8.545 8.545 0 0 1 3.187-2.988A8.458 8.458 0 0 1 12 3.5a8.5 8.5 0 1 1-8.454 9.396l-.104-.995l-1.989.209l.104.994C2.11 18.384 6.573 22.5 12 22.5c5.799 0 10.5-4.701 10.5-10.5ZM11 6v6.414l3.5 3.5l1.414-1.414L13 11.586V6h-2Z"
+                  />
+                </svg>
+                <span
+                  class="text-[9px] font-black uppercase tracking-[0.2em] text-brand-light/50 group-hover:text-white transition-colors"
+                  >My Projects</span
+                >
+              </a>
+            </div>
+            <a
+              href="{{ url_for('dashboard.index') }}"
+              class="street-btn flex items-center gap-2 px-6 py-2.5 text-xs active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                class="w-4 h-4"
+              >
+                <g fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    stroke-linejoin="round"
+                    d="M4 18a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"
+                  />
+                  <circle cx="12" cy="7" r="3" />
+                </g>
+              </svg>
+              Profile
+            </a>
+            {% endif %}
+            <a
+              href="{{ url_for('auth.logout') }}"
+              class="group flex items-center gap-4"
+            >
+              <div
+                class="h-2 w-2 rounded-full bg-red-600/40 group-hover:bg-red-500 transition-all"
+              ></div>
+              <span
+                class="text-sm font-black uppercase tracking-[0.25em] text-white/20 group-hover:text-red-400 transition-colors"
+                >Logout</span
+              >
+            </a>
+          </div>
+          {% else %}
+          <a
+            href="{{ url_for('auth.login') }}"
+            class="street-btn px-8 py-2.5 text-sm inline-block active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
+            >Sign In</a
+          >
+          {% endif %} {% endif %}
+        </div>
+      </div>
+
+      <!-- MOBILE NAVIGATION DROPDOWN (Visible only on mobile when hamburger is clicked) -->
+      <div
+        x-show="mobileMenuOpen"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-4"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-4"
+        x-cloak
+        class="md:hidden pt-6 pb-2 mt-4 border-t border-white/10"
+      >
+        <div class="flex flex-col gap-6">
+          {% if request.endpoint == 'auth.login' %}
+          <a
+            href="{{ url_for('auth.register') }}"
+            class="street-btn px-6 py-4 text-center text-sm w-full block"
+            >Join Now</a
+          >
+          {% elif request.endpoint == 'auth.register' %}
+          <a
+            href="{{ url_for('auth.login') }}"
+            class="street-btn px-6 py-4 text-center text-sm w-full block"
+            >Login</a
+          >
+          {% else %} {% if session.user_id %} {% if session.get('role',
+          '')|lower == 'admin' %}
+          <a
+            href="{{ url_for('admin.panel') }}"
+            class="street-btn px-6 py-4 text-center text-sm w-full block"
+            >Admin Panel</a
+          >
+          {% else %}
+          <div class="flex flex-col gap-5 border-b border-white/10 pb-6">
+            <a
+              href="{{ url_for('projects.browse') }}"
+              class="flex items-center gap-4 text-brand-light/70 hover:text-white transition-colors"
+            >
+              <svg
+                class="w-6 h-6 text-brand-teal"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                class="w-5 h-5 text-brand-light/50 group-hover:text-brand-teal transition-all duration-300"
               >
                 <path
                   d="M5.127 3.502 5.25 3.5h9.5c.041 0 .082 0 .123.002A2.251 2.251 0 0 0 12.75 2h-5.5a2.25 2.25 0 0 0-2.123 1.502ZM1 10.25A2.25 2.25 0 0 1 3.25 8h13.5A2.25 2.25 0 0 1 19 10.25v5.5A2.25 2.25 0 0 1 16.75 18H3.25A2.25 2.25 0 0 1 1 15.75v-5.5ZM3.25 6.5c-.04 0-.082 0-.123.002A2.25 2.25 0 0 1 5.25 5h9.5c.98 0 1.814.627 2.123 1.502a3.819 3.819 0 0 0-.123-.002H3.25Z"
                 />
               </svg>
-              <span
-                class="text-[9px] font-black uppercase tracking-[0.2em] text-brand-light/50 group-hover:text-white transition-colors"
+              <span class="text-xs font-black uppercase tracking-[0.2em]"
                 >Browse Projects</span
               >
             </a>
-
             <a
               href="{{ url_for('developers.browse') }}"
-              class="group flex flex-col items-center gap-1.5"
+              class="flex items-center gap-4 text-brand-light/70 hover:text-white transition-colors"
             >
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6 text-brand-teal"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                class="w-5 h-5 text-brand-light/50 group-hover:text-brand-teal transition-all duration-300"
               >
                 <g fill-rule="evenodd" clip-rule="evenodd">
                   <path
@@ -294,28 +474,24 @@
                   />
                 </g>
               </svg>
-              <span
-                class="text-[9px] font-black uppercase tracking-[0.2em] text-brand-light/50 group-hover:text-white transition-colors"
+              <span class="text-xs font-black uppercase tracking-[0.2em]"
                 >Find Developers</span
               >
             </a>
-
             <a
               href="{{ url_for('matches.index') }}"
-              class="group flex flex-col items-center gap-1.5"
+              class="flex items-center gap-4 text-brand-light/70 hover:text-white transition-colors"
             >
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6 text-brand-teal"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                class="w-5 h-5 text-brand-light/50 group-hover:text-brand-teal transition-all duration-300"
               >
                 <path
                   d="M22.5 12c0-5.799-4.701-10.5-10.5-10.5c-1.798 0-3.493.453-4.975 1.251A10.55 10.55 0 0 0 3.5 5.834V2.5h-2v7h7v-2H4.787a8.545 8.545 0 0 1 3.187-2.988A8.458 8.458 0 0 1 12 3.5a8.5 8.5 0 1 1-8.454 9.396l-.104-.995l-1.989.209l.104.994C2.11 18.384 6.573 22.5 12 22.5c5.799 0 10.5-4.701 10.5-10.5ZM11 6v6.414l3.5 3.5l1.414-1.414L13 11.586V6h-2Z"
                 />
               </svg>
-              <span
-                class="text-[9px] font-black uppercase tracking-[0.2em] text-brand-light/50 group-hover:text-white transition-colors"
+              <span class="text-xs font-black uppercase tracking-[0.2em]"
                 >My Projects</span
               >
             </a>
@@ -323,13 +499,9 @@
 
           <a
             href="{{ url_for('dashboard.index') }}"
-            class="street-btn flex items-center gap-2 px-6 py-2.5 text-xs active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
+            class="street-btn flex items-center justify-center gap-3 px-6 py-4 text-xs mt-2 w-full active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              class="w-4 h-4"
-            >
+            <svg viewBox="0 0 24 24" class="w-5 h-5">
               <g fill="none" stroke="currentColor" stroke-width="2">
                 <path
                   stroke-linejoin="round"
@@ -344,25 +516,22 @@
 
           <a
             href="{{ url_for('auth.logout') }}"
-            class="group flex items-center gap-4"
+            class="flex items-center gap-4 mt-2 mb-2 p-2"
           >
-            <div
-              class="h-2 w-2 rounded-full bg-red-600/40 group-hover:bg-red-500 transition-all"
-            ></div>
+            <div class="h-2 w-2 rounded-full bg-red-600/40"></div>
             <span
-              class="text-sm font-black uppercase tracking-[0.25em] text-white/20 group-hover:text-red-400 transition-colors"
+              class="text-sm font-black uppercase tracking-[0.25em] text-red-400"
               >Logout</span
             >
           </a>
+          {% else %}
+          <a
+            href="{{ url_for('auth.login') }}"
+            class="street-btn px-6 py-4 text-center text-sm w-full block active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
+            >Sign In</a
+          >
+          {% endif %} {% endif %}
         </div>
-        {% else %}
-        <a
-          href="{{ url_for('auth.login') }}"
-          class="street-btn px-8 py-2.5 text-sm inline-block active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
-        >
-          Sign In
-        </a>
-        {% endif %} {% endif %}
       </div>
     </nav>
 
@@ -451,15 +620,17 @@
         const csrfMeta = document.querySelector('meta[name="csrf-token"]');
         const csrfToken = csrfMeta ? csrfMeta.getAttribute("content") : null;
         if (csrfToken) {
-          document.querySelectorAll('form[method="POST"], form[method="post"]').forEach((form) => {
-            if (!form.querySelector('input[name="csrf_token"]')) {
-              const csrfInput = document.createElement("input");
-              csrfInput.type = "hidden";
-              csrfInput.name = "csrf_token";
-              csrfInput.value = csrfToken;
-              form.appendChild(csrfInput);
-            }
-          });
+          document
+            .querySelectorAll('form[method="POST"], form[method="post"]')
+            .forEach((form) => {
+              if (!form.querySelector('input[name="csrf_token"]')) {
+                const csrfInput = document.createElement("input");
+                csrfInput.type = "hidden";
+                csrfInput.name = "csrf_token";
+                csrfInput.value = csrfToken;
+                form.appendChild(csrfInput);
+              }
+            });
 
           document.body.addEventListener("htmx:configRequest", (event) => {
             event.detail.headers["X-CSRFToken"] = csrfToken;
@@ -499,7 +670,7 @@
             pendingPageNavigation = true;
             showLoader();
           },
-          true
+          true,
         );
         document.addEventListener("click", (event) => {
           const link = event.target.closest("a[href]");
