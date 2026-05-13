@@ -1,0 +1,9 @@
+# Ignore the templates folder for language statistics
+templates/* linguist-vendored
+
+# Ignore static assets if you have them
+static/* linguist-vendored
+
+# Explicitly ensure your main logic is counted
+app.py linguist-detectable
+functions.py linguist-detectable
