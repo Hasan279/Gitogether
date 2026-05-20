@@ -1,0 +1,23 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  {% set stat_items = [ 
+    ('Users', stats.total_users, 'Total User Base'),
+    ('Projects', stats.active_projects, 'Live Listings'), 
+    ('Matches', stats.completed_matches, 'Success Rate'), 
+    ('Avg Rating', stats.global_avg|round(1), 'User Satisfaction') 
+  ] %} 
+  
+  {% for label, val, sub in stat_items %}
+  <div class="bg-white/5 border border-white/10 p-10 rounded-[3rem] backdrop-blur-xl group hover:border-brand-teal/30 transition-all">
+    <p class="text-xs font-black text-brand-teal uppercase tracking-[0.2em] mb-2">
+      {{ label }}
+    </p>
+    <h2 class="text-5xl font-black text-white tracking-tighter">{{ val }}</h2>
+    <p class="text-[10px] font-bold text-white/50 uppercase mt-6 tracking-widest">
+      {{ sub }}
+    </p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
