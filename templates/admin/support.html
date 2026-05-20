@@ -1,0 +1,67 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<section class="space-y-6">
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="h-8 w-1.5 bg-brand-teal rounded-full"></div>
+      <h3 class="text-sm font-black text-white uppercase tracking-[0.4em]">
+        Support Inbox
+      </h3>
+    </div>
+    <div class="flex gap-4">
+      <a href="{{ url_for('admin.panel', tab='support', status='open') }}" class="text-[10px] font-black uppercase tracking-widest {% if status_filter == 'open' %}text-brand-teal{% else %}text-white/50 hover:text-white{% endif %} transition-colors">
+        Open
+      </a>
+      <a href="{{ url_for('admin.panel', tab='support', status='resolved') }}" class="text-[10px] font-black uppercase tracking-widest {% if status_filter == 'resolved' %}text-brand-teal{% else %}text-white/50 hover:text-white{% endif %} transition-colors">
+        Resolved
+      </a>
+      <a href="{{ url_for('admin.panel', tab='support') }}" class="text-[10px] font-black uppercase tracking-widest {% if not status_filter %}text-brand-teal{% else %}text-white/50 hover:text-white{% endif %} transition-colors">
+        All
+      </a>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {% for q in queries %}
+    <div class="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] flex flex-col md:flex-row justify-between items-start gap-6 group hover:border-brand-teal/30 transition-all">
+      <div class="flex-1 space-y-4">
+        <div class="flex items-center gap-3">
+          {% if q.status == 'open' %}
+          <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+          {% else %}
+          <span class="w-2 h-2 rounded-full bg-brand-teal"></span>
+          {% endif %}
+          <span class="text-white/60 font-black uppercase text-[10px] tracking-widest">
+            {{ q.full_name }} ({{ q.email }})
+          </span>
+          <span class="text-white/20 text-xs">|</span>
+          <span class="text-white/40 text-[10px] font-bold uppercase tracking-widest">
+            {{ q.created_at.strftime('%Y-%m-%d %H:%M') }}
+          </span>
+        </div>
+        <h4 class="text-lg font-black text-white">{{ q.subject }}</h4>
+        <p class="text-white/80 text-sm leading-relaxed whitespace-pre-wrap">{{ q.message }}</p>
+      </div>
+      
+      {% if q.status == 'open' %}
+      <form action="{{ url_for('admin.resolve_query_admin', query_id=q.query_id) }}" method="POST">
+        <button class="px-6 py-2 bg-brand-teal/10 border border-brand-teal/30 text-brand-teal text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-brand-teal hover:text-brand-dark transition-all">
+          Resolve
+        </button>
+      </form>
+      {% else %}
+      <span class="px-6 py-2 bg-white/5 border border-white/10 text-white/30 text-[10px] font-black uppercase tracking-widest rounded-xl">
+        Resolved
+      </span>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="bg-white/5 border border-white/10 p-10 rounded-[2.5rem] text-center">
+      <p class="text-white/40 text-xs font-bold uppercase tracking-widest">
+        No queries found.
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

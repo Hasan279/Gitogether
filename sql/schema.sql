@@ -84,3 +84,13 @@ CREATE TABLE Project_Messages (
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE Developer_Queries (
+    query_id SERIAL PRIMARY KEY,
+    sender_id INT NOT NULL REFERENCES Developer_Profiles(developer_id) ON DELETE CASCADE,
+    subject VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'open' CHECK (status IN ('open', 'resolved')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_dev_queries_status ON Developer_Queries(status);

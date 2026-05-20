@@ -16,7 +16,7 @@ cloudinary.config(
     api_secret = CLOUDINARY_API_SECRET
 )
 
-from controllers import auth, dashboard, projects, developers, requests, matches, ratings, admin
+from controllers import auth, dashboard, projects, developers, requests, matches, ratings, admin, support
 
 app.register_blueprint(auth.bp)
 app.register_blueprint(dashboard.bp)
@@ -26,6 +26,7 @@ app.register_blueprint(requests.bp)
 app.register_blueprint(matches.bp)
 app.register_blueprint(ratings.bp)
 app.register_blueprint(admin.bp)
+app.register_blueprint(support.bp)
 
 @app.route('/')
 def home():

@@ -35,6 +35,10 @@
        class="px-4 py-2 text-xs font-black uppercase tracking-widest transition-colors {% if tab == 'ratings' %}text-brand-teal border-b-2 border-brand-teal{% else %}text-white/50 hover:text-white{% endif %}">
       Ratings
     </a>
+    <a href="{{ url_for('admin.panel', tab='support') }}" 
+       class="px-4 py-2 text-xs font-black uppercase tracking-widest transition-colors {% if tab == 'support' %}text-brand-teal border-b-2 border-brand-teal{% else %}text-white/50 hover:text-white{% endif %}">
+      Support
+    </a>
   </nav>
 
   <div class="space-y-8">

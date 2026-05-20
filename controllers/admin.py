@@ -8,6 +8,7 @@ from models.admin import (
     delete_rating_admin as delete_rating_db, 
     delete_project_admin as delete_project_db
 )
+from models.support import get_all_queries, mark_query_resolved
 
 bp = Blueprint('admin', __name__)
 
@@ -44,6 +45,11 @@ def panel():
         context['developers'] = get_all_developers_oversight(search_term=d_search, limit=row_limit)
         context['dev_q'] = d_search
         return render_template('admin/developers.html', **context)
+    elif tab == 'support':
+        status_filter = request.args.get('status', '').strip()
+        context['queries'] = get_all_queries(status=status_filter if status_filter in ['open', 'resolved'] else None)
+        context['status_filter'] = status_filter
+        return render_template('admin/support.html', **context)
     else:
         return redirect(url_for('admin.panel', tab='dashboard'))
 
@@ -67,3 +73,10 @@ def toggle_user(user_id):
     toggle_user_status_admin(user_id)
     flash("User access status updated.", "success")
     return redirect(url_for('admin.panel', tab='developers'))
+
+@bp.route('/admin/resolve_query/<int:query_id>', methods=['POST'])
+def resolve_query_admin(query_id):
+    if not admin_required(): return redirect(url_for('auth.login'))
+    mark_query_resolved(query_id)
+    flash("Support query marked as resolved.", "success")
+    return redirect(url_for('admin.panel', tab='support'))
