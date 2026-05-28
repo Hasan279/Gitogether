@@ -22,7 +22,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {% for match in active_matches %}
       <div
-        class="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] flex flex-col justify-between hover:border-brand-teal/30 transition-all backdrop-blur-md"
+        class="bg-emerald-500/5 border border-emerald-500/20 p-8 rounded-[2.5rem] flex flex-col justify-between hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all backdrop-blur-md"
       >
         <div>
           <h3 class="text-xl font-black text-white uppercase mb-2">
@@ -101,7 +101,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {% for project in my_listings %}
       <div
-        class="bg-white/5 border border-brand-emerald/20 p-8 rounded-[2.5rem] flex flex-col justify-between hover:border-brand-emerald/40 transition-all backdrop-blur-md"
+        class="bg-blue-500/5 border border-blue-500/20 p-8 rounded-[2.5rem] flex flex-col justify-between hover:border-blue-500/50 hover:bg-blue-500/10 transition-all backdrop-blur-md"
       >
         <div>
           <h3 class="text-xl font-black text-white uppercase mb-2">
@@ -113,7 +113,7 @@
             {{ project.location or 'Remote' }}
           </p>
           <span
-            class="inline-block text-[8px] font-black uppercase tracking-widest text-brand-emerald border border-brand-emerald/30 bg-brand-emerald/10 px-3 py-1 rounded-full"
+            class="inline-block text-[8px] font-black uppercase tracking-widest text-blue-400 border border-blue-500/30 bg-blue-500/10 px-3 py-1 rounded-full"
           >
             Marketplace Live
           </span>
@@ -121,7 +121,7 @@
 
         <a
           href="{{ url_for('projects.detail', project_id=project.project_id) }}"
-          class="mt-6 text-center text-[10px] font-black text-brand-emerald border border-brand-emerald/20 py-3 rounded-xl uppercase hover:bg-brand-emerald hover:text-brand-dark transition-all"
+          class="mt-6 text-center text-[10px] font-black text-blue-400 border border-blue-500/20 py-3 rounded-xl uppercase hover:bg-blue-500 hover:text-white transition-all"
         >
           View Listing
         </a>
@@ -152,7 +152,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {% for match in completed_matches %}
       <div
-        class="bg-white/5 border border-white/5 p-8 rounded-[2.5rem] opacity-80 hover:opacity-100 transition-all"
+        class="bg-amber-500/5 border border-amber-500/20 p-8 rounded-[2.5rem] opacity-80 hover:opacity-100 hover:bg-amber-500/10 transition-all"
       >
         <h3 class="text-lg font-black text-white/60 uppercase mb-4">
           {{ match.title }}
