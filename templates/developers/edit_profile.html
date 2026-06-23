@@ -1,3 +1,4 @@
+{% from 'macros.html' import render_avatar %}
 {% extends 'base.html' %} {% block content %}
 <div class="max-w-4xl mx-auto space-y-10">
   <div>
@@ -27,11 +28,7 @@
           >
           <div class="flex items-center gap-6">
             {% if developer.avatar_url %}
-            <img
-              src="{{ developer.avatar_url }}"
-              alt="Current Avatar"
-              class="w-16 h-16 rounded-2xl object-cover border border-white/10 shadow-lg"
-            />
+            {{ render_avatar(developer.full_name, developer.avatar_url, 'w-16 h-16', 128, 128, false) }}
             {% else %}
             <div
               class="w-16 h-16 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center text-white/20"
