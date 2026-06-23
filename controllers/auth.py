@@ -56,9 +56,7 @@ def login():
     if request.method == 'GET':
         return render_template('auth/login.html')
 
-    client_ip = request.headers.get('X-Forwarded-For', request.remote_addr or '')
-    if ',' in client_ip:
-        client_ip = client_ip.split(',')[0].strip()
+    client_ip = request.remote_addr or ''
     now = time.time()
     attempts = [
         ts for ts in FAILED_LOGINS_BY_IP[client_ip]

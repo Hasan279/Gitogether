@@ -88,6 +88,9 @@ def edit_profile():
 
         # Handle image upload to Cloudinary if an image is provided
         if image and image.filename != '':
+            if not image.mimetype.startswith('image/'):
+                flash('Only image files are allowed!', 'error')
+                return redirect(url_for('developers.edit_profile'))
             try:
                 # Use Cloudinary API to upload image (and force it to a square)
                 upload_result = cloudinary.uploader.upload(

@@ -270,5 +270,8 @@ def send_message(project_id):
     if not content or not content.strip():
         return {'status': 'empty'}, 400
         
+    if len(content) > 1000:
+        return {'status': 'too long'}, 400
+        
     create_message(project_id, developer_id, content.strip())
     return {'status': 'ok'}

@@ -3,11 +3,14 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from flask_wtf.csrf import CSRFProtect
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import SECRET_KEY, DEBUG, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = SECRET_KEY
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024 # 5MB max upload size
 csrf = CSRFProtect(app)
 
 cloudinary.config(
