@@ -14,7 +14,7 @@
       {% for msg in messages %}
         <div class="message flex flex-col max-w-[70%] {% if msg.sender_id == current_developer_id %}msg-mine self-end text-right{% else %}msg-theirs self-start text-left{% endif %}">
           <span class="text-[10px] font-bold text-white/50 mb-1 uppercase">{{ msg.sender_name }}</span>
-          <div class="px-4 py-3 text-sm text-white {% if msg.sender_id == current_developer_id %}bg-brand-teal text-brand-dark rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm{% else %}bg-white/10 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm border border-white/5{% endif %}">
+          <div class="px-4 py-3 text-sm text-left {% if msg.sender_id == current_developer_id %}bg-brand-teal text-brand-dark rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm{% else %}bg-white/10 text-white rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm border border-white/5{% endif %}">
             {{ msg.content }}
           </div>
         </div>
@@ -56,6 +56,49 @@
   
   scrollToBottom();
 
+  let lastMessageId = 0;
+  {% if messages %}
+    lastMessageId = {{ messages[-1].message_id }};
+  {% endif %}
+
+  function startPolling() {
+      setInterval(async () => {
+          if (document.visibilityState === 'visible') {
+             try {
+                 const res = await fetch(`/projects/${projectId}/messages?after=${lastMessageId}`);
+                 if (res.ok) {
+                     const data = await res.json();
+                     if (data.status === 'ok' && data.messages && data.messages.length > 0) {
+                         for (const msg of data.messages) {
+                             if (msg.sender_id === currentUserId) continue; // Already optimistically added
+                             
+                             const bubbleContainer = document.createElement('div');
+                             bubbleContainer.className = "message flex flex-col max-w-[70%] msg-theirs self-start text-left";
+                             
+                             const nameSpan = document.createElement('span');
+                             nameSpan.className = "text-[10px] font-bold text-white/50 mb-1 uppercase";
+                             nameSpan.innerText = msg.sender_name || "Team Member"; 
+                             
+                             const textDiv = document.createElement('div');
+                             textDiv.className = "px-4 py-3 text-sm text-left text-white bg-white/10 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm border border-white/5";
+                             textDiv.innerText = msg.content;
+                             
+                             bubbleContainer.appendChild(nameSpan);
+                             bubbleContainer.appendChild(textDiv);
+                             chatBox.appendChild(bubbleContainer);
+                             
+                             lastMessageId = Math.max(lastMessageId, msg.message_id);
+                         }
+                         scrollToBottom();
+                     }
+                 }
+             } catch (err) {
+                 console.error("Polling error:", err);
+             }
+          }
+      }, 5000);
+  }
+
   if (supabaseClient) {
       supabaseClient
         .channel(`project-${projectId}-chat`)
@@ -71,24 +114,25 @@
           nameSpan.innerText = "Team Member"; 
           
           const textDiv = document.createElement('div');
-          textDiv.className = "px-4 py-3 text-sm text-white bg-white/10 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm border border-white/5";
+          textDiv.className = "px-4 py-3 text-sm text-left text-white bg-white/10 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm border border-white/5";
           textDiv.innerText = msg.content;
           
           bubbleContainer.appendChild(nameSpan);
           bubbleContainer.appendChild(textDiv);
           chatBox.appendChild(bubbleContainer);
+          
+          lastMessageId = Math.max(lastMessageId, msg.message_id);
           scrollToBottom();
         })
-        .subscribe();
-  } else {
-      console.warn("Supabase Realtime is not active because SUPABASE_URL or SUPABASE_ANON_KEY is missing in .env.");
-      // Fallback: Smart Polling every 5 seconds if tab is visible
-      setInterval(() => {
-          if (document.visibilityState === 'visible') {
-             // To implement polling, we'd fetch messages and append new ones.
-             // For now, reload the chat to see new messages.
+        .subscribe((status) => {
+          if (status !== 'SUBSCRIBED') {
+            console.warn("Supabase subscription failed. Falling back to polling.");
+            startPolling();
           }
-      }, 5000);
+        });
+  } else {
+      console.warn("Supabase Realtime is not active. Starting polling.");
+      startPolling();
   }
 
   chatForm.addEventListener('submit', async (e) => {
@@ -107,7 +151,7 @@
     nameSpan.innerText = "You";
     
     const textDiv = document.createElement('div');
-    textDiv.className = "px-4 py-3 text-sm text-white bg-brand-teal text-brand-dark rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm";
+    textDiv.className = "px-4 py-3 text-sm text-left bg-brand-teal text-brand-dark rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm";
     textDiv.innerText = content;
     
     bubbleContainer.appendChild(nameSpan);

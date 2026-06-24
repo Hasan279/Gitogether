@@ -29,3 +29,19 @@ def get_project_messages(project_id, limit=50):
     cur.close()
     release_connection(conn)
     return messages
+
+def get_new_project_messages(project_id, after_id, limit=50):
+    conn = get_connection()
+    cur = get_cursor(conn)
+    cur.execute("""
+        SELECT m.message_id, m.content, m.created_at, m.sender_id, d.full_name as sender_name
+        FROM Project_Messages m
+        JOIN Developer_Profiles d ON m.sender_id = d.developer_id
+        WHERE m.project_id = %s AND m.message_id > %s
+        ORDER BY m.created_at ASC
+        LIMIT %s
+    """, (project_id, after_id, limit))
+    messages = cur.fetchall()
+    cur.close()
+    release_connection(conn)
+    return messages

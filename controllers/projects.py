@@ -4,7 +4,7 @@ from models.skill import *
 from models.user import *
 from models.request import *
 from models.match import get_active_match_counts_for_projects, check_existing_match
-from models.message import get_project_messages, create_message
+from models.message import get_project_messages, create_message, get_new_project_messages
 from config import SUPABASE_URL, SUPABASE_ANON_KEY
 import math
 
@@ -253,8 +253,8 @@ def chat(project_id):
                            supabase_url=SUPABASE_URL,
                            supabase_anon_key=SUPABASE_ANON_KEY)
 
-@bp.route('/projects/<int:project_id>/messages', methods=['POST'])
-def send_message(project_id):
+@bp.route('/projects/<int:project_id>/messages', methods=['GET', 'POST'])
+def handle_messages(project_id):
     if 'user_id' not in session:
         return {'status': 'unauthorized'}, 401
         
@@ -266,12 +266,30 @@ def send_message(project_id):
         if not match or match['status'] != 'active':
             return {'status': 'unauthorized'}, 401
             
-    content = request.json.get('content')
-    if not content or not content.strip():
-        return {'status': 'empty'}, 400
+    if request.method == 'GET':
+        after_id = request.args.get('after', 0, type=int)
+        new_msgs = get_new_project_messages(project_id, after_id)
         
-    if len(content) > 1000:
-        return {'status': 'too long'}, 400
+        # Format messages for JSON
+        formatted_msgs = []
+        for msg in new_msgs:
+            formatted_msgs.append({
+                'message_id': msg['message_id'],
+                'content': msg['content'],
+                'sender_id': msg['sender_id'],
+                'sender_name': msg['sender_name'],
+                'created_at': msg['created_at'].isoformat() if msg['created_at'] else None
+            })
+            
+        return {'status': 'ok', 'messages': formatted_msgs}
         
-    create_message(project_id, developer_id, content.strip())
-    return {'status': 'ok'}
+    elif request.method == 'POST':
+        content = request.json.get('content')
+        if not content or not content.strip():
+            return {'status': 'empty'}, 400
+            
+        if len(content) > 1000:
+            return {'status': 'too long'}, 400
+            
+        msg_id = create_message(project_id, developer_id, content.strip())
+        return {'status': 'ok', 'message_id': msg_id}
