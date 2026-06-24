@@ -16,8 +16,9 @@ Finding the right person to build with is hard. Gitogether makes it simple — c
 - **Post Projects** — describe what you're building and what kind of collaborator you need
 - **Browse & Filter** — find projects or developers by skill, sorted by reputation
 - **Request to Join** — send a join request, owner reviews and accepts or rejects
-- **Collaboration Tracking** — active and completed projects all in one place
+- **Live Collaboration Chats** — real-time messaging powered by Supabase with a smart polling fallback to ensure team comms never drop
 - **Ratings** — rate your collaborators after a project wraps up, build your reputation over time
+- **Admin Panel** — a dedicated admin dashboard to monitor system health, manage users, handle reports, and oversee projects
 
 ---
 
