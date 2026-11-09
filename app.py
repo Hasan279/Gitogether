@@ -37,5 +37,18 @@ def home():
         return redirect(url_for('dashboard.index'))
     return render_template('home.html')
 
+@app.route('/health')
+def health():
+    try:
+        from models.db import get_connection, get_cursor, release_connection
+        conn = get_connection()
+        cur = get_cursor(conn)
+        cur.execute("SELECT 1;")
+        cur.fetchone()
+        release_connection(conn)
+        return {"status": "healthy", "database": "connected"}, 200
+    except Exception as e:
+        return {"status": "unhealthy", "error": str(e)}, 500
+        
 if __name__ == "__main__":
     app.run(debug=DEBUG)
